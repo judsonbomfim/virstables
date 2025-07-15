@@ -195,7 +195,6 @@ CELERY_RESULT_BACKEND = str(os.getenv('CELERY_RESULT_BACKEND'))
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_BEAT_SYNC_EVERY = None
-
 CELERY_TIMEZONE = 'America/Sao_Paulo'
 
 
