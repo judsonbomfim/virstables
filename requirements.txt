@@ -6,12 +6,14 @@ django-environ==0.12.0
 django-sass-processor==1.4.1
 django-storages==1.14.6
 django-widget-tweaks==1.5.0
+djangorestframework==3.16.0
 jmespath==1.0.1
 libsass==0.22.0
 pillow==11.1.0
 psycopg2-binary==2.9.10
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
+pytz==2025.2
 s3transfer==0.11.4
 six==1.17.0
 sqlparse==0.5.3
