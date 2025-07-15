@@ -21,9 +21,7 @@ services:
 
   celery:
     build: .
-    command: >
-      bash -c "until nc -z redis 6379; do echo 'Aguardando Redis...'; sleep 2; done &&
-               celery -A core worker --loglevel=info"
+    entrypoint: ["./entrypoint-celery.sh"]
     env_file:
       - .env
     depends_on:
