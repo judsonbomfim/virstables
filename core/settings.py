@@ -81,6 +81,8 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+DATABASE_URL = os.getenv('DATABASE_URL', f'postgres://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@db:5432/{os.getenv("DB_NAME")}')
+
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE'),
