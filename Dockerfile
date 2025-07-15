@@ -15,4 +15,3 @@ ENV PYTHONUNBUFFERED=1
 RUN chmod +x entrypoint.sh
 EXPOSE 8000
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]
