@@ -19,6 +19,10 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    command: >
+      bash -c "until nc -z db 5432; do echo 'Aguardando PostgreSQL...'; sleep 2; done &&
+               python manage.py migrate &&
+               gunicorn --bind 0.0.0.0:8000 meu_projeto.wsgi:application"
 
   db:
     image: postgres:16
@@ -43,9 +47,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "redis-cliಸ
-
-System: Você não forneceu um endpoint de verificação de integridade para o Redis.
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
