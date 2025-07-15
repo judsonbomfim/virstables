@@ -1,0 +1,311 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css_custom %}
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.snow.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.bubble.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card">
+        <div class="card-header border-l-primary border-3">
+          <h5 class="card-title">{{ page_subtitle }}</h5>
+        </div>
+        <div class="card-body">
+          {% if leilao != None %}
+          <form method="post" action="{% url 'cavalo_backend:cavalo_adicionar_leilao' leilao.id %}" enctype="multipart/form-data" class="form-horizontal">
+          {% elif cavalo != None %}
+          <form method="post" action="{% url 'cavalo_backend:cavalo_editar' cavalo.id %}" enctype="multipart/form-data" class="form-horizontal">
+          {% else %}
+          <form method="post" action="{% url 'cavalo_backend:cavalo_adicionar' %}" enctype="multipart/form-data" class="form-horizontal">
+          {% endif %}
+          {% csrf_token %}
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.nome.id_for_label }}">Leilão</label>
+              <select class="form-control" id="{{ form.leilao.id_for_label }}" name="{{ form.leilao.name }}">
+                <option value="" disabled {% if not form.leilao.value %}selected{% endif %}>Selecione...</option>
+                {% for choice in form.leilao.field.choices %}
+                  <option value="{{ choice.0 }}" {% if choice.0|stringformat:"s" == form.leilao.value|stringformat:"s" %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+              </select>
+              {% if form.leilao.errors %}
+                <div class="text-danger">{{ form.leilao.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.nome.id_for_label }}">Nome do Cavalo</label>
+              <input type="text" class="form-control" id="{{ form.nome.id_for_label }}" name="{{ form.nome.name }}" value="{{ form.nome.value|default_if_none:'' }}" required />
+              {% if form.nome.errors %}
+                <div class="text-danger">{{ form.nome.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.raca.id_for_label }}">Raça</label>
+              <input type="text" class="form-control" id="{{ form.raca.id_for_label }}" name="{{ form.raca.name }}" value="{{ form.raca.value|default_if_none:'' }}" required />
+              {% if form.raca.errors %}
+                <div class="text-danger">{{ form.raca.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.nascimento.id_for_label }}">Data de Nascimento</label>
+              <input type="date" class="form-control" id="{{ form.nascimento.id_for_label }}" name="{{ form.nascimento.name }}" value="{{ form.nascimento.value|default_if_none:'' }}" required />              {% if form.nascimento.errors %}
+                <div class="text-danger">{{ form.nascimento.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.descricao.id_for_label }}">Descrição</label>
+              <div id="editor-descricao" class="quill-editor h-150"></div>
+              <input type="hidden" id="{{ form.descricao.id_for_label }}" name="{{ form.descricao.name }}" value="{{ form.descricao.value|default_if_none:'' }}" />
+              {% if form.descricao.errors %}
+                <div class="text-danger">{{ form.descricao.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.informacoes.id_for_label }}">Informações Adicionais</label>
+              <div id="editor-informacoes" class="quill-editor h-150"></div>
+              <input type="hidden" id="{{ form.informacoes.id_for_label }}" name="{{ form.informacoes.name }}" value="{{ form.informacoes.value|default_if_none:'' }}" />
+              {% if form.informacoes.errors %}
+                <div class="text-danger">{{ form.informacoes.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.registro.id_for_label }}">Registro</label>
+              <input type="text" class="form-control" id="{{ form.registro.id_for_label }}" name="{{ form.registro.name }}" value="{{ form.registro.value|default_if_none:'' }}" required />
+              {% if form.registro.errors %}
+                <div class="text-danger">{{ form.registro.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.altura.id_for_label }}">Altura</label>
+              <input type="text" class="form-control" id="{{ form.altura.id_for_label }}" name="{{ form.altura.name }}" value="{{ form.altura.value|default_if_none:'' }}" placeholder="1,65" required />
+              {% if form.altura.errors %}
+                <div class="text-danger">{{ form.altura.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.sexo.id_for_label }}">Sexo</label>
+              <select class="form-control" id="{{ form.sexo.id_for_label }}" name="{{ form.sexo.name }}" required>
+                <option value="" disabled {% if not form.sexo.value %}selected{% endif %}>Selecione...</option>
+                {% for value, label in form.sexo.field.choices %}
+                  <option value="{{ value }}" {% if form.sexo.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              {% if form.sexo.errors %}
+                <div class="text-danger">{{ form.sexo.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.pelagem.id_for_label }}">Pelagem</label>
+              <input type="text" class="form-control" id="{{ form.pelagem.id_for_label }}" name="{{ form.pelagem.name }}" value="{{ form.pelagem.value|default_if_none:'' }}" required />
+              {% if form.pelagem.errors %}
+                <div class="text-danger">{{ form.pelagem.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.criador.id_for_label }}">Criador</label>
+              <input type="text" class="form-control" id="{{ form.criador.id_for_label }}" name="{{ form.criador.name }}" value="{{ form.criador.value|default_if_none:'' }}" required />
+              {% if form.criador.errors %}
+                <div class="text-danger">{{ form.criador.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.vendedor.id_for_label }}">Vendedor</label>
+              <input type="text" class="form-control" id="{{ form.vendedor.id_for_label }}" name="{{ form.vendedor.name }}" value="{{ form.vendedor.value|default_if_none:'' }}" required />
+              {% if form.vendedor.errors %}
+                <div class="text-danger">{{ form.vendedor.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.alojamento.id_for_label }}">Alojamento</label>
+              <input type="text" class="form-control" id="{{ form.alojamento.id_for_label }}" name="{{ form.alojamento.name }}" value="{{ form.alojamento.value|default_if_none:'' }}" required />
+              {% if form.alojamento.errors %}
+                <div class="text-danger">{{ form.alojamento.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.pai.id_for_label }}">Pai</label>
+              <input type="text" class="form-control" id="{{ form.pai.id_for_label }}" name="{{ form.pai.name }}" value="{{ form.pai.value|default_if_none:'' }}" required />
+              {% if form.pai.errors %}
+                <div class="text-danger">{{ form.pai.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.mae.id_for_label }}">Mãe</label>
+              <input type="text" class="form-control" id="{{ form.mae.id_for_label }}" name="{{ form.mae.name }}" value="{{ form.mae.value|default_if_none:'' }}" required />
+              {% if form.mae.errors %}
+                <div class="text-danger">{{ form.mae.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.avo_paterno.id_for_label }}">Avô Paterno</label>
+              <input type="text" class="form-control" id="{{ form.avo_paterno.id_for_label }}" name="{{ form.avo_paterno.name }}" value="{{ form.avo_paterno.value|default_if_none:'' }}" required />
+              {% if form.avo_paterno.errors %}
+                <div class="text-danger">{{ form.avo_paterno.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.avo_paterna.id_for_label }}">Avó Paterna</label>
+              <input type="text" class="form-control" id="{{ form.avo_paterna.id_for_label }}" name="{{ form.avo_paterna.name }}" value="{{ form.avo_paterna.value|default_if_none:'' }}" required />
+              {% if form.avo_paterna.errors %}
+                <div class="text-danger">{{ form.avo_paterna.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.avo_materno.id_for_label }}">Avô Materno</label>
+              <input type="text" class="form-control" id="{{ form.avo_materno.id_for_label }}" name="{{ form.avo_materno.name }}" value="{{ form.avo_materno.value|default_if_none:'' }}" required />
+              {% if form.avo_materno.errors %}
+                <div class="text-danger">{{ form.avo_materno.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.avo_materna.id_for_label }}">Avó Materna</label>
+              <input type="text" class="form-control" id="{{ form.avo_materna.id_for_label }}" name="{{ form.avo_materna.name }}" value="{{ form.avo_materna.value|default_if_none:'' }}" required />
+              {% if form.avo_materna.errors %}
+                <div class="text-danger">{{ form.avo_materna.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.bisavo_paterno1.id_for_label }}">Bisavô Paterno 1</label>
+              <input type="text" class="form-control" id="{{ form.bisavo_paterno1.id_for_label }}" name="{{ form.bisavo_paterno1.name }}" value="{{ form.bisavo_paterno1.value|default_if_none:'' }}" required />
+              {% if form.bisavo_paterno1.errors %}
+                <div class="text-danger">{{ form.bisavo_paterno1.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.bisavo_paterno2.id_for_label }}">Bisavô Paterno 2</label>
+              <input type="text" class="form-control" id="{{ form.bisavo_paterno2.id_for_label }}" name="{{ form.bisavo_paterno2.name }}" value="{{ form.bisavo_paterno2.value|default_if_none:'' }}" required />
+              {% if form.bisavo_paterno2.errors %}
+                <div class="text-danger">{{ form.bisavo_paterno2.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.bisavo_paterno3.id_for_label }}">Bisavô Paterno 3</label>
+              <input type="text" class="form-control" id="{{ form.bisavo_paterno3.id_for_label }}" name="{{ form.bisavo_paterno3.name }}" value="{{ form.bisavo_paterno3.value|default_if_none:'' }}" required />
+              {% if form.bisavo_paterno3.errors %}
+                <div class="text-danger">{{ form.bisavo_paterno3.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.bisavo_paterno4.id_for_label }}">Bisavô Paterno 4</label>
+              <input type="text" class="form-control" id="{{ form.bisavo_paterno4.id_for_label }}" name="{{ form.bisavo_paterno4.name }}" value="{{ form.bisavo_paterno4.value|default_if_none:'' }}" required />
+              {% if form.bisavo_paterno4.errors %}
+                <div class="text-danger">{{ form.bisavo_paterno4.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.bisavo_materno1.id_for_label }}">Bisavô Materno 1</label>
+              <input type="text" class="form-control" id="{{ form.bisavo_materno1.id_for_label }}" name="{{ form.bisavo_materno1.name }}" value="{{ form.bisavo_materno1.value|default_if_none:'' }}" required />
+              {% if form.bisavo_materno1.errors %}
+                <div class="text-danger">{{ form.bisavo_materno1.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.bisavo_materno2.id_for_label }}">Bisavô Materno 2</label>
+              <input type="text" class="form-control" id="{{ form.bisavo_materno2.id_for_label }}" name="{{ form.bisavo_materno2.name }}" value="{{ form.bisavo_materno2.value|default_if_none:'' }}" required />
+              {% if form.bisavo_materno2.errors %}
+                <div class="text-danger">{{ form.bisavo_materno2.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.bisavo_materno3.id_for_label }}">Bisavô Materno 3</label>
+              <input type="text" class="form-control" id="{{ form.bisavo_materno3.id_for_label }}" name="{{ form.bisavo_materno3.name }}" value="{{ form.bisavo_materno3.value|default_if_none:'' }}" required />
+              {% if form.bisavo_materno3.errors %}
+                <div class="text-danger">{{ form.bisavo_materno3.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.bisavo_materno4.id_for_label }}">Bisavô Materno 4</label>
+              <input type="text" class="form-control" id="{{ form.bisavo_materno4.id_for_label }}" name="{{ form.bisavo_materno4.name }}" value="{{ form.bisavo_materno4.value|default_if_none:'' }}" required />
+              {% if form.bisavo_materno4.errors %}
+                <div class="text-danger">{{ form.bisavo_materno4.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.lance_inicial.id_for_label }}">Lance Inicial</label>
+              <input type="text" class="form-control" id="{{ form.lance_inicial.id_for_label }}" name="{{ form.lance_inicial.name }}" value="{{ form.lance_inicial.value|default_if_none:'' }}" placeholder="R$ 100,00" maxlength="5"  required />
+              {% if form.lance_inicial.errors %}
+                <div class="text-danger">{{ form.lance_inicial.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.parcela.id_for_label }}">Número de Parcelas</label>
+              <input type="number" class="form-control" id="{{ form.parcela.id_for_label }}" name="{{ form.parcela.name }}" value="{{ form.parcela.value|default_if_none:'' }}" placeholder="30" maxlength="3"  required />
+              {% if form.parcela.errors %}
+                <div class="text-danger">{{ form.parcela.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.status.id_for_label }}">Status</label>
+              <select class="form-control" id="{{ form.status.id_for_label }}" name="{{ form.status.name }}" required>
+                <option value="" disabled {% if not form.status.value %}selected{% endif %}>Selecione...</option>
+                {% for value, label in form.status.field.choices %}
+                  <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              {% if form.status.errors %}
+                <div class="text-danger">{{ form.status.errors }}</div>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary btn-pill">{{ page_subtitle }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'backend/assets/js/editors/quill.js' %}"></script>
+  <script src="{% static 'backend/assets/js/custom-add-product3.js' %}"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.5/dist/autoNumeric.min.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const lance_inicialInput = document.getElementById('{{ form.lance_inicial.id_for_label }}');
+      if (lance_inicialInput) {
+        new AutoNumeric(lance_inicialInput, {
+            currencySymbol: 'R$ ',
+            decimalCharacter: ',',
+            digitGroupSeparator: '.',
+            decimalPlaces: 2,
+            minimumValue: '0',
+            modifyValueOnWheel: false,
+            unformatOnSubmit: true
+        });
+      }
+      // Máscara para altura (ex: 1.62)
+      const alturaInput = document.getElementById('{{ form.altura.id_for_label }}');
+      if (alturaInput && alturaInput.value) {
+        new AutoNumeric(alturaInput, {
+            decimalCharacter: ',',
+            digitGroupSeparator: '',
+            decimalPlaces: 2,
+            minimumValue: '0',
+            maximumValue: '3.00',
+            modifyValueOnWheel: false,
+            unformatOnSubmit: true
+        });
+      }
+
+      // Editor para descrição
+      const quillDescricao = new Quill('#editor-descricao', { theme: 'snow' });
+      const descricaoInput = document.getElementById('{{ form.descricao.id_for_label }}');
+      // Preenche o Quill com o valor do campo, mesmo após erro
+      quillDescricao.root.innerHTML = descricaoInput.value || '';
+
+      // Editor para informações
+      const quillInformacoes = new Quill('#editor-informacoes', { theme: 'snow' });
+      const informacoesInput = document.getElementById('{{ form.informacoes.id_for_label }}');
+      quillInformacoes.root.innerHTML = informacoesInput.value || '';
+
+      // Atualiza os campos hidden antes de enviar o formulário
+      const form = document.querySelector('form');
+      form.addEventListener('submit', function (event) {
+        descricaoInput.value = quillDescricao.root.innerHTML;
+        informacoesInput.value = quillInformacoes.root.innerHTML;
+      });
+  });
+  </script>
+{% endblock %}

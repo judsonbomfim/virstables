@@ -1,0 +1,71 @@
+{% load static %}
+{% load sass_tags %}
+
+<!-- Page Sidebar Start -->
+<div class="sidebar-wrapper" data-sidebar-layout="stroke-svg">
+  <div>
+    <div class="logo-wrapper">
+      <a href="{% url 'home_backend:home' %}"><img class="img-fluid for-light" src="{% static 'backend/images/lgo_virtual_stables_site_w.png' %}" alt="" /><img class="img-fluid for-dark" src="{% static 'backend/images/lgo_virtual_stables_site_w.png' %}" alt="" /></a>
+      <div class="back-btn">
+        <i class="fa-solid fa-angle-left"></i>
+      </div>
+      <div class="toggle-sidebar">
+        <i class="status_toggle middle sidebar-toggle" data-feather="grid"></i>
+      </div>
+    </div>
+    <div class="logo-icon-wrapper">
+      <a href="{% url 'home_backend:home' %}"><img class="img-fluid" src="{% static 'backend/images/lgo_virtual_stables_icon_site_w.png' %}" alt="" /></a>
+    </div>
+    <nav class="sidebar-main">
+      <div class="left-arrow" id="left-arrow">
+        <i data-feather="arrow-left"></i>
+      </div>
+      <div id="sidebar-menu">
+        <ul class="sidebar-links" id="simple-bar">
+          <li class="back-btn">
+            <a href="{% url 'home_backend:home' %}"><img class="img-fluid" src="{% static 'backend/images/lgo_virtual_stables_icon_site_w.png' %}" alt="" /></a>
+            <div class="mobile-back text-end">
+              <span>Voltar</span><i class="fa-solid fa-angle-right ps-2" aria-hidden="true"></i>
+            </div>
+          </li>
+          <li class="pin-title sidebar-main-title">
+            <div>
+              <h6>PIN</h6>
+            </div>
+          </li>
+          <li class="sidebar-list">
+            <i class="fa-solid fa-thumbtack"></i>
+            <a class="sidebar-link sidebar-title link-nav" href="{% url 'home_backend:home' %}"><i class="icofont icofont-ui-home text-secondary lead"></i> <span>Home</span></a>
+          </li>
+          <li class="sidebar-list">
+            <i class="fa-solid fa-thumbtack"></i><a class="sidebar-link sidebar-title" href="#"><i class="icofont icofont-court-hammer text-secondary lead"></i> <span>Leilões</span></a>
+            <ul class="sidebar-submenu">
+              <li>
+                <a href="{% url 'leilao_backend:leilao_lista' %}">Listar Leilões</a>
+              </li>
+              <li>
+                <a href="{% url 'leilao_backend:leilao_adicionar' %}">Adicionar Leilões</a>
+              </li>
+            </ul>
+          </li>
+          <li class="sidebar-list">
+            <i class="fa-solid fa-thumbtack"></i>
+            <a class="sidebar-link sidebar-title" href="#"><i class="icofont icofont-animal-horse-head-alt-1 text-secondary lead"></i> <span>Cavalos Individuais</span></a>
+            <ul class="sidebar-submenu">
+              <li>
+                <a href="{% url 'cavalo_backend:cavalo_lista' %}">Listar Cavalos</a>
+              </li>
+              <li>
+                <a href="{% url 'cavalo_backend:cavalo_adicionar' %}">Adicionar Cavalos</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="right-arrow" id="right-arrow">
+        <i data-feather="arrow-right"></i>
+      </div>
+    </nav>
+  </div>
+</div>
+<!-- Page Sidebar Ends -->

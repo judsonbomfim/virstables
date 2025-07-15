@@ -1,0 +1,249 @@
+{% extends 'frontend/base.html' %}
+
+{% load static i18n cavalo_extras %}
+{% load widget_tweaks %}
+
+{% block html_attribute %}
+  data-bs-theme="light"
+{% endblock %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block body_attribute %}
+  class="bg-body-secondary" data-bs-spy="scroll" data-bs-target="#navbar-example"
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'frontend/assets/plugins/select2/select2.min.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+  {% include "frontend/partials/subtitle.html" %}
+
+
+<section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="leiloes">
+    <div class="container">
+      <div class="card shadow-lg">
+
+        <div class="row align-items-center m-2 m-lg-5">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-xl-4">
+                    <div class="card card-top-sticky border-0">
+                      <div class="card-body p-0">
+
+                        <div class="avatar avatar-xl mx-auto mt-3">
+                            <span
+                                class="avatar-title bg-primary-subtle text-primary rounded-circle fw-bold">
+                                <i data-lucide="shield-user" class="text-primary fs-28 fill-primary"></i>
+                            </span>
+                        </div>
+                        <div class="mt-3 text-center">
+                        <h4 class="mt-3">Faça seu cadastro</h4>
+                        <p class="text-muted mb-3">Somente usuários cadastrados poderão dar lances</p>
+                        <p class="text-muted mb-3">* Cadastro sujeito a análise</p>
+                        </div>                        
+
+                      </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                  </div> <!-- end col-->
+
+                  <div class="col-xl-8">
+                    <div class="p-0 p-md-4">
+
+                        <div class="wrapper wrapper-content animated fadeInRight">
+                            <div class="row">
+                                <div class="col-lg-12"> <!-- Usa a largura total da página -->
+                                    <div class="ibox">
+                                        <div class="ibox-content">
+                                            <!-- Exibe mensagens de erro ou sucesso -->
+                                            {% if messages %}
+                                                <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissable">
+                                                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                                    {% for message in messages %}
+                                                        {{ message }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+
+                                            <form method="post" class="form-horizontal">
+                                                {% csrf_token %}
+
+                                                <!-- Dados do Usuário -->
+                                                <div class="ibox">
+                                                    <div class="ibox-title pb-3">
+                                                        <h3>Dados de Acesso</h3>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ user_form.username.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ user_form.username|add_class:"form-control" }}
+                                                                {% if user_form.username.help_text %}
+                                                                    <small class="form-text text-muted">{{ user_form.username.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if user_form.username.errors %}
+                                                                    <span class="text-danger">{{ user_form.username.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ user_form.email.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ user_form.email|add_class:"form-control"|attr:"type:email" }}
+                                                                {% if user_form.email.help_text %}
+                                                                    <small class="form-text text-muted">{{ user_form.email.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if user_form.email.errors %}
+                                                                    <span class="text-danger">{{ user_form.email.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ user_form.password1.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                <div class="input-group">
+                                                                    {{ user_form.password1|add_class:"form-control" }}
+                                                                    <button type="button" class="btn btn-outline-light" onclick="togglePassword('id_password1', this)">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                                {% if user_form.password1.errors %}
+                                                                    <span class="text-danger">{{ user_form.password1.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ user_form.password2.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                <div class="input-group">
+                                                                    {{ user_form.password2|add_class:"form-control" }}
+                                                                    <button type="button" class="btn btn-outline-light" onclick="togglePassword('id_password2', this)">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                                {% if user_form.password2.errors %}
+                                                                    <span class="text-danger">{{ user_form.password2.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Dados do Perfil -->
+                                                <div class="ibox">
+                                                    <div class="ibox-title pb-3">
+                                                        <h3>Dados do Cliente</h3>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        {% for field in perfil_form %}
+                                                            <div class="form-group row pb-2">
+                                                                <label class="col-lg-3 col-form-label">{{ field.label }}</label>
+                                                                <div class="col-lg-9">
+                                                                    {{ field|add_class:"form-control" }}
+                                                                    {% if field.help_text %}
+                                                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                                                    {% endif %}
+                                                                    {% if field.errors %}
+                                                                        <span class="text-danger">{{ field.errors }}</span>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botão de Envio -->
+                                                <div class="form-group row pb-2">
+                                                    <div class="col-lg-10 mt-3">
+                                                        <button class="btn btn-primary btn-lg" type="submit">Fazer meu cadastro</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                  </div> <!-- end col-->
+                </div> <!-- end row-->
+              </div> <!-- end card-body-->
+            </div> <!-- end card-->
+          </div> <!-- end col-->
+        </div> <!-- end row-->
+
+      </div>    
+
+    </div> <!-- container -->
+  </section>
+
+{% endblock %}
+
+{% block extra_javascript %}
+<!-- Landing Page js -->
+<script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
+<script src="{% static 'frontend/assets/plugins/select2/select2.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#id_cpf').mask('000.000.000-00');
+        $('#id_cnpj').mask('00.000.000/0000-00');
+        $('#id_cpf_repres').mask('000.000.000-00');
+        $('#id_end_cep').mask('00000-000');
+        $('#id_telefone').mask('(00) 0000-0000');
+        $('#id_celular').mask('(00) 90000-0000');
+
+        // Restringe username para letras minúsculas, sem acentos e sem espaços
+        $('#id_username').on('input', function() {
+            let val = $(this).val();
+            // Remove acentos, espaços e caracteres não permitidos
+            val = val.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // remove acentos
+            val = val.replace(/[^a-z0-9]/g, ''); // permite apenas minúsculas e números
+            $(this).val(val);
+        });
+
+        // Inicializa o Select2 para os campos de estado
+        $('#id_emis_uf, #id_end_estado').select2();
+
+        // Preenche os campos de endereço com base no CEP
+        $('#id_end_cep').on('blur', function() {
+            var cep = $(this).val().replace(/\D/g, '');
+            if (cep.length === 8) {
+                $.getJSON('https://viacep.com.br/ws/' + cep + '/json/', function(data) {
+                    if (!("erro" in data)) {
+                        $('#id_end_rua_av').val(data.logradouro);
+                        $('#id_end_bairro').val(data.bairro);
+                        $('#id_end_cidade').val(data.localidade);
+                        $('#id_end_estado').val(data.uf).trigger('change'); // para select2
+                    } else {
+                        alert('CEP não encontrado.');
+                    }
+                });
+            }
+        });        
+    });
+
+    // Função para alternar a visibilidade da senha
+    function togglePassword(fieldId, btn) {
+        var input = document.getElementById(fieldId);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.querySelector('i').classList.remove('fa-eye');
+            btn.querySelector('i').classList.add('fa-eye-slash');
+        } else {
+            input.type = "password";
+            btn.querySelector('i').classList.remove('fa-eye-slash');
+            btn.querySelector('i').classList.add('fa-eye');
+        }
+    }
+
+</script>
+{% endblock %}

@@ -1,0 +1,203 @@
+from pathlib import Path
+import environ
+import urllib.parse
+import os
+from django.contrib.messages import constants as messages
+from dotenv import load_dotenv
+load_dotenv()
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = [
+    h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',')
+    if h.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    a.strip().replace('\\x3a', ':') for a in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if a.strip()
+]
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'sass_processor',
+    'widget_tweaks',
+    'apps.home.apps.HomeConfig',
+    'apps.users.apps.UsersConfig',
+    'apps.cavalo.apps.CavaloConfig',
+    'apps.leilao.apps.LeilaoConfig',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'core.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'core.wsgi.application'
+
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': os.getenv('DB_ENGINE'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+    }
+}
+
+
+# Password validation
+# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+# Internationalization
+# https://docs.djangoproject.com/en/4.2/topics/i18n/
+
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'America/Sao_Paulo'
+DATE_INPUT_FORMATS = ('%d/%m/%Y',)
+USE_I18N = True
+USE_L10N = True
+USE_TZ = False
+
+DATE_FORMAT = '%d/%m/%Y'
+
+DATA_UPLOAD_MAX_NUMBER_FILES = 1000
+
+# Expirar sessão em 10h
+SESSION_COOKIE_AGE = 36000
+
+
+PAINEL_TITLE = str(os.getenv('PAINEL_TITLE'))
+URL_SITE = str(os.getenv('URL_SITE'))
+URL_PAINEL = str(os.getenv('URL_PAINEL'))
+URL_CDN = 'https://'+str(os.getenv('URL_CDN'))
+
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'core/static'),
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+# # Configurações AWS
+# AWS_ACCESS_KEY_ID = str(os.getenv('AWS_ACCESS_KEY_ID'))
+# AWS_SECRET_ACCESS_KEY = str(os.getenv('AWS_SECRET_ACCESS_KEY'))
+# AWS_STORAGE_BUCKET_NAME = str(os.getenv('AWS_STORAGE_BUCKET_NAME'))
+# AWS_S3_REGION_NAME = str(os.getenv('AWS_S3_REGION_NAME'))
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+# AWS_S3_FILE_OVERWRITE = False  # Evita sobrescrever arquivos com mesmo nome
+# AWS_DEFAULT_ACL = None  # Usa ACL do bucket (recomendado para django-storages 2.0+)
+
+# # Configuração de armazenamento para arquivos estáticos e mídia
+# STORAGES = {
+#     'default': {
+#         'BACKEND': 'core.storage_backends.PublicMediaStorage',
+#         'OPTIONS': {
+#             'location': 'media',  # Subpasta para arquivos de mídia
+#             # 'default_acl': 'public-read',
+#         },
+#     },
+#     'staticfiles': {
+#         'BACKEND': 'core.storage_backends.StaticStorage',
+#         'OPTIONS': {
+#             'location': 'static',  # Subpasta para arquivos estáticos
+#             # 'default_acl': 'public-read',
+#         },
+#     },
+# }
+
+# # URLs para arquivos estáticos e mídia
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'primary',
+    messages.ERROR: 'danger',
+    messages.SUCCESS: 'success',
+    messages.INFO: 'info',
+    messages.WARNING: 'warning',
+}

@@ -1,0 +1,461 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block css_custom %}
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.snow.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.bubble.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/dropzone.min.css' %}" />
+  <style>
+    .sortable-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
+    }
+    .sortable-item {
+      border: 1px solid #ddd;
+      margin: 1%;
+      padding: 10px;
+      background: #fff;
+      cursor: move;
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      width: 48%; /* Define a largura como 50% */
+      box-sizing: border-box; /* Inclui padding e border na largura */
+    }
+    .sortable-item img {
+      max-width: 100px;
+      max-height: 100px;
+      margin-right: 10px;
+    }
+    .sortable-item.dragging {
+      opacity: 0.6;
+      background: #f8f9fa;
+    }
+    .destaque-checkbox, .excluir-foto {
+      margin: 10px;
+    }
+    .toast-body {
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+    }
+    .toast-body i {
+      line-height: 1;
+    }
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1050;
+    }
+    /* Ajuste responsivo para telas menores */
+    @media (max-width: 768px) {
+      .sortable-item {
+        width: 100%; /* Empilha os itens em telas menores */
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid basic_table">
+    <div class="row">
+      <div class="col-lg-6">
+        <!-- Destalhes -->
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ cavalo.nome }}</h5>
+            <a href="{% url 'cavalo_backend:cavalo_editar' cavalo.pk %}" class="btn btn-outline-primary"><i class="icofont icofont-edit"></i> Editar Cavalo</a>
+          </div>
+          <div class="card-body">
+            {% if cavalo.leilao %}
+              <p>
+                <b>Leilão do Cavalo:</b> {{ cavalo.leilao.nome }}
+              </p>
+            {% endif %}
+            <br />
+            <div class="container overflow-hidden text-start">
+              <div class="row gy-3">
+                <div class="col-6">
+                  <p>
+                    <b>Raça:</b> {{ cavalo.raca }}
+                  </p>
+                  <p>
+                    <b>Data de Nascimento:</b> {{ cavalo.nascimento|date:'d/m/Y' }}
+                  </p>
+                  <p>
+                    <b>Registro:</b> {{ cavalo.registro }}
+                  </p>
+                  <p>
+                    <b>Altura:</b> {{ cavalo.altura }}
+                  </p>
+                  <p>
+                    <b>Sexo:</b> {{ cavalo.get_sexo_display }}
+                  </p>
+                  <p>
+                    <b>Pelagem:</b> {{ cavalo.pelagem }}
+                  </p>
+                  <p>
+                    <b>Criador:</b> {{ cavalo.criador }}
+                  </p>
+                  <p>
+                    <b>Vendedor:</b> {{ cavalo.vendedor }}
+                  </p>
+                  <p>
+                    <b>Alojamento:</b> {{ cavalo.alojamento }}
+                  </p>
+                </div>
+                <div class="col-6">
+                  <p>
+                    <b>Pai:</b> {{ cavalo.pai }} <br />
+                    <b>Mãe:</b> {{ cavalo.mae }} <br />
+                    <b>Avô Paterno:</b> {{ cavalo.avo_paterno }} <br />
+                    <b>Avó Paterna:</b> {{ cavalo.avo_paterna }} <br />
+                    <b>Avô Materno:</b> {{ cavalo.avo_materno }} <br />
+                    <b>Avó Materna:</b> {{ cavalo.avo_materna }} <br />
+                    <b>Bisavô Paterno:</b> {{ cavalo.bisavo_paterno }} <br />
+                    <b>Bisavó Paterna:</b> {{ cavalo.bisavo_paterna }} <br />
+                    <b>Bisavô Materno:</b> {{ cavalo.bisavo_materno }} <br />
+                    <b>Bisavó Materna:</b> {{ cavalo.bisavo_materna }} <br />
+                  </p>
+
+                  <p>
+                    <b>Lance Inicial:</b> {{ cavalo.lance_inicial }}
+                  </p>
+                  <p>
+                    <b>Parcelas:</b> {{ cavalo.parcela }}
+                  </p>
+                  <p>
+                    <b>Status:</b> {{ cavalo.get_status_display }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <br />
+            <br />
+            <p>
+              <b>Descrição:</b> {{ cavalo.descricao|safe }}
+            </p>
+            <p>
+              <b>Informações:</b> {{ cavalo.informacoes|safe }}
+            </p>
+          </div>
+        </div>
+        <!-- Videos -->
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Videos</h5>
+            <a href="{% url 'cavalo_backend:cavalo_video_adicionar' cavalo.id %}" class="btn btn-outline-primary"><i class="icofont icofont-plus"></i> Adicionar Vídeo</a>
+          </div>
+          <div class="card-block row">
+            <div class="col-sm-12 col-lg-12 col-xl-12">
+              <div class="table-responsive custom-scrollbar">
+                <table class="table">
+                  <thead class="table-secondary">
+                    <tr>
+                      <th scope="col">Legenda</th>
+                      <th scope="col">Link</th>
+                      <th scope="col">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for video in videos %}
+                      <tr>
+                        <td scope="row">{{ video.legenda }}</td>
+                        <td scope="row">{{ video.url_youtube }}</td>
+                        <td>
+                          <a href="{{ video.url_youtube }}" target="_blank"><i class="icofont icofont-brand-youtube text-secondary fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Ver Vídeo"></i></a>
+                          <a href="#" class="abrir-modal-excluir-video" data-video-id="{{ video.pk }}" data-video-nome="{{ video.url_youtube }}"><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Vídeo"></i></a>
+                        </td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="4">Nenhum vídeo no momento.</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Fotos -->
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Fotos</h5>
+            <a href="{% url 'cavalo_backend:cavalo_foto_adicionar' cavalo.id %}" class="btn btn-outline-primary"><i class="icofont icofont-plus"></i> Adicionar Foto</a>
+          </div>
+          <div class="card-body">
+            <ul id="sortable-list" class="sortable-list">
+              {% for foto in fotos %}
+                <li class="sortable-item" data-id="{{ foto.id }}">
+                  <input type="checkbox" class="destaque-checkbox" data-id="{{ foto.id }}" {% if foto.is_destaque %}checked{% endif %}>
+                  <a href="#" class="excluir-foto abrir-modal-excluir-foto ms-2" data-foto-id="{{ foto.id }}" data-foto-nome="Foto {{ foto.ordem }}"><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Foto"></i></a>
+                  <img src="{{ foto.imagem.url }}" alt="Foto de {{ cavalo.nome }}" />
+                  <span>Foto {{ foto.ordem }} {% if foto.is_destaque %}(Destaque){% endif %}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary" onclick="salvarOrdem()">Salvar Ordem</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <!-- Lances -->
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Lances</h5>
+          </div>
+          <div class="card-block row">
+            <div class="col-sm-12 col-lg-12 col-xl-12">
+              <div class="table-responsive custom-scrollbar">
+                <table class="table">
+                  <thead class="table-success">
+                    <tr>
+                      <th scope="col">Nome</th>
+                      <th scope="col">Cidade/Estado</th>
+                      <th scope="col">Lance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for cavalo in cavalos %}
+                      <tr>
+                        <th scope="row">{{ cavalo.nome }}</th>
+                        <td>
+                          {% if cavalo.raca %}
+                            {{ cavalo.raca }}
+                          {% else %}
+                            -
+                          {% endif %}
+                        </td>
+                        <th scope="row">{{ cavalo.get_status_display }}</th>
+                        <td>
+                          <a href=""><i class="icofont icofont-file-text text-primary fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Ver Detalhes"></i></a>
+                          <a href="{% url 'cavalo_backend:cavalo_editar' cavalo.id %}"><i class="icofont icofont-edit text-info fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Editar Leilão"></i></a>
+                          <a href=""><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Leilão"></i></a>
+                        </td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="4">Nenhum lance no momento.</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" id="openModalBtn" class="btn btn-danger abrir-modal-excluir-cavalo" data-bs-toggle="modal"  data-cavalo-id="{{ cavalo.pk }}" data-cavalo-nome="{{ cavalo.nome }}">Excluir Cavalo</button>
+
+  <!-- Modal Excluir Cavalo -->
+  <div class="modal fade" id="modalExcluirCavalo" tabindex="-1" aria-labelledby="modalExcluirCavaloLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content border-danger">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalExcluirCavaloLabel"><i class="icofont icofont-ui-delete"></i> Excluir Cavalo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Tem certeza que deseja excluir o cavalo <strong id="modalCavaloNome"></strong>?<br />
+          </p>
+        </div>
+        <div class="modal-footer">
+          <form id="formExcluirCavalo" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+          </form>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Excluir Video -->
+  <div class="modal fade" id="modalExcluirVideo" tabindex="-1" aria-labelledby="modalExcluirVideoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content border-danger">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalExcluirVideoLabel"><i class="icofont icofont-ui-delete"></i> Excluir Video</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Tem certeza que deseja excluir o Video <strong id="modalVideoNome"></strong>?<br />
+          </p>
+        </div>
+        <div class="modal-footer">
+          <form id="formExcluirVideo" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+          </form>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Excluir Foto -->
+  <div class="modal fade" id="modalExcluirFoto" tabindex="-1" aria-labelledby="modalExcluirFotoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content border-danger">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalExcluirFotoLabel"><i class="icofont icofont-ui-delete"></i> Excluir Foto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Tem certeza que deseja excluir a <strong id="modalFotoNome"></strong>?<br />
+          </p>
+        </div>
+        <div class="modal-footer">
+          <form id="formExcluirFoto" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+          </form>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'backend/assets/js/tooltip-init.js' %}"></script>
+  <script src="{% static 'backend/assets/js/sortable/sortable.min.js' %}"></script>
+  <!-- SortableJS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Inicializar SortableJS para reordenação
+      const sortableList = document.getElementById('sortable-list');
+      Sortable.create(sortableList, {
+        animation: 150,
+        handle: '.sortable-item',
+        draggable: '.sortable-item',
+        onEnd: function () {
+          console.log('Ordem alterada');
+        },
+      });
+
+      // Inicializar toasts do Bootstrap
+      const toasts = document.querySelectorAll('.toast');
+      toasts.forEach(toast => {
+        const bootstrapToast = new bootstrap.Toast(toast);
+        bootstrapToast.show();
+      });
+
+      // Função para salvar a ordem
+      window.salvarOrdem = function () {
+        const items = sortableList.querySelectorAll('.sortable-item');
+        const ordem = Array.from(items).map(item => item.getAttribute('data-id'));
+        console.log('Nova ordem:', ordem);
+
+        fetch("{% url 'cavalo_backend:cavalo_detalhe' cavalo.id %}", {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'ordem[]=' + ordem.join('&ordem[]=')
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'ok') {
+            window.location.href = data.redirect_url; // Redirecionar para exibir toast
+          } else {
+            console.error('Erro:', data.mensagem);
+          }
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+        });
+      };
+
+      // Manipular cliques no checkbox de destaque
+      document.querySelectorAll('.destaque-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+          const fotoId = this.getAttribute('data-id');
+          const isDestaque = this.checked;
+
+          // Desmarcar outros checkboxes localmente
+          if (isDestaque) {
+            document.querySelectorAll('.destaque-checkbox').forEach(cb => {
+              if (cb !== this) cb.checked = false;
+            });
+          }
+
+          fetch("{% url 'cavalo_backend:cavalo_detalhe' cavalo.id %}", {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `foto_id=${fotoId}&is_destaque=${isDestaque}`
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'ok') {
+              window.location.href = data.redirect_url; // Redirecionar para exibir toast
+            } else {
+              console.error('Erro:', data.mensagem);
+            }
+          })
+          .catch(error => {
+            console.error('Erro:', error);
+          });
+        });
+      });
+    });
+  </script>
+
+  <!-- Modais -->
+  <script>
+    document.querySelectorAll('.abrir-modal-excluir-cavalo').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault()
+        var cavaloId = this.getAttribute('data-cavalo-id')
+        var cavaloNome = this.getAttribute('data-cavalo-nome')
+        document.getElementById('modalCavaloNome').textContent = cavaloNome
+        var form = document.getElementById('formExcluirCavalo')
+        form.action = '/painel/cavalo/excluir/' + cavaloId + '/'
+        var modal = new bootstrap.Modal(document.getElementById('modalExcluirCavalo'))
+        modal.show()
+      })
+    })
+    document.querySelectorAll('.abrir-modal-excluir-video').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault()
+        var videoId = this.getAttribute('data-video-id')
+        var videoNome = this.getAttribute('data-video-nome')
+        document.getElementById('modalVideoNome').textContent = videoNome
+        var form = document.getElementById('formExcluirVideo')
+        form.action = '/painel/cavalo/excluir/video/' + videoId + '/';
+        var modal = new bootstrap.Modal(document.getElementById('modalExcluirVideo'))
+        modal.show()
+      })
+    })
+    document.querySelectorAll('.abrir-modal-excluir-foto').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault()
+        var fotoId = this.getAttribute('data-foto-id')
+        var fotoNome = this.getAttribute('data-foto-nome')
+        document.getElementById('modalFotoNome').textContent = fotoNome
+        var form = document.getElementById('formExcluirFoto')
+        form.action = '/painel/cavalo/excluir/foto/' + fotoId + '/';
+        var modal = new bootstrap.Modal(document.getElementById('modalExcluirFoto'))
+        modal.show()
+      })
+    })
+  </script> 
+{% endblock %}

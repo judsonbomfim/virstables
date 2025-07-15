@@ -1,0 +1,1 @@
+default_app_config = 'virstables.core.apps.CoreConfig'

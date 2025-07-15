@@ -1,0 +1,36 @@
+            <!-- Contagem -->
+              <div class="text-center pt-3">
+                {% if data_hoje < leilao.data_inicio %}
+                  <h4 class="fs-lg mb-1">Tempo para Início do Pré-lance</h4>
+                  <input type="hidden" class="data-leilao" value="{{ leilao.data_inicio|date:'Y-m-d H:i:s' }}" />
+                {% elif data_hoje < leilao.data_fim %}
+                  <h4 class="fs-lg mb-1">Tempo para Termino do Pré-lance</h4>
+                  <input type="hidden" class="data-leilao" value="{{ leilao.data_fim|date:'Y-m-d H:i:s' }}" />
+                {% else %}
+                  <h4 class="fs-lg mb-1">Pré-lance encerrado</h4>
+                {% endif %}
+              </div>              
+              <div class="contador-modern text-center my-4" id="contador-leilao-{{ leilao.id }}">
+                <div class="d-flex justify-content-center align-items-end gap-3 flex-wrap bg-light bg-gradient p-2">
+                  <div>
+                    <span class="contador-numero text-secondary" id="days-{{ leilao.id }}">00</span>
+                    <div class="contador-label">Dia(s)</div>
+                  </div>
+                  <span class="contador-divisor">|</span>
+                  <div>
+                    <span class="contador-numero text-secondary" id="hours-{{ leilao.id }}">00</span>
+                    <div class="contador-label">Hora(s)</div>
+                  </div>
+                  <span class="contador-divisor">|</span>
+                  <div>
+                    <span class="contador-numero text-secondary" id="minutes-{{ leilao.id }}">00</span>
+                    <div class="contador-label">Minuto(s)</div>
+                  </div>
+                  <span class="contador-divisor">|</span>
+                  <div>
+                    <span class="contador-numero text-secondary" id="seconds-{{ leilao.id }}">00</span>
+                    <div class="contador-label">Segundo(sss)</div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Contagem -->
