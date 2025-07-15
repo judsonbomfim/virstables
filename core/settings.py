@@ -187,6 +187,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 
+# CELERY
+
+CELERY_BROKER_URL = str(os.getenv('CELERY_BROKER_URL'))
+CELERY_RESULT_BACKEND = str(os.getenv('CELERY_RESULT_BACKEND'))
+
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SYNC_EVERY = None
+
+CELERY_TIMEZONE = 'America/Sao_Paulo'
+
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
