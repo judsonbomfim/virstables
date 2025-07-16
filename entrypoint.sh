@@ -1,21 +1,23 @@
-#!/bin/sh
+# version: '3.8'
 
-# Aguarda a conexão com o banco de dados (local)
-until nc -z 127.0.0.1 5432; do
-    echo "Aguardando PostgreSQL..."
-    sleep 2
-done
+services:
+  web:
+    container_name: djangoweb
+    build: .
+    command: /djangoweb/scripts/entrypoint.sh
+    ports:
+      - "80:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+  redis:
+    container_name: redis
+    image: redis:7.2.4-alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
 
-# Aguarda a conexão com o Redis (local)
-until nc -z 127.0.0.1 6379; do
-    echo "Aguardando Redis..."
-    sleep 2
-done
-
-
-#!/bin/sh
-
-python manage.py migrate
-python manage.py collectstatic --noinput
-nohup gunicorn core.wsgi:application --bind 0.0.0.0:8000 --log-level=info --timeout 120
-# nohup celery -A core worker -B --loglevel=info &
+volumes:
+  redis-data:

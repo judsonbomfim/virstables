@@ -7,13 +7,29 @@ services:
       - "80:8000"
     env_file:
       - .env
-
-  celery_worker:
-    build: .
-    command: celery -A core worker -B --loglevel=info && celery -A core beat --loglevel=info
-    volumes:
-      - .:/app
-    env_file:
-      - .env
     depends_on:
-      - web
+      - redis
+      - db  # Adiciona dependência do banco
+  redis:
+    container_name: redis
+    image: redis:7.2.4-alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+  db:
+    container_name: postgres
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: stablesdb
+      POSTGRES_USER: stablesuser
+      POSTGRES_PASSWORD: 8s2tYjEvdRYTxJNuQwjEvdR
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  redis-data:
+  postgres-data:
