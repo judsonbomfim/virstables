@@ -1,22 +1,27 @@
-FROM python:3.12.1-slim-bullseye
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-WORKDIR /djangoweb
+# Use uma imagem base oficial do Python
+FROM python:3.11-slim
 
+# Defina o diretório de trabalho
+WORKDIR /app
+
+# Instale dependências do sistema
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instale as dependências do Python
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get update && apt-get install -y nano && \
-    pip install --upgrade pip && \
-    pip install -r requirements.txt && \
-    adduser --disabled-password --no-create-home duser
-
+# Copie o código da aplicação
 COPY . .
 
-COPY entrypoint.sh ./scripts/entrypoint.sh
+# Colete arquivos estáticos
+RUN python manage.py collectstatic --noinput
 
-RUN chmod +x /djangoweb/scripts/entrypoint.sh && \
-    chown -R duser:duser /djangoweb
-
-USER duser
-
+# Exponha a porta (se necessário, mas Gunicorn usará um socket)
 EXPOSE 8000
+
+# Comando para rodar o Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "meu_projeto.wsgi:application"]
