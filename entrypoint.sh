@@ -1,23 +1,6 @@
-# version: '3.8'
+#!/bin/sh
 
-services:
-  web:
-    container_name: djangoweb
-    build: .
-    command: /djangoweb/scripts/entrypoint.sh
-    ports:
-      - "80:8000"
-    env_file:
-      - .env
-    depends_on:
-      - redis
-  redis:
-    container_name: redis
-    image: redis:7.2.4-alpine
-    volumes:
-      - redis-data:/data
-    ports:
-      - "6379:6379"
-
-volumes:
-  redis-data:
+python manage.py migrate
+python manage.py collectstatic --noinput
+nohup gunicorn core.wsgi:application --bind 0.0.0.0:8000 --log-level=info &
+nohup celery -A core worker -B --loglevel=info
