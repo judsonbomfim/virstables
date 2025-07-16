@@ -9,7 +9,7 @@ services:
       - .env
     depends_on:
       - redis
-      - db  # Adiciona dependência do banco
+      - db
   redis:
     container_name: redis
     image: redis:7.2.4-alpine
