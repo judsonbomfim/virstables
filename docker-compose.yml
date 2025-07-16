@@ -1,26 +1,4 @@
-# version: '3.8'
-
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - static_data:/app/staticfiles
-    env_file:
-      - .env
-    depends_on:
-      - db
-    restart: always
-
-  db:
-    image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - .env
-    restart: always
-
   nginx:
     image: nginx:latest
     ports:
@@ -34,7 +12,24 @@ services:
     depends_on:
       - app
     restart: always
-
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - static_data:/app/staticfiles
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: always
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    restart: always
   certbot:
     image: certbot/certbot
     volumes:
@@ -44,7 +39,6 @@ services:
       - nginx
     command: renew --quiet
     restart: "no"
-
 volumes:
   postgres_data:
   static_data:
