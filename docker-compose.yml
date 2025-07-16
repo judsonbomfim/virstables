@@ -1,71 +1,19 @@
 services:
   web:
+    container_name: djangoweb
     build: .
+    command: /djangoweb/scripts/entrypoint.sh
     ports:
-      - "8000:8000"
+      - "80:8000"
+    env_file:
+      - .env
+
+  celery_worker:
+    build: .
+    command: celery -A core worker -B --loglevel=info && celery -A core beat --loglevel=info
+    volumes:
+      - .:/app
     env_file:
       - .env
     depends_on:
-      - db
-      - redis
-    volumes:
-      - .:/app
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    entrypoint: ["./entrypoint.sh"]
-
-  celery:
-    build: .
-    entrypoint: ["./entrypoint-celery.sh"]
-    env_file:
-      - .env
-    depends_on:
-      - db
-      - redis
-    volumes:
-      - .:/app
-    networks:
-      - app-network
-
-  db:
-    image: postgres:16
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  postgres_data:
-  redis_data:
-
-networks:
-  app-network:
-    driver: bridge
+      - web

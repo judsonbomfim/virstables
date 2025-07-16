@@ -28,6 +28,8 @@ CSRF_TRUSTED_ORIGINS = [
     if a.strip()
 ]
 
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # Application definition
@@ -150,38 +152,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# # Configurações AWS
-# AWS_ACCESS_KEY_ID = str(os.getenv('AWS_ACCESS_KEY_ID'))
-# AWS_SECRET_ACCESS_KEY = str(os.getenv('AWS_SECRET_ACCESS_KEY'))
-# AWS_STORAGE_BUCKET_NAME = str(os.getenv('AWS_STORAGE_BUCKET_NAME'))
-# AWS_S3_REGION_NAME = str(os.getenv('AWS_S3_REGION_NAME'))
-# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
-# AWS_S3_FILE_OVERWRITE = False  # Evita sobrescrever arquivos com mesmo nome
-# AWS_DEFAULT_ACL = None  # Usa ACL do bucket (recomendado para django-storages 2.0+)
-
-# # Configuração de armazenamento para arquivos estáticos e mídia
-# STORAGES = {
-#     'default': {
-#         'BACKEND': 'core.storage_backends.PublicMediaStorage',
-#         'OPTIONS': {
-#             'location': 'media',  # Subpasta para arquivos de mídia
-#             # 'default_acl': 'public-read',
-#         },
-#     },
-#     'staticfiles': {
-#         'BACKEND': 'core.storage_backends.StaticStorage',
-#         'OPTIONS': {
-#             'location': 'static',  # Subpasta para arquivos estáticos
-#             # 'default_acl': 'public-read',
-#         },
-#     },
-# }
-
-# # URLs para arquivos estáticos e mídia
-# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Default primary key field type
@@ -229,3 +199,35 @@ MESSAGE_TAGS = {
     messages.INFO: 'info',
     messages.WARNING: 'warning',
 }
+
+
+# # Configurações AWS
+# AWS_ACCESS_KEY_ID = str(os.getenv('AWS_ACCESS_KEY_ID'))
+# AWS_SECRET_ACCESS_KEY = str(os.getenv('AWS_SECRET_ACCESS_KEY'))
+# AWS_STORAGE_BUCKET_NAME = str(os.getenv('AWS_STORAGE_BUCKET_NAME'))
+# AWS_S3_REGION_NAME = str(os.getenv('AWS_S3_REGION_NAME'))
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+# AWS_S3_FILE_OVERWRITE = False  # Evita sobrescrever arquivos com mesmo nome
+# AWS_DEFAULT_ACL = None  # Usa ACL do bucket (recomendado para django-storages 2.0+)
+
+# # Configuração de armazenamento para arquivos estáticos e mídia
+# STORAGES = {
+#     'default': {
+#         'BACKEND': 'core.storage_backends.PublicMediaStorage',
+#         'OPTIONS': {
+#             'location': 'media',  # Subpasta para arquivos de mídia
+#             # 'default_acl': 'public-read',
+#         },
+#     },
+#     'staticfiles': {
+#         'BACKEND': 'core.storage_backends.StaticStorage',
+#         'OPTIONS': {
+#             'location': 'static',  # Subpasta para arquivos estáticos
+#             # 'default_acl': 'public-read',
+#         },
+#     },
+# }
+
+# # URLs para arquivos estáticos e mídia
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
