@@ -3,15 +3,13 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - static_data:/app/staticfiles
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
     depends_on:
       - app
     restart: always
+
   app:
     build:
       context: .
@@ -23,24 +21,18 @@ services:
     depends_on:
       - db
     restart: always
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput"
+
   db:
-    image: postgres:15
+    image: postgres:16
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
     restart: always
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-    depends_on:
-      - nginx
-    command: renew --quiet
-    restart: "no"
+
 volumes:
   postgres_data:
   static_data:
-  certbot-etc:
-  certbot-var:

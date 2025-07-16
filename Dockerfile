@@ -1,27 +1,18 @@
-# Use uma imagem base oficial do Python
-FROM python:3.11-slim
+# Usar uma imagem base com Python
+FROM python:3.12-slim
 
-# Defina o diretório de trabalho
+# Definir diretório de trabalho
 WORKDIR /app
 
-# Instale dependências do sistema
-RUN apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Instale as dependências do Python
+# Copiar requirements.txt e instalar dependências
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie o código da aplicação
+# Copiar o código do projeto
 COPY . .
 
-# Colete arquivos estáticos
-RUN python manage.py collectstatic --noinput
-
-# Exponha a porta (se necessário, mas Gunicorn usará um socket)
+# Expor a porta do Gunicorn (opcional, para documentação)
 EXPOSE 8000
 
-# Comando para rodar o Gunicorn
+# Comando padrão será sobrescrito no docker-compose.yml
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]
