@@ -19,12 +19,12 @@ services:
       - "6379:6379"
   db:
     container_name: postgres
-    image: postgres:15
+    image: postgres:16
     restart: always
     environment:
-      POSTGRES_DB: stablesdb
-      POSTGRES_USER: stablesuser
-      POSTGRES_PASSWORD: 8s2tYjEvdRYTxJNuQwjEvdR
+        - POSTGRES_DB=${DB_NAME}
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
