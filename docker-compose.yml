@@ -1,9 +1,13 @@
+version: '3.8'
+
 services:
   web:
     build: .
     entrypoint: ./entrypoint.sh
     volumes:
-      - .:/app
+      - app_code:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
     ports:
       - "8000:8000"
     env_file:
@@ -15,7 +19,7 @@ services:
     build: .
     command: python manage.py migrate --noinput
     volumes:
-      - .:/app
+      - app_code:/app
     env_file:
       - .env
 
@@ -23,8 +27,13 @@ services:
     build: .
     command: celery -A core worker -l info
     volumes:
-      - .:/app
+      - app_code:/app
     env_file:
       - .env
     depends_on:
       - web
+
+volumes:
+  app_code:
+  static_volume:
+  media_volume: 
