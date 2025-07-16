@@ -144,7 +144,6 @@ URL_CDN = 'https://'+str(os.getenv('URL_CDN'))
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'core/static'),
 ]
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -153,6 +152,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
