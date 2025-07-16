@@ -11,8 +11,8 @@ services:
       - redis
       - db
     volumes:
-      - ./static:/home/judbomfim/virstables/static
-      - ./media:/home/judbomfim/virstables/media
+      - ./static:/home/ubuntu/virstables/static
+      - ./media:/home/ubuntu/virstables/media
   redis:
     container_name: redis
     image: redis:7.2.4-alpine
