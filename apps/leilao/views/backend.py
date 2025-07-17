@@ -70,53 +70,41 @@ def leilao_detalhe(request, id):
 @login_required(login_url='/login/')
 @group_required('Administradores')
 def leilao_form(request, id=None):
+    leilao = None
+    if id:
+        leilao = get_object_or_404(Leilao, pk=id)
     if request.method == 'POST':
         if id:
-            leilao = get_object_or_404(Leilao, pk=id)
-            imagem_antiga = leilao.imagem.path if leilao.imagem else None
-            # if not request.user.has_perm('core.change_leilao', leilao):
-            #     raise PermissionDenied("Você não tem permissão para editar este leilão.")
+            imagem_antiga = leilao.imagem.path if leilao and leilao.imagem else None
             form = LeilaoForm(request.POST, request.FILES, instance=leilao)
-            print("Form data:", request.POST)  # Debug
-            print("FILES:", request.FILES)
             if form.is_valid():
                 if 'imagem' in request.FILES and imagem_antiga:
                     if os.path.isfile(imagem_antiga):
                         os.remove(imagem_antiga)
-                        print(f"Imagem antiga removida: {imagem_antiga}")
                 leilao = form.save(commit=False)
                 leilao.save()
                 return redirect('leilao:leilao_detalhe', id=leilao.pk)
-            else:
-                print("Erros do form:", form.errors)
-        else:   
-            form = LeilaoForm(request.POST)
+        else:
+            # CORRIGIDO: adicionar request.FILES
+            form = LeilaoForm(request.POST, request.FILES)
             if form.is_valid():
                 leilao = form.save(commit=False)
                 leilao.save()
                 return redirect('leilao:leilao_detalhe', id=leilao.pk)
-            else:
-                print("Erros do form:", form.errors)  # Debug
-    else:        
-        if id:
-            leilao = get_object_or_404(Leilao, pk=id)            
-            page_subtitle = 'Editar Leilão'
-            form = LeilaoForm(instance=leilao)
-        else:
-            form = LeilaoForm()
-            page_subtitle = 'Adicionar Leilão'
-        
-        
-        context = {
-            'painel_title': settings.PAINEL_TITLE,
-            'page_title': 'Leilão',
-            'page_subtitle': page_subtitle,
-            'page_icon': 'icofont icofont-court-hammer',
-            'form': form,
-            'leilao': leilao if id else None,
-        }
-        
-        return render(request, 'backend/leilao_form.html', context)
+        page_subtitle = 'Editar Leilão' if id else 'Adicionar Leilão'
+    else:
+        form = LeilaoForm(instance=leilao) if id else LeilaoForm()
+        page_subtitle = 'Editar Leilão' if id else 'Adicionar Leilão'
+
+    context = {
+        'painel_title': settings.PAINEL_TITLE,
+        'page_title': 'Leilão',
+        'page_subtitle': page_subtitle,
+        'page_icon': 'icofont icofont-court-hammer',
+        'form': form,
+        'leilao': leilao,
+    }
+    return render(request, 'backend/leilao_form.html', context)
 
 
 @login_required(login_url='/login/')
