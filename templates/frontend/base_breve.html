@@ -1,0 +1,51 @@
+{% load static i18n %}
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}" {% block html_attribute %}{% endblock html_attribute %}>
+<head>
+      <!-- Title Meta -->
+<meta charset="utf-8" />
+<title> {% block title %}{% endblock title %} | Virtual Stables</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="WebAppLayers">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel="shortcut icon" href="{% static 'frontend/images/lgo_virtual_stables_site_favicon.png' %}">
+{% block css %}
+
+        {% block extra_css %} {% endblock extra_css %}
+
+        <!-- =========css=========== -->
+        <!-- Theme Config Js -->
+        <script src="{% static 'frontend/assets/js/config.js' %}"></script>
+        <!-- Vendor css -->
+        <link href="{% static 'frontend/assets/css/vendors.min.css' %}" rel="stylesheet" type="text/css">
+        <!-- App css -->
+        <link href="{% static 'frontend/assets/css/app.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'frontend/css/custom.css' %}" rel="stylesheet" type="text/css">
+
+{% endblock css %}
+
+</head>
+<body {% block body_attribute %}{% endblock body_attribute %}>
+
+{% block preloader %}{% endblock %}
+
+{% block content %}{% endblock content %}
+
+
+{% block javascript %}
+
+    <!-- =======js================ -->
+    <!-- Vendor js -->
+    <script src="{% static 'frontend/assets/js/vendors.min.js' %}"></script>
+    <!-- App js -->
+    <script src="{% static 'frontend/assets/js/app.js' %}"></script>
+
+    {% block extra_javascript %} {% endblock extra_javascript %}
+
+{% endblock javascript %}
+
+</body>
+</html>

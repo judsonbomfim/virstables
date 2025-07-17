@@ -23,3 +23,15 @@ def home(request):
         'data_hoje': hoje,
     }
     return render(request, 'frontend/index.html', context)
+
+def home_breve(request):
+    
+    leiloes = Leilao.objects.all().order_by('-data_inicio').filter(status='ativo')
+    hoje = data_atual()
+    context = {
+        'painel_title': settings.PAINEL_TITLE,
+        'page_title': 'Home',
+        'leiloes': leiloes,
+        'data_hoje': hoje,
+    }
+    return render(request, 'frontend/home_breve.html', context)
