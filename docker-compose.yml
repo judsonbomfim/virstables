@@ -26,13 +26,13 @@ services:
             python manage.py collectstatic --noinput &&
             gunicorn core.wsgi:application --bind 0.0.0.0:8000"
 
-  db:
-    image: postgres:16
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - .env
-    restart: always
+  # db:
+  #   image: postgres:16
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   env_file:
+  #     - .env
+  #   restart: always
 
 volumes:
   postgres_data:
