@@ -17,18 +17,14 @@ class Cavalo(models.Model):
     slug = models.SlugField(max_length=120, unique=True, blank=True, null=True)
     raca = models.CharField(max_length=50, null=True)
     descricao = models.TextField()
-    informacoes = models.TextField(blank=True, null=True)
     registro = models.CharField(
         max_length=50,
-        validators=[RegexValidator(r'^[A-Z0-9-]+$', 'Registro deve conter apenas letras maiúsculas, números e hífens')]
     )
     nascimento = models.DateField(blank=True, null=True, help_text="Data de nascimento do cavalo")
     geracao = models.CharField(max_length=50, blank=True, null=True, help_text="Geração do cavalo")
     altura = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, help_text="Altura em metros")
     sexo = models.CharField(max_length=10, choices=[('M', 'Macho'), ('F', 'Fêmea'), ('C', 'Castrado')])
     pelagem = models.CharField(max_length=30, blank=True, null=True, help_text="Tipo de pelagem")
-    # criador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cavalos_criador', blank=True, null=True)
-    # vendedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cavalos_vendedor', blank=True, null=True)
     criador = models.CharField(max_length=100, blank=True, null=True, help_text="Criador do cavalo")
     vendedor = models.CharField(max_length=100, blank=True, null=True, help_text="Vendedor do cavalo")
     alojamento = models.CharField(max_length=100, blank=True, null=True, help_text="Local de alojamento do cavalo")

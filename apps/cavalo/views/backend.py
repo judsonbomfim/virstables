@@ -21,7 +21,7 @@ from apps.cavalo.models import Cavalo, Video, Foto
 class CavaloForm(ModelForm):
     class Meta:
         model = Cavalo
-        fields = ['nome', 'raca', 'descricao', 'informacoes', 'registro',
+        fields = ['nome', 'raca', 'descricao', 'registro',
                   'nascimento', 'geracao', 'altura', 'sexo', 'pelagem',
                   'criador', 'vendedor', 'alojamento', 'pai', 'mae',
                   'avo_paterno', 'avo_paterna', 'avo_materno', 'avo_materna',

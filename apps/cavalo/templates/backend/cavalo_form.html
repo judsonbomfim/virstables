@@ -51,7 +51,8 @@
             </div>
             <div class="form-group mb-3">
               <label class="form-label" for="{{ form.nascimento.id_for_label }}">Data de Nascimento</label>
-              <input type="date" class="form-control" id="{{ form.nascimento.id_for_label }}" name="{{ form.nascimento.name }}" value="{{ form.nascimento.value|default_if_none:'' }}" required />              {% if form.nascimento.errors %}
+              <input type="date" class="form-control" id="{{ form.nascimento.id_for_label }}" name="{{ form.nascimento.name }}" value="{{ form.nascimento.value|stringformat:"s" }}" required />
+              {% if form.nascimento.errors %}
                 <div class="text-danger">{{ form.nascimento.errors }}</div>
               {% endif %}
             </div>
@@ -61,14 +62,6 @@
               <input type="hidden" id="{{ form.descricao.id_for_label }}" name="{{ form.descricao.name }}" value="{{ form.descricao.value|default_if_none:'' }}" />
               {% if form.descricao.errors %}
                 <div class="text-danger">{{ form.descricao.errors }}</div>
-              {% endif %}
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.informacoes.id_for_label }}">Informações Adicionais</label>
-              <div id="editor-informacoes" class="quill-editor h-150"></div>
-              <input type="hidden" id="{{ form.informacoes.id_for_label }}" name="{{ form.informacoes.name }}" value="{{ form.informacoes.value|default_if_none:'' }}" />
-              {% if form.informacoes.errors %}
-                <div class="text-danger">{{ form.informacoes.errors }}</div>
               {% endif %}
             </div>
             <div class="form-group mb-3">
@@ -295,16 +288,17 @@
       // Preenche o Quill com o valor do campo, mesmo após erro
       quillDescricao.root.innerHTML = descricaoInput.value || '';
 
-      // Editor para informações
-      const quillInformacoes = new Quill('#editor-informacoes', { theme: 'snow' });
-      const informacoesInput = document.getElementById('{{ form.informacoes.id_for_label }}');
-      quillInformacoes.root.innerHTML = informacoesInput.value || '';
-
-      // Atualiza os campos hidden antes de enviar o formulário
-      const form = document.querySelector('form');
+      const form = document.querySelector('form[action*="cavalo"]');
       form.addEventListener('submit', function (event) {
         descricaoInput.value = quillDescricao.root.innerHTML;
-        informacoesInput.value = quillInformacoes.root.innerHTML;
+
+        if (quillDescricao.getText().trim().length === 0) {
+          alert('Preencha o campo Descrição.');
+          event.preventDefault();
+          return false;
+        }
+        // Debug: veja o valor do campo hidden
+        // console.log('Descrição enviada:', descricaoInput.value);
       });
   });
   </script>
