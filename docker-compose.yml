@@ -18,8 +18,8 @@ services:
       - static_data:/app/staticfiles
     env_file:
       - .env
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     restart: always
     command: >
       sh -c "python manage.py migrate &&
