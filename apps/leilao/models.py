@@ -17,13 +17,13 @@ class Leilao(models.Model):
     status = models.CharField(max_length=20, choices=[('ativo', 'Ativo'), ('finalizado', 'Finalizado')], default='ativo')
 
     def __str__(self):
-        return self.nome
+        return str(self.nome)
 
     def save(self, *args, **kwargs):
         novo_slug = slugify(self.nome)
         slug_unico = novo_slug
         contador = 1
-        while Leilao.objects.filter(slug=slug_unico).exclude(pk=self.pk).exists():
+        while Leilao.objects.filter(slug=slug_unico).exclude(pk=self.pk).exists():  # type: ignore
             slug_unico = f"{novo_slug}-{contador}"
             contador += 1
         self.slug = slug_unico

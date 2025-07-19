@@ -14,7 +14,7 @@ def data_atual():
 # @login_required(login_url='/login/')
 def home(request):
     
-    leiloes = Leilao.objects.all().order_by('-data_inicio').filter(status='ativo')
+    leiloes = Leilao.objects.all().order_by('-data_inicio').filter(status='ativo')  # type: ignore
     hoje = data_atual()
     context = {
         'painel_title': settings.PAINEL_TITLE,
@@ -26,12 +26,14 @@ def home(request):
 
 def home_breve(request):
     
-    leiloes = Leilao.objects.all().order_by('-data_inicio').filter(status='ativo')
+    leiloes = Leilao.objects.all().order_by('-data_inicio').filter(status='ativo')  # type: ignore
     hoje = data_atual()
+    link_leilao = "https://www.leilonorte.com/web/evento/1153/8-leilao-virtual-ares-lusitanos-selecao"
     context = {
         'painel_title': settings.PAINEL_TITLE,
         'page_title': 'Home',
         'leiloes': leiloes,
         'data_hoje': hoje,
+        'link_leilao': link_leilao,
     }
     return render(request, 'frontend/home_breve.html', context)
