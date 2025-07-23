@@ -84,7 +84,10 @@
                 <input type="hidden" name="next" value="{{ next }}">
                 <button type="submit" class="btn btn-primary block full-width m-b-lg">Entrar</button>
                 <p class="text-muted text-center m-t-md">
-                    <small>Esqueceu sua senha? <a href="">Redefinir senha</a></small>
+                    Esqueceu sua senha? <a href="">Redefinir senha</a>
+                </p>
+                <p class="text-muted text-center m-t-md">
+                    <b>AINDA NÃO SE CADASTROU?</b> <a href="{% url 'users_frontend:cadastro' %}">Cadastre-se</a>
                 </p>
             </form>
         </div>

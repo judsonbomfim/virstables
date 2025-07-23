@@ -27,7 +27,7 @@ class CavaloForm(ModelForm):
                   'avo_paterno', 'avo_paterna', 'avo_materno', 'avo_materna',
                   'bisavo_paterno1', 'bisavo_paterno2', 'bisavo_paterno3', 'bisavo_paterno4',
                   'bisavo_materno1', 'bisavo_materno2', 'bisavo_materno3', 'bisavo_materno4',
-                  'lance_inicial', 'parcela', 'leilao', 'status']
+                  'lance_inicial', 'incremento_lance', 'parcela', 'leilao', 'status']
         help_texts = {
             # Add any specific help texts if needed
         }

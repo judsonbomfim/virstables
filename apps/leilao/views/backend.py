@@ -16,9 +16,19 @@ class LeilaoForm(ModelForm):
         fields = ['nome', 'descricao', 'termos', 'data_leilao', 'data_inicio', 'data_fim', 'imagem', 'status']
         widgets = {
             'descricao': forms.Textarea(attrs={'class': 'form-control'}),
-            'termos': forms.Textarea(attrs={'class': 'form-control'}),
+            'termos': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),  # CORREÇÃO: FileInput para upload
+            'data_leilao': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'data_inicio': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'data_fim': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'imagem': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
             'status': Select(attrs={'class': 'form-select'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Tornar o campo termos opcional
+        self.fields['termos'].required = False
+        self.fields['termos'].help_text = "Arquivo PDF com os termos do leilão (opcional)"
 
 @login_required(login_url='/login/')
 @group_required('Administradores')

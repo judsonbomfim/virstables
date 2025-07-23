@@ -14,74 +14,118 @@
           <h5 class="card-title">{{ page_subtitle }}</h5>
         </div>
         <div class="card-body">
-          <form method="post" enctype="multipart/form-data" class="form-horizontal">
+          <!-- Exibe mensagens de erro ou sucesso -->
+          {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show">
+                      <button aria-hidden="true" data-bs-dismiss="alert" class="btn-close" type="button"></button>
+                      {{ message }}
+                  </div>
+              {% endfor %}
+          {% endif %}
+          <form method="post" class="form-horizontal">
             {% csrf_token %}
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.nome.id_for_label }}">Nome do Leilão</label>
-              <input type="text" class="form-control" id="{{ form.nome.id_for_label }}" name="{{ form.nome.name }}" value="{{ form.nome.value|default_if_none:'' }}" required />
-              {% if form.nome.errors %}
-                <div class="text-danger">{{ form.nome.errors }}</div>
-              {% endif %}
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.data_leilao.id_for_label }}">Data do Leilão</label>
-              <input type="datetime-local" class="form-control" id="{{ form.data_leilao.id_for_label }}" name="{{ form.data_leilao.name }}" value="{{ form.data_leilao.value|date:'Y-m-d\\TH:i'|default_if_none:'' }}" required />
-              {% if form.data_leilao.errors %}
-                <div class="text-danger">{{ form.data_leilao.errors }}</div>
-              {% endif %}
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.data_inicio.id_for_label }}">Data de Início dos Lances</label>
-              <input type="datetime-local" class="form-control" id="{{ form.data_inicio.id_for_label }}" name="{{ form.data_inicio.name }}" value="{{ form.data_inicio.value|date:'Y-m-d\\TH:i'|default_if_none:'' }}" required />
-              {% if form.data_inicio.errors %}
-                <div class="text-danger">{{ form.data_inicio.errors }}</div>
-              {% endif %}
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.data_fim.id_for_label }}">Data de Fim dos Lances</label>
-              <input type="datetime-local" class="form-control" id="{{ form.data_fim.id_for_label }}" name="{{ form.data_fim.name }}" value="{{ form.data_fim.value|date:'Y-m-d\\TH:i'|default_if_none:'' }}" required />
-              {% if form.data_fim.errors %}
-                <div class="text-danger">{{ form.data_fim.errors }}</div>
-              {% endif %}
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.imagem.id_for_label }}">Imagem</label>
-              <input type="file" class="form-control" id="{{ form.imagem.id_for_label }}" name="{{ form.imagem.name }}">
-              {% if form.instance.imagem %}
-                <div class="mb-2">
-                  <img src="{{ form.instance.imagem.url }}" alt="Imagem atual" class="img-thumbnail" style="max-width: 200px;">
-                  <p class="small text-muted mt-1">Imagem atual</p>
+
+            <!-- Dados do Usuário -->
+            <div class="ibox">
+                <div class="ibox-title pb-3">
+                    <h3>Dados de Acesso</h3>
                 </div>
-              {% endif %}              
-              {% if form.imagem.errors %}
-                <div class="text-danger">{{ form.imagem.errors }}</div>
-              {% endif %}
+                <div class="ibox-content">
+                    <div class="form-group row pb-2">
+                        <label class="col-lg-3 col-form-label">{{ user_form.nome_completo.label }}</label>
+                        <div class="col-lg-9">
+                            {{ user_form.nome_completo|add_class:"form-control" }}
+                            {% if user_form.nome_completo.help_text %}
+                                <small class="form-text text-muted">{{ user_form.nome_completo.help_text }}</small>
+                            {% endif %}
+                            {% if user_form.nome_completo.errors %}
+                                <span class="text-danger">{{ user_form.nome_completo.errors }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row pb-2">
+                        <label class="col-lg-3 col-form-label">{{ user_form.username.label }}</label>
+                        <div class="col-lg-9">
+                            {{ user_form.username|add_class:"form-control" }}
+                            {% if user_form.username.help_text %}
+                                <small class="form-text text-muted">{{ user_form.username.help_text }}</small>
+                            {% endif %}
+                            {% if user_form.username.errors %}
+                                <span class="text-danger">{{ user_form.username.errors }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row pb-2">
+                        <label class="col-lg-3 col-form-label">{{ user_form.email.label }}</label>
+                        <div class="col-lg-9">
+                            {{ user_form.email|add_class:"form-control" }}
+                            {% if user_form.email.help_text %}
+                                <small class="form-text text-muted">{{ user_form.email.help_text }}</small>
+                            {% endif %}
+                            {% if user_form.email.errors %}
+                                <span class="text-danger">{{ user_form.email.errors }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row pb-2">
+                        <label class="col-lg-3 col-form-label">{{ user_form.password1.label }}</label>
+                        <div class="col-lg-9">
+                            {{ user_form.password1|add_class:"form-control" }}
+                            {% if user_form.password1.help_text %}
+                                <small class="form-text text-muted">{{ user_form.password1.help_text }}</small>
+                            {% endif %}
+                            {% if user_form.password1.errors %}
+                                <span class="text-danger">{{ user_form.password1.errors }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row pb-2">
+                        <label class="col-lg-3 col-form-label">{{ user_form.password2.label }}</label>
+                        <div class="col-lg-9">
+                            {{ user_form.password2|add_class:"form-control" }}
+                            {% if user_form.password2.errors %}
+                                <span class="text-danger">{{ user_form.password2.errors }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.descricao.id_for_label }}">Descrição</label>
-              <div id="editor" class="quill-editor h-150"></div>
-              <input type="hidden" id="{{ form.descricao.id_for_label }}" name="{{ form.descricao.name }}" value="{{ form.descricao.value|default_if_none:'' }}" />
-              {% if form.descricao.errors %}
-                <div class="text-danger">{{ form.descricao.errors }}</div>
-              {% endif %}
+
+            <!-- Dados do Perfil -->
+            <div class="ibox">
+                <div class="ibox-title pb-3">
+                    <h3>Dados Pessoais</h3>
+                </div>
+                <div class="ibox-content">
+                    {% for field in perfil_form %}
+                        <div class="form-group row pb-2">
+                            <label class="col-lg-3 col-form-label">{{ field.label }}</label>
+                            <div class="col-lg-9">
+                                {{ field|add_class:"form-control" }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <span class="text-danger">{{ field.errors }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.termos.id_for_label }}">Termos</label>
-              <div id="editor_termos" class="quill-editor h-150"></div>
-              <input type="hidden" id="{{ form.termos.id_for_label }}" name="{{ form.termos.name }}" value="{{ form.termos.value|default_if_none:'' }}" />
-              {% if form.termos.errors %}
-                <div class="text-danger">{{ form.termos.errors }}</div>
-              {% endif %}
+
+            <!-- Botão de Envio -->
+            <div class="form-group row pb-2">
+                <div class="col-lg-10 mt-3">
+                    <button class="btn btn-primary btn-lg" type="submit">Fazer meu cadastro</button>
+                </div>
             </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.status.id_for_label }}">Status</label>
-              {{ form.status }}
-              {% if form.status.errors %}
-                <div class="text-danger">{{ form.status.errors }}</div>
-              {% endif %}
-            </div>
-            <button type="submit" class="btn btn-primary btn-pill">{{ page_subtitle }}</button>
-          </form>
+        </form>
         </div>
       </div>
     </div>
@@ -98,14 +142,7 @@
     })
     quillDescricao.root.innerHTML = document.getElementById('{{ form.descricao.id_for_label }}').value
     const descricaoInput = document.getElementById('{{ form.descricao.id_for_label }}')
-    
-    // Editor para termos
-    const quillTermos = new Quill('#editor_termos', {
-      theme: 'snow'
-    })
-    quillTermos.root.innerHTML = document.getElementById('{{ form.termos.id_for_label }}').value
-    const termosInput = document.getElementById('{{ form.termos.id_for_label }}')
-    
+       
     const form = document.querySelector('form')
     form.addEventListener('submit', function (event) {
       descricaoInput.value = quillDescricao.root.innerHTML

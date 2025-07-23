@@ -14,20 +14,38 @@ def cadastro(request):
         user_form = CustomUserCreationForm(request.POST)
         perfil_form = PerfilClienteForm(request.POST)
         
+        # DEBUG: Mostrar erros no console
+        print("=== DEBUG CADASTRO ===")
+        print(f"User form válido: {user_form.is_valid()}")
+        if not user_form.is_valid():
+            print(f"User form errors: {user_form.errors}")
+        print(f"Perfil form válido: {perfil_form.is_valid()}")
+        if not perfil_form.is_valid():
+            print(f"Perfil form errors: {perfil_form.errors}")
+        print("======================")
+        
         if user_form.is_valid() and perfil_form.is_valid():
             try:
-                user = user_form.save()
+                # Criar o usuário (o processamento do nome já é feito no form)
+                user = user_form.save(commit=False)
+                user.is_active = False  # Usuário inativo até aprovação
+                user.save()
+                
+                # Criar o perfil
                 perfil = perfil_form.save(commit=False)
                 perfil.usuario = user
                 perfil.save()
-                grupo_clientes = Group.objects.get(name='Clientes')
-                user.groups.add(grupo_clientes)
-                login(request, user)
-                messages.success(request, 'Cadastro realizado com sucesso!')
-                return redirect('leilao_list')
-            except ObjectDoesNotExist:
-                messages.error(request, 'Erro: Grupo Clientes não encontrado.')
-                return render(request, 'frontend/conta/cadastro.html', {'user_form': user_form, 'perfil_form': perfil_form})
+                
+                messages.success(request, 
+                    f'Cadastro realizado com sucesso para {user.first_name} {user.last_name}! '
+                    'Sua conta está em análise.')
+                return redirect('users_frontend:login')
+                
+            except Exception as e:
+                print(f"Erro ao salvar: {str(e)}")
+                messages.error(request, f'Erro ao realizar cadastro: {str(e)}')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
     else:
         user_form = CustomUserCreationForm()
         perfil_form = PerfilClienteForm()
@@ -45,6 +63,12 @@ class CustomLoginView(LoginView):
     template_name = 'frontend/conta/login.html'
 
     def get_success_url(self):
+        # PRIMEIRO: Verificar se existe parâmetro 'next'
+        next_url = self.request.POST.get('next') or self.request.GET.get('next')
+        if next_url:
+            return next_url
+        
+        # SE NÃO HOUVER 'next', usar as regras de grupo
         if self.request.user.groups.filter(name='Administradores').exists():
             return reverse_lazy('home_backend:home')  # Redireciona para o backend
         return reverse_lazy('home_frontend:home')  # Redireciona para o frontend

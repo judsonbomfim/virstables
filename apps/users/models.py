@@ -35,6 +35,14 @@ class PerfilCliente(models.Model):
     ]    
     
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil_cliente')
+    
+    # CAMPO ADICIONADO: Nome completo
+    nome_completo = models.CharField(
+        max_length=100, 
+        verbose_name="Nome Completo",
+        help_text="Nome completo do cliente"
+    )
+    
     cpf = models.CharField(
         max_length=14,
         unique=True,
@@ -42,6 +50,8 @@ class PerfilCliente(models.Model):
         verbose_name="CPF",
         help_text="Pessoa Física - Formato: 000.000.000-00"
     )
+    
+    # ... resto dos campos permanece igual
     cnpj = models.CharField(
         max_length=18,
         unique=True,
@@ -61,15 +71,6 @@ class PerfilCliente(models.Model):
     )
     nasc_fund = models.DateField(verbose_name="Data de Nascimento/Fundação", help_text="Formato: DD/MM/AAAA")
     profis_cnae = models.CharField(max_length=25, blank=True, null=True, verbose_name="Profissão/CNAE", help_text="Código CNAE ou profissão")
-    representante = models.CharField(max_length=200, blank=True, null=True, verbose_name="Nome do Representante", help_text="Nome do representante legal, se aplicável")
-    cpf_repres = models.CharField(
-        max_length=14,
-        blank=True,
-        null=True,
-        validators=[RegexValidator(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', 'CPF deve estar no formato 000.000.000-00')],
-        verbose_name="CPF do Representante",
-        help_text="Formato: 000.000.000-00"
-    )
     end_rua_av = models.CharField(max_length=200, verbose_name="Rua/Avenida")
     end_numero = models.CharField(max_length=10, verbose_name="Número")
     end_complem = models.CharField(max_length=100, blank=True, null=True, verbose_name="Complemento")
@@ -91,9 +92,9 @@ class PerfilCliente(models.Model):
         max_length=15,
         blank=True,
         null=True,
-    validators=[RegexValidator(r'^\(\d{2}\) \d{4}-\d{4}$', 'Telefone deve estar no formato (11) 1234-5678')],
-    verbose_name="Telefone",
-    help_text="Formato: (11) 1234-5678"
+        validators=[RegexValidator(r'^\(\d{2}\) \d{4}-\d{4}$', 'Telefone deve estar no formato (11) 1234-5678')],
+        verbose_name="Telefone",
+        help_text="Formato: (11) 1234-5678"
     )
     celular = models.CharField(
         max_length=15,
@@ -101,6 +102,15 @@ class PerfilCliente(models.Model):
         verbose_name="Celular",
         help_text="Formato: (11) 91234-5678"
     )
+    propriedade = models.CharField(max_length=200, blank=True, null=True, verbose_name="Nome da Propriedade", help_text="Nome do Propriedade, se aplicável")
+    propr_cidade = models.CharField(max_length=100, blank=True, null=True, verbose_name="Cidade da Propriedade")
+    propr_estado = models.CharField(
+        max_length=2,
+        blank=True, null=True,
+        choices=ESTADOS_BRASIL,
+        verbose_name="Estado da Propriedade",
+        help_text="Selecione o estado"
+    )
 
     def __str__(self):
-        return f"Perfil de {self.usuario.username}"
+        return f"Perfil de {self.usuario.username} - {self.nome_completo}"
