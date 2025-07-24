@@ -1,6 +1,6 @@
-<!-- filepath: /home/judbomfim/virstables/apps/leilao/templates/backend/leilao_form.html -->
 {% extends 'backend/shared/base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block css_custom %}
   <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.snow.css' %}" />
@@ -25,7 +25,7 @@
             <div class="row mb-3">
               <label class="col-sm-3 col-form-label">{{ form.nome.label }}</label>
               <div class="col-sm-9">
-                {{ form.nome }}
+                {{ form.nome|add_class:"form-control" }}
                 {% if form.nome.errors %}
                   <div class="text-danger small">{{ form.nome.errors }}</div>
                 {% endif %}
@@ -36,7 +36,7 @@
               <label class="col-sm-3 col-form-label">{{ form.descricao.label }}</label>
               <div class="col-sm-9">
                 <div id="editor" style="height: 200px;"></div>
-                {{ form.descricao|add_class:"d-none" }}
+                <input type="hidden" id="{{ form.descricao.id_for_label }}" name="{{ form.descricao.name }}" value="{{ form.descricao.value|default_if_none:'' }}" />
                 {% if form.descricao.errors %}
                   <div class="text-danger small">{{ form.descricao.errors }}</div>
                 {% endif %}
@@ -47,7 +47,7 @@
             <div class="row mb-3">
               <label class="col-sm-3 col-form-label">{{ form.termos.label }}</label>
               <div class="col-sm-9">
-                {{ form.termos }}
+                {{ form.termos|add_class:"form-control" }}
                 {% if form.termos.help_text %}
                   <small class="form-text text-muted">{{ form.termos.help_text }}</small>
                 {% endif %}
@@ -68,7 +68,7 @@
             <div class="row mb-3">
               <label class="col-sm-3 col-form-label">{{ form.data_leilao.label }}</label>
               <div class="col-sm-9">
-                {{ form.data_leilao }}
+                <input type="datetime-local" class="form-control" id="{{ form.data_leilao.id_for_label }}" name="{{ form.data_leilao.name }}" value="{% if form.data_leilao.value %}{{ form.data_leilao.value|date:'Y-m-d\TH:i' }}{% endif %}" />
                 {% if form.data_leilao.errors %}
                   <div class="text-danger small">{{ form.data_leilao.errors }}</div>
                 {% endif %}
@@ -78,7 +78,7 @@
             <div class="row mb-3">
               <label class="col-sm-3 col-form-label">{{ form.data_inicio.label }}</label>
               <div class="col-sm-9">
-                {{ form.data_inicio }}
+                <input type="datetime-local" class="form-control" id="{{ form.data_inicio.id_for_label }}" name="{{ form.data_inicio.name }}" value="{% if form.data_inicio.value %}{{ form.data_inicio.value|date:'Y-m-d\TH:i' }}{% endif %}" />
                 {% if form.data_inicio.errors %}
                   <div class="text-danger small">{{ form.data_inicio.errors }}</div>
                 {% endif %}
@@ -88,7 +88,7 @@
             <div class="row mb-3">
               <label class="col-sm-3 col-form-label">{{ form.data_fim.label }}</label>
               <div class="col-sm-9">
-                {{ form.data_fim }}
+                <input type="datetime-local" class="form-control" id="{{ form.data_fim.id_for_label }}" name="{{ form.data_fim.name }}" value="{% if form.data_fim.value %}{{ form.data_fim.value|date:'Y-m-d\TH:i' }}{% endif %}" />
                 {% if form.data_fim.errors %}
                   <div class="text-danger small">{{ form.data_fim.errors }}</div>
                 {% endif %}
@@ -99,7 +99,7 @@
             <div class="row mb-3">
               <label class="col-sm-3 col-form-label">{{ form.imagem.label }}</label>
               <div class="col-sm-9">
-                {{ form.imagem }}
+                {{ form.imagem|add_class:"form-control" }}
                 {% if leilao.imagem %}
                   <div class="mt-2">
                     <small class="text-muted">Imagem atual: 
@@ -117,7 +117,7 @@
             <div class="row mb-3">
               <label class="col-sm-3 col-form-label">{{ form.status.label }}</label>
               <div class="col-sm-9">
-                {{ form.status }}
+                {{ form.status|add_class:"form-control" }}
                 {% if form.status.errors %}
                   <div class="text-danger small">{{ form.status.errors }}</div>
                 {% endif %}
