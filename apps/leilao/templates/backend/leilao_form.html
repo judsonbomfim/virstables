@@ -1,3 +1,4 @@
+<!-- filepath: /home/judbomfim/virstables/apps/leilao/templates/backend/leilao_form.html -->
 {% extends 'backend/shared/base.html' %}
 {% load static %}
 
@@ -8,7 +9,7 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-lg-6 offset-lg-3">
+    <div class="col-lg-8 offset-lg-2">
       <div class="card">
         <div class="card-header border-l-primary border-3">
           <h5 class="card-title">{{ page_subtitle }}</h5>
@@ -23,109 +24,123 @@
                   </div>
               {% endfor %}
           {% endif %}
-          <form method="post" class="form-horizontal">
+          
+          <form method="post" enctype="multipart/form-data" class="form-horizontal">
             {% csrf_token %}
 
-            <!-- Dados do Usuário -->
-            <div class="ibox">
-                <div class="ibox-title pb-3">
-                    <h3>Dados de Acesso</h3>
-                </div>
-                <div class="ibox-content">
-                    <div class="form-group row pb-2">
-                        <label class="col-lg-3 col-form-label">{{ user_form.nome_completo.label }}</label>
-                        <div class="col-lg-9">
-                            {{ user_form.nome_completo|add_class:"form-control" }}
-                            {% if user_form.nome_completo.help_text %}
-                                <small class="form-text text-muted">{{ user_form.nome_completo.help_text }}</small>
-                            {% endif %}
-                            {% if user_form.nome_completo.errors %}
-                                <span class="text-danger">{{ user_form.nome_completo.errors }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="form-group row pb-2">
-                        <label class="col-lg-3 col-form-label">{{ user_form.username.label }}</label>
-                        <div class="col-lg-9">
-                            {{ user_form.username|add_class:"form-control" }}
-                            {% if user_form.username.help_text %}
-                                <small class="form-text text-muted">{{ user_form.username.help_text }}</small>
-                            {% endif %}
-                            {% if user_form.username.errors %}
-                                <span class="text-danger">{{ user_form.username.errors }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="form-group row pb-2">
-                        <label class="col-lg-3 col-form-label">{{ user_form.email.label }}</label>
-                        <div class="col-lg-9">
-                            {{ user_form.email|add_class:"form-control" }}
-                            {% if user_form.email.help_text %}
-                                <small class="form-text text-muted">{{ user_form.email.help_text }}</small>
-                            {% endif %}
-                            {% if user_form.email.errors %}
-                                <span class="text-danger">{{ user_form.email.errors }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="form-group row pb-2">
-                        <label class="col-lg-3 col-form-label">{{ user_form.password1.label }}</label>
-                        <div class="col-lg-9">
-                            {{ user_form.password1|add_class:"form-control" }}
-                            {% if user_form.password1.help_text %}
-                                <small class="form-text text-muted">{{ user_form.password1.help_text }}</small>
-                            {% endif %}
-                            {% if user_form.password1.errors %}
-                                <span class="text-danger">{{ user_form.password1.errors }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="form-group row pb-2">
-                        <label class="col-lg-3 col-form-label">{{ user_form.password2.label }}</label>
-                        <div class="col-lg-9">
-                            {{ user_form.password2|add_class:"form-control" }}
-                            {% if user_form.password2.errors %}
-                                <span class="text-danger">{{ user_form.password2.errors }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+            <!-- Dados básicos do Leilão -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.nome.label }}</label>
+              <div class="col-sm-9">
+                {{ form.nome }}
+                {% if form.nome.errors %}
+                  <div class="text-danger small">{{ form.nome.errors }}</div>
+                {% endif %}
+              </div>
             </div>
 
-            <!-- Dados do Perfil -->
-            <div class="ibox">
-                <div class="ibox-title pb-3">
-                    <h3>Dados Pessoais</h3>
-                </div>
-                <div class="ibox-content">
-                    {% for field in perfil_form %}
-                        <div class="form-group row pb-2">
-                            <label class="col-lg-3 col-form-label">{{ field.label }}</label>
-                            <div class="col-lg-9">
-                                {{ field|add_class:"form-control" }}
-                                {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                                {% endif %}
-                                {% if field.errors %}
-                                    <span class="text-danger">{{ field.errors }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.descricao.label }}</label>
+              <div class="col-sm-9">
+                <div id="editor" style="height: 200px;"></div>
+                {{ form.descricao|add_class:"d-none" }}
+                {% if form.descricao.errors %}
+                  <div class="text-danger small">{{ form.descricao.errors }}</div>
+                {% endif %}
+              </div>
             </div>
 
-            <!-- Botão de Envio -->
-            <div class="form-group row pb-2">
-                <div class="col-lg-10 mt-3">
-                    <button class="btn btn-primary btn-lg" type="submit">Fazer meu cadastro</button>
-                </div>
+            <!-- Campo Termos (PDF) -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.termos.label }}</label>
+              <div class="col-sm-9">
+                {{ form.termos }}
+                {% if form.termos.help_text %}
+                  <small class="form-text text-muted">{{ form.termos.help_text }}</small>
+                {% endif %}
+                {% if leilao.termos %}
+                  <div class="mt-2">
+                    <small class="text-muted">Arquivo atual: 
+                      <a href="{{ leilao.termos.url }}" target="_blank">{{ leilao.termos.name }}</a>
+                    </small>
+                  </div>
+                {% endif %}
+                {% if form.termos.errors %}
+                  <div class="text-danger small">{{ form.termos.errors }}</div>
+                {% endif %}
+              </div>
             </div>
-        </form>
+
+            <!-- Datas -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.data_leilao.label }}</label>
+              <div class="col-sm-9">
+                {{ form.data_leilao }}
+                {% if form.data_leilao.errors %}
+                  <div class="text-danger small">{{ form.data_leilao.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.data_inicio.label }}</label>
+              <div class="col-sm-9">
+                {{ form.data_inicio }}
+                {% if form.data_inicio.errors %}
+                  <div class="text-danger small">{{ form.data_inicio.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.data_fim.label }}</label>
+              <div class="col-sm-9">
+                {{ form.data_fim }}
+                {% if form.data_fim.errors %}
+                  <div class="text-danger small">{{ form.data_fim.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Imagem -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.imagem.label }}</label>
+              <div class="col-sm-9">
+                {{ form.imagem }}
+                {% if leilao.imagem %}
+                  <div class="mt-2">
+                    <small class="text-muted">Imagem atual: 
+                      <a href="{{ leilao.imagem.url }}" target="_blank">{{ leilao.imagem.name }}</a>
+                    </small>
+                  </div>
+                {% endif %}
+                {% if form.imagem.errors %}
+                  <div class="text-danger small">{{ form.imagem.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.status.label }}</label>
+              <div class="col-sm-9">
+                {{ form.status }}
+                {% if form.status.errors %}
+                  <div class="text-danger small">{{ form.status.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Botões -->
+            <div class="row">
+              <div class="col-sm-9 offset-sm-3">
+                <button type="submit" class="btn btn-primary">
+                  {% if leilao %}Atualizar{% else %}Criar{% endif %} Leilão
+                </button>
+                <a href="{% url 'leilao_backend:leilao_lista' %}" class="btn btn-secondary">Cancelar</a>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -134,19 +149,31 @@
 
 {% block scriptcontent %}
   <script src="{% static 'backend/assets/js/editors/quill.js' %}"></script>
-  <script src="{% static 'backend/assets/js/custom-add-product3.js' %}"></script>
   <script>
     // Editor para descrição
     const quillDescricao = new Quill('#editor', {
-      theme: 'snow'
-    })
-    quillDescricao.root.innerHTML = document.getElementById('{{ form.descricao.id_for_label }}').value
-    const descricaoInput = document.getElementById('{{ form.descricao.id_for_label }}')
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          ['link'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['clean']
+        ]
+      }
+    });
+    
+    // Carregar conteúdo existente
+    const descricaoInput = document.getElementById('{{ form.descricao.id_for_label }}');
+    if (descricaoInput.value) {
+      quillDescricao.root.innerHTML = descricaoInput.value;
+    }
        
-    const form = document.querySelector('form')
+    // Salvar conteúdo no submit
+    const form = document.querySelector('form');
     form.addEventListener('submit', function (event) {
-      descricaoInput.value = quillDescricao.root.innerHTML
-      termosInput.value = quillTermos.root.innerHTML
-    })
+      descricaoInput.value = quillDescricao.root.innerHTML;
+    });
   </script>
 {% endblock %}

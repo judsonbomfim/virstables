@@ -14,21 +14,19 @@ def cadastro(request):
         user_form = CustomUserCreationForm(request.POST)
         perfil_form = PerfilClienteForm(request.POST)
         
-        # DEBUG: Mostrar erros no console
-        print("=== DEBUG CADASTRO ===")
-        print(f"User form válido: {user_form.is_valid()}")
-        if not user_form.is_valid():
-            print(f"User form errors: {user_form.errors}")
-        print(f"Perfil form válido: {perfil_form.is_valid()}")
-        if not perfil_form.is_valid():
-            print(f"Perfil form errors: {perfil_form.errors}")
-        print("======================")
-        
         if user_form.is_valid() and perfil_form.is_valid():
             try:
-                # Criar o usuário (o processamento do nome já é feito no form)
+                # Criar o usuário
                 user = user_form.save(commit=False)
-                user.is_active = False  # Usuário inativo até aprovação
+                
+                # Processar nome completo do PerfilCliente para first_name e last_name
+                nome_completo = perfil_form.cleaned_data.get('nome_completo', '').strip()
+                if nome_completo:
+                    nomes = nome_completo.split()
+                    user.first_name = nomes[0] if nomes else ''
+                    user.last_name = ' '.join(nomes[1:]) if len(nomes) > 1 else ''
+                
+                user.is_active = False  # Inativo até aprovação
                 user.save()
                 
                 # Criar o perfil
@@ -42,7 +40,6 @@ def cadastro(request):
                 return redirect('users_frontend:login')
                 
             except Exception as e:
-                print(f"Erro ao salvar: {str(e)}")
                 messages.error(request, f'Erro ao realizar cadastro: {str(e)}')
         else:
             messages.error(request, 'Por favor, corrija os erros abaixo.')
