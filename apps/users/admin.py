@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
 from .models import PerfilCliente
 
 @admin.register(PerfilCliente)
@@ -32,7 +33,8 @@ class PerfilClienteAdmin(admin.ModelAdmin):
     
     list_editable = ['status']
     
-    readonly_fields = ['usuario']
+    # Remover readonly_fields para permitir seleção de usuário
+    autocomplete_fields = ['usuario']
     
     fieldsets = (
         ('Usuário', {
@@ -69,13 +71,25 @@ class PerfilClienteAdmin(admin.ModelAdmin):
         }),
     )
     
-    # Ações personalizadas
-    actions = ['ativar_clientes', 'suspender_clientes', 'colocar_em_analise']
-    
     def get_readonly_fields(self, request, obj=None):
         if obj:  # Editando um perfil existente
-            return self.readonly_fields + ['cpf', 'cnpj']
-        return self.readonly_fields
+            return ['cpf', 'cnpj']  # Removido 'usuario' para permitir alteração
+        return []
+    
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "usuario":
+            # Mostrar apenas usuários que ainda não têm perfil
+            usuarios_com_perfil = PerfilCliente.objects.values_list('usuario_id', flat=True)
+            kwargs["queryset"] = User.objects.exclude(id__in=usuarios_com_perfil)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+# Configurar autocomplete para User
+from django.contrib.auth.admin import UserAdmin
+admin.site.unregister(User)
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    search_fields = ['username', 'email', 'first_name', 'last_name']
 
 # Ações personalizadas
 @admin.action(description='Ativar clientes selecionados')
