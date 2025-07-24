@@ -16,14 +16,7 @@
         </div>
         <div class="card-body">
           <!-- Exibe mensagens de erro ou sucesso -->
-          {% if messages %}
-              {% for message in messages %}
-                  <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show">
-                      <button aria-hidden="true" data-bs-dismiss="alert" class="btn-close" type="button"></button>
-                      {{ message }}
-                  </div>
-              {% endfor %}
-          {% endif %}
+          {% include "frontend/partials/messages.html" %}
           
           <form method="post" enctype="multipart/form-data" class="form-horizontal">
             {% csrf_token %}

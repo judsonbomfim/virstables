@@ -63,14 +63,7 @@
                                     <div class="ibox">
                                         <div class="ibox-content">
                                             <!-- Exibe mensagens de erro ou sucesso -->
-                                            {% if messages %}
-                                                {% for message in messages %}
-                                                    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show">
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                                        {{ message }}
-                                                    </div>
-                                                {% endfor %}
-                                            {% endif %}
+                                            {% include "frontend/partials/messages.html" %}
 
                                             <form method="post" class="form-horizontal">
                                                 {% csrf_token %}

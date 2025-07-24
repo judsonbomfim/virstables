@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class PerfilCliente(models.Model):
     
@@ -34,9 +36,15 @@ class PerfilCliente(models.Model):
         ('TO', 'Tocantins'),
     ]    
     
+    STATUS_CHOICES = [
+        ('analise', 'Em Análise'),
+        ('ativo', 'Ativo'),
+        ('inativo', 'Inativo'),
+        ('suspenso', 'Suspenso'),
+    ]
+    
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil_cliente')
     
-    # CAMPO ADICIONADO: Nome completo
     nome_completo = models.CharField(
         max_length=100, 
         verbose_name="Nome Completo",
@@ -111,6 +119,36 @@ class PerfilCliente(models.Model):
         verbose_name="Estado da Propriedade",
         help_text="Selecione o estado"
     )
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='analise',
+        verbose_name="Status",
+        help_text="Status atual do cliente no sistema"
+    )
 
     def __str__(self):
-        return f"Perfil de {self.usuario.username} - {self.nome_completo}"
+        return f"Perfil de {self.usuario.username} - {self.nome_completo} ({self.get_status_display()})"
+    
+    def pode_dar_lances(self):
+        """Verifica se o cliente pode dar lances (status ativo)"""
+        return self.status == 'ativo'
+    
+    class Meta:
+        verbose_name = "Perfil do Cliente"
+        verbose_name_plural = "Perfis dos Clientes"
+
+@receiver(post_save, sender=PerfilCliente)
+def atribuir_permissao_cliente(sender, instance, created, **kwargs):
+    """
+    Signal para atribuir automaticamente a permissão 'Clientes' 
+    quando um perfil de cliente é criado
+    """
+    if created:
+        try:
+            grupo_cliente = Group.objects.get(name='Clientes')
+            instance.usuario.groups.add(grupo_cliente)
+        except Group.DoesNotExist:
+            # Log ou criar o grupo se não existir
+            grupo_cliente = Group.objects.create(name='Clientes')
+            instance.usuario.groups.add(grupo_cliente)

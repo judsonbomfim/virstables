@@ -37,7 +37,7 @@ def cadastro(request):
                 messages.success(request, 
                     f'Cadastro realizado com sucesso para {user.first_name} {user.last_name}! '
                     'Sua conta está em análise.')
-                return redirect('users_frontend:login')
+                return redirect('home_frontend:home')
                 
             except Exception as e:
                 messages.error(request, f'Erro ao realizar cadastro: {str(e)}')

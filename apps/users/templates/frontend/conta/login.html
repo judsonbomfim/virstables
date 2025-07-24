@@ -51,25 +51,15 @@
             <h2 class="font-bold">LOGIN</h2>
             <p class="m-t-md">Faça login para acessar sua conta.</p>
 
-            <!-- Exibe mensagens de erro ou sucesso -->
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show m-b-md" role="alert">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+            {% include "frontend/partials/messages.html" %}
 
             <!-- Exibe erros do formulário -->
             {% if form.errors %}
-                <div class="alert alert-danger alert-dismissible fade show m-b-md" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    Credenciais inválidas. Por favor, verifique seu nome de usuário e senha.
+                <div class="col-12 mb-3">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        Credenciais inválidas. Por favor, verifique seu nome de usuário e senha.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 </div>
             {% endif %}
 
