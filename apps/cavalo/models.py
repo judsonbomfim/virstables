@@ -44,7 +44,7 @@ class Cavalo(models.Model):
     bisavo_materno3 = models.CharField(max_length=30, blank=True, null=True, help_text="Bisavô Materno")
     bisavo_materno4 = models.CharField(max_length=30, blank=True, null=True, help_text="Bisavó Materno")
     lance_inicial = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text="Lance Inicial da parcela")
-    incremento_lance = models.DecimalField(max_digits=10, decimal_places=2, default=100.00, help_text="Valor mínimo de incremento entre lances")
+    incremento_lance = models.DecimalField(max_digits=10, decimal_places=2, default=50.00, help_text="Valor mínimo de incremento entre lances")
     parcela = models.IntegerField(blank=True, null=True, help_text="Número de parcelas")
     data_cadastro = models.DateTimeField(auto_now_add=True, help_text="Data de cadastro do cavalo")
     status = models.CharField(

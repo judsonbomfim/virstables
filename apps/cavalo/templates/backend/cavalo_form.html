@@ -263,6 +263,7 @@
   <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.5/dist/autoNumeric.min.js"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function() {
+      // Configuração para Lance Inicial
       const lance_inicialInput = document.getElementById('{{ form.lance_inicial.id_for_label }}');
       if (lance_inicialInput) {
         new AutoNumeric(lance_inicialInput, {
@@ -275,9 +276,24 @@
             unformatOnSubmit: true
         });
       }
+
+      // Configuração para Incremento de Lance
+      const incremento_lanceInput = document.getElementById('{{ form.incremento_lance.id_for_label }}');
+      if (incremento_lanceInput) {
+        new AutoNumeric(incremento_lanceInput, {
+            currencySymbol: 'R$ ',
+            decimalCharacter: ',',
+            digitGroupSeparator: '.',
+            decimalPlaces: 2,
+            minimumValue: '0',
+            modifyValueOnWheel: false,
+            unformatOnSubmit: true
+        });
+      }
+
       // Máscara para altura (ex: 1.62)
       const alturaInput = document.getElementById('{{ form.altura.id_for_label }}');
-      if (alturaInput && alturaInput.value) {
+      if (alturaInput) {
         new AutoNumeric(alturaInput, {
             decimalCharacter: ',',
             digitGroupSeparator: '',
