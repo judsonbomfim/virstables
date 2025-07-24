@@ -26,7 +26,7 @@ def cadastro(request):
                     user.first_name = nomes[0] if nomes else ''
                     user.last_name = ' '.join(nomes[1:]) if len(nomes) > 1 else ''
                 
-                user.is_active = False  # Inativo até aprovação
+                user.is_active = True  # Inativo até aprovação
                 user.save()
                 
                 # Criar o perfil
