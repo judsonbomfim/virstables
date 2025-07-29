@@ -6,7 +6,7 @@
 * Website:  https://webapplayers.com
 * Contact: support@webapplayers.com
 * License: For each use you must have a valid license purchased only from above link in order to legally use the theme for your project.
-              -->
+-->
 
 {% extends 'frontend/base.html' %}
 
@@ -101,7 +101,7 @@
           <div class="col-lg-5 col-xl-5">
             <div class="position-relative">
               <!-- Main image -->
-              <a href="{% url 'leilao_frontend:leilao_detalhe' leilao.id %}">
+              <a href="{% url 'leilao_frontend:leilao_detalhe' leilao.slug %}">
                 {% if leilao.imagem %}
                   <img src="{{ leilao.imagem.url }}" class="rounded-3 shadow-lg img-fluid w-75 mx-auto d-block z-1 position-relative" alt="{{ leilao.nome }}" />
                 {% else %}
@@ -112,7 +112,7 @@
           </div>
 
           <!-- Content -->
-          <div class="col-lg-7 p-5">
+          <div class="col-lg-7 p-4">
             <h2 class="mb-4 lh-base">{{ leilao.nome }}</h2>
             <p class="mb-2 lead"><b>Prazo para Pré-Lances:</b></p>
             <p class="mb-2 lead">

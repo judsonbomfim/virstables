@@ -23,7 +23,7 @@ class Cavalo(models.Model):
     nascimento = models.DateField(blank=True, null=True, help_text="Data de nascimento do cavalo")
     geracao = models.CharField(max_length=50, blank=True, null=True, help_text="Geração do cavalo")
     altura = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, help_text="Altura em metros")
-    sexo = models.CharField(max_length=10, choices=[('M', 'Macho'), ('F', 'Fêmea'), ('C', 'Castrado')])
+    sexo = models.CharField(max_length=10, blank=True, null=True, choices=[('M', 'Macho'), ('F', 'Fêmea'), ('C', 'Castrado')])
     pelagem = models.CharField(max_length=30, blank=True, null=True, help_text="Tipo de pelagem")
     criador = models.CharField(max_length=100, blank=True, null=True, help_text="Criador do cavalo")
     vendedor = models.CharField(max_length=100, blank=True, null=True, help_text="Vendedor do cavalo")
@@ -46,6 +46,7 @@ class Cavalo(models.Model):
     lance_inicial = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text="Lance Inicial da parcela")
     incremento_lance = models.DecimalField(max_digits=10, decimal_places=2, default=50.00, help_text="Valor mínimo de incremento entre lances")
     parcela = models.IntegerField(blank=True, null=True, help_text="Número de parcelas")
+    lote = models.IntegerField(blank=True, null=True, help_text="Número do lote no leilão")
     data_cadastro = models.DateTimeField(auto_now_add=True, help_text="Data de cadastro do cavalo")
     status = models.CharField(
         max_length=20,
