@@ -10,6 +10,8 @@ services:
     depends_on:
       - app
     restart: always
+    networks:
+      - app-network
 
   app:
     build:
@@ -21,19 +23,45 @@ services:
     env_file:
       - .env
     depends_on:
+      - postgres
       - redis
     restart: always
+    expose:
+      - "8000"
+    networks:
+      - app-network
     command: >
       sh -c "python manage.py migrate &&
             python manage.py collectstatic --noinput &&
             gunicorn core.wsgi:application --bind 0.0.0.0:8000"
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: stables
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - app-network
 
   redis:
     image: redis:7
     restart: always
     ports:
       - "6379:6379"
+    networks:
+      - app-network
 
 volumes:
   static_data:
   media_data:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
