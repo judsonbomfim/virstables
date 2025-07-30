@@ -36,7 +36,7 @@ services:
             gunicorn core.wsgi:application --bind 0.0.0.0:8000"
 
   postgres:
-    image: postgres:16
+    image: postgres:17
     environment:
       POSTGRES_DB: stables
       POSTGRES_USER: postgres
