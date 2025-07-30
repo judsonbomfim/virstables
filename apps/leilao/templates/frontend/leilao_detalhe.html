@@ -1,0 +1,244 @@
+{% extends 'frontend/base.html' %}
+
+{% load static i18n cavalo_extras %}
+
+{% block html_attribute %}
+  data-bs-theme="light"
+{% endblock %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block body_attribute %}
+  class="bg-body-secondary" data-bs-spy="scroll" data-bs-target="#navbar-example"
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'frontend/css/contador.css' %}" />
+{% endblock %}
+
+{% block content %}
+  {% include "frontend/partials/subtitle.html" %}
+
+  <!-- Leilões -->
+  <section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="leiloes">
+    <div class="container">
+      <div class="card shadow-lg">
+
+        <div class="row align-items-center m-2 m-lg-5">
+
+          <div class="row mb-5">
+
+            <div class="col-lg-5 col-xl-5">
+              <div class="position-relative">
+                <!-- Main image -->
+                {% if leilao.imagem %}
+                  <img src="{{ leilao.imagem.url }}" class="rounded-3 shadow-lg img-fluid w-75 mx-auto d-block z-1 position-relative" alt="{{ leilao.nome }}" />
+                {% else %}
+                  <img src="{% static 'frontend/images/img-leilao-site.jpg' %}" class="rounded-3 shadow-lg img-fluid w-75 mx-auto d-block z-1 position-relative" alt="{{ leilao.nome }}" />
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Detalhes do leilão -->
+            <div class="col-lg-7">
+              <div class="row">
+                <h2 class="mb-4 lh-base text-center text-md-start">{{ leilao.nome }}</h2>
+                <p class="mb-2 lead text-center text-md-start">
+                  <b>Prazo para Pré-Lances:</b>
+                </p>
+                <p class="mb-2 lead text-center text-md-start">
+                  Início: <b>{{ leilao.data_inicio|date:'d/m/Y' }}</b> ({{ leilao.data_inicio|time:'H:i' }})<br />
+                  Término: <b>{{ leilao.data_fim|date:'d/m/Y' }}</b> ({{ leilao.data_fim|time:'H:i' }}):
+                </p>
+                <p class="mb-2 lead text-center text-md-start">
+                  Transmissão: <b>{{ leilao.data_leilao|date:'d/m/Y H:i' }}</b>
+                </p>
+                <br />
+                {% include "frontend/partials/contador.html" %}
+              </div>
+              {% if leilao.termos %}
+                <div class="mb-3">
+                  <a href="{{ leilao.termos.url }}" target="_blank" class="btn btn-outline-primary">
+                    <i class="ti ti-file-text me-2"></i>
+                    Baixar Termos do Leilão (PDF)
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+
+          </div>
+
+          <div class="col-lg-12 text-center">
+            <h2 class="mb-2 lh-base">LISTA DE LOTES</h2>
+          </div>
+
+          <!-- Lista de cavalos -->
+          <div class="col-12 px-2 px-md-5 py-5 bg-white rounded-3">
+            <div class="row row-cols-xxl-3 row-cols-lg-3 row-cols-sm-2 row-col-1 g-2">
+
+            
+            {% for item in cavalos_com_lances %}
+              {% with cavalo=item.cavalo ultimo_lance=item.ultimo_lance %}
+              <div class="col">
+                <article class="card mb-2 shadow-lg">
+                  <!-- Card Body -->
+                  <div class="card-body mb-0 pb-0">
+                    {% if cavalo.lote %}
+                    <div class="badge text-bg-success badge-label fs-base rounded position-absolute top-0 start-0 m-3">Lote {{cavalo.lote|stringformat:"02d"}}</div>
+                    {% endif %}
+                    {% with destaque=cavalo.fotos.all|foto_destaque %}
+                    <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
+                      <img src="{{ destaque.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
+                    </a>
+                    {% endwith %}
+                    
+                    <!-- Title -->
+                    <h2 class="fs-xxl 1h-base mb-2 text-center w-100 text-uppercase">
+                      <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="link-reset">{{ cavalo.nome }}</a>
+                    </h2>
+                    
+                    <!-- Detalhes do cavalo -->
+                    <div class="row text-center pb-0">
+                      <div class="col-6 col-md-6">
+                        <div class="row">
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Raça:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.raca }}</p>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Pelagem:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.pelagem }}</p>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Altura:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.altura|floatformat:2 }} m</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-md-6">
+                        <div class="row">
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Sexo:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.get_sexo_display }}</p>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Nascimento:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.nascimento|date:'d/m/Y' }}</p>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Criador:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.criador }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Informações de Lance -->
+                  {% if ultimo_lance %}
+                    <!-- Existe pelo menos um lance -->
+                    <div class="row my-3 text-center">
+                      <span class="text-muted fs-4">Último Lance:</span>
+                      <span class="text-primary fs-3 fw-semibold">R$ {{ ultimo_lance.valor|floatformat:2 }}</span>
+                      <span class="text-primary fs-5">{{ ultimo_lance.usuario.perfil_cliente.end_cidade }}/{{ ultimo_lance.usuario.perfil_cliente.end_estado }}</span>
+                      <span class="text-muted fs-6">em {{ ultimo_lance.data|date:"d/m/Y H:i" }}</span>
+                      <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
+                    </div>
+                  {% else %}
+                    <!-- Não há lances ainda -->
+                    <div class="row my-3 text-center">
+                      <span class="text-muted fs-4">Lance Inicial:</span>
+                      <span class="text-primary fs-3 fw-semibold">R$ {{ cavalo.lance_inicial|floatformat:2 }}</span>
+                      <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
+                    </div>
+                    <div class="alert alert-warning text-center" role="alert">
+                      <a class="alert-link">Seja o primeiro a confirmar o lance</a>!
+                    </div>
+                  {% endif %}
+
+                  <!-- Card footer -->
+                  <div class="card-footer bg-transparent d-grid gap-2 w-100">
+                    <input type="hidden" class="data-leilao" value="{{ leilao.data_fim|date:'Y-m-d H:i:s' }}" />
+                    {% if ultimo_lance %}
+                      <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}#lance" class="btn btn-secondary w-100">
+                        <i class="ti ti-gavel me-1"></i> Dar um lance
+                      </a>
+                    {% else %}
+                      <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}#lance" class="btn btn-secondary w-100">
+                        <i class="ti ti-gavel me-1"></i> Primeiro Lance
+                      </a>
+                    {% endif %}
+                    <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="btn btn-primary w-100">
+                       Mais Informações
+                    </a>
+                  </div>
+
+                </article>                
+              </div> <!-- end col -->
+              {% endwith %}
+            {% empty %}
+              <div class="col-12 text-center bg-light bg-opacity-30 p-3 w-100">
+                <p class="text-muted">Nenhum lote disponível no momento.</p>
+              </div>
+            {% endfor %}              
+
+
+            </div>
+          </div>
+          <!-- Fim Lista de cavalos -->
+
+        </div> <!-- end row -->
+
+      </div> <!-- end card -->
+    </div> <!-- end container -->
+  </section>
+{% endblock %}
+
+{% block extra_javascript %}
+  <!-- Landing Page js -->
+  <script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
+
+  <script>
+    function startCountdown(card, dataFimStr) {
+      const eventCountDown = new Date(dataFimStr.replace(' ', 'T')).getTime()
+      const daysEl = card.querySelector('[id^="days-"]')
+      const hoursEl = card.querySelector('[id^="hours-"]')
+      const minutesEl = card.querySelector('[id^="minutes-"]')
+      const secondsEl = card.querySelector('[id^="seconds-"]')
+      if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+        console.warn('Contador não encontrado para card', card)
+        return
+      }
+      const count = setInterval(function () {
+        const now = new Date().getTime()
+        const timeleft = eventCountDown - now
+        const days = Math.floor(timeleft / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+        const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((timeleft % (1000 * 60)) / 1000)
+        daysEl.innerHTML = days
+        hoursEl.innerHTML = hours
+        minutesEl.innerHTML = minutes
+        secondsEl.innerHTML = seconds
+        if (timeleft < 0) {
+          clearInterval(count)
+          daysEl.innerHTML = ''
+          hoursEl.innerHTML = ''
+          minutesEl.innerHTML = ''
+          secondsEl.innerHTML = ''
+        }
+      }, 1000)
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.data-leilao').forEach(function (input) {
+        const card = input.closest('.card')
+        if (!card) return
+        if (input.value) {
+          startCountdown(card, input.value)
+        }
+      })
+    })
+  </script>
+{% endblock %}

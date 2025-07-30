@@ -1,0 +1,88 @@
+{% extends 'frontend/base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block extra_css %}
+<style>
+    .loginscreen.middle-box {
+        width: 400px;
+        margin: 10% auto;
+        padding: 20px;
+    }
+    .ibox-content {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    .form-control {
+        border-radius: 6px;
+        height: 50px;
+        font-size: 16px;
+        padding: 10px;
+    }
+    .btn-primary {
+        background-color: #1ab394;
+        border-color: #1ab394;
+        height: 50px;
+        font-size: 16px;
+    }
+    .btn-primary:hover {
+        background-color: #179d82;
+        border-color: #179d82;
+    }
+    .alert {
+        margin-bottom: 25px;
+        padding: 15px;
+        border-radius: 6px;
+    }
+    .m-t-md { margin-top: 15px !important; }
+    .m-b-md { margin-bottom: 15px !important; }
+    .m-t-lg { margin-top: 30px !important; }
+    .m-b-lg { margin-bottom: 30px !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="middle-box text-center loginscreen animated fadeInDown">
+    <div class="ibox">
+        <div class="ibox-content">
+            <h2 class="font-bold">LOGIN</h2>
+            <p class="m-t-md">Faça login para acessar sua conta.</p>
+
+            {% include "frontend/partials/messages.html" %}
+
+            <!-- Exibe erros do formulário -->
+            {% if form.errors %}
+                <div class="col-12 mb-3">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        Credenciais inválidas. Por favor, verifique seu nome de usuário e senha.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            {% endif %}
+
+            <form class="m-t-lg" role="form" method="post" action="">
+                {% csrf_token %}
+                <div class="form-group m-b-lg">
+                    <input type="text" class="form-control" name="username" placeholder="Nome de usuário" required autofocus>
+                </div>
+                <div class="form-group m-b-lg">
+                    <input type="password" class="form-control" name="password" placeholder="Senha" required>
+                </div>
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn btn-primary block full-width m-b-lg">Entrar</button>
+                <p class="text-muted text-center m-t-md">
+                    Esqueceu sua senha? <a href="">Redefinir senha</a>
+                </p>
+                <p class="text-muted text-center m-t-md">
+                    <b>AINDA NÃO SE CADASTROU?</b> <a href="{% url 'users_frontend:cadastro' %}">Cadastre-se</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

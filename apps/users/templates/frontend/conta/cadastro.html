@@ -1,0 +1,456 @@
+{% extends 'frontend/base.html' %}
+
+{% load static i18n cavalo_extras %}
+{% load widget_tweaks %}
+
+{% block html_attribute %}
+  data-bs-theme="light"
+{% endblock %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block body_attribute %}
+  class="bg-body-secondary" data-bs-spy="scroll" data-bs-target="#navbar-example"
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'frontend/assets/plugins/select2/select2.min.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+  {% include "frontend/partials/subtitle.html" %}
+
+
+<section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="leiloes">
+    <div class="container">
+      <div class="card shadow-lg">
+
+        <div class="row align-items-center m-2 m-lg-5">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-xl-4">
+                    <div class="card card-top-sticky border-0">
+                      <div class="card-body p-0">
+
+                        <div class="avatar avatar-xl mx-auto mt-3">
+                            <span
+                                class="avatar-title bg-primary-subtle text-primary rounded-circle fw-bold">
+                                <i data-lucide="shield-user" class="text-primary fs-28 fill-primary"></i>
+                            </span>
+                        </div>
+                        <div class="mt-3 text-center">
+                        <h4 class="mt-3">Faça seu cadastro</h4>
+                        <p class="text-muted mb-3">Somente usuários cadastrados poderão dar lances</p>
+                        <p class="text-muted mb-3">* Cadastro sujeito a análise</p>
+                        </div>                        
+
+                      </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                  </div> <!-- end col-->
+
+                  <div class="col-xl-8">
+                    <div class="p-0 p-md-4">
+
+                        <div class="wrapper wrapper-content animated fadeInRight">
+                            <div class="row">
+                                <div class="col-lg-12"> <!-- Usa a largura total da página -->
+                                    <div class="ibox">
+                                        <div class="ibox-content">
+                                            <!-- Exibe mensagens de erro ou sucesso -->
+                                            {% include "frontend/partials/messages.html" %}
+
+                                            <form method="post" class="form-horizontal">
+                                                {% csrf_token %}
+
+                                                <!-- Dados do Usuário -->
+                                                <div class="ibox">
+                                                    <div class="ibox-title">
+                                                        <h3>Dados de Acesso</h3>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        <!-- Username -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ user_form.username.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ user_form.username|add_class:"form-control" }}
+                                                                {% if user_form.username.help_text %}
+                                                                    <small class="form-text text-muted">{{ user_form.username.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if user_form.username.errors %}
+                                                                    <div class="text-danger">
+                                                                        {% for error in user_form.username.errors %}
+                                                                            <small>{{ error }}</small><br>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Email -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ user_form.email.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ user_form.email|add_class:"form-control" }}
+                                                                {% if user_form.email.errors %}
+                                                                    <div class="text-danger">
+                                                                        {% for error in user_form.email.errors %}
+                                                                            <small>{{ error }}</small><br>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Password1 -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ user_form.password1.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                <div class="input-group">
+                                                                    {{ user_form.password1|add_class:"form-control" }}
+                                                                    <button type="button" class="btn btn-outline-light" onclick="togglePassword('id_password1', this)">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                                {% if user_form.password1.help_text %}
+                                                                    <small class="form-text text-muted">{{ user_form.password1.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if user_form.password1.errors %}
+                                                                    <div class="text-danger">
+                                                                        {% for error in user_form.password1.errors %}
+                                                                            <small>{{ error }}</small><br>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Password2 -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ user_form.password2.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                <div class="input-group">
+                                                                    {{ user_form.password2|add_class:"form-control" }}
+                                                                    <button type="button" class="btn btn-outline-light" onclick="togglePassword('id_password2', this)">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                                {% if user_form.password2.errors %}
+                                                                    <div class="text-danger">
+                                                                        {% for error in user_form.password2.errors %}
+                                                                            <small>{{ error }}</small><br>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Dados do Perfil -->
+                                                <div class="ibox">
+                                                    <div class="ibox-title pb-3 pt-3">
+                                                        <h4>Dados do Cliente</h4>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        <!-- Nome Completo -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.nome_completo.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.nome_completo|add_class:"form-control" }}
+                                                                <small class="form-text text-muted">Este nome será usado para preencher automaticamente o nome no sistema</small>
+                                                                {% if perfil_form.nome_completo.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.nome_completo.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- CPF -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.cpf.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.cpf|add_class:"form-control" }}
+                                                                {% if perfil_form.cpf.help_text %}
+                                                                    <small class="form-text text-muted">{{ perfil_form.cpf.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if perfil_form.cpf.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.cpf.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- CNPJ -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.cnpj.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.cnpj|add_class:"form-control" }}
+                                                                {% if perfil_form.cnpj.help_text %}
+                                                                    <small class="form-text text-muted">{{ perfil_form.cnpj.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if perfil_form.cnpj.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.cnpj.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- RG/IE -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.rg_ie.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.rg_ie|add_class:"form-control" }}
+                                                                {% if perfil_form.rg_ie.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.rg_ie.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- UF Emissão -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.emis_uf.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.emis_uf|add_class:"form-control" }}
+                                                                {% if perfil_form.emis_uf.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.emis_uf.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Data Nascimento -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.nasc_fund.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.nasc_fund|add_class:"form-control" }}
+                                                                {% if perfil_form.nasc_fund.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.nasc_fund.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Telefone -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.telefone.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.telefone|add_class:"form-control" }}
+                                                                {% if perfil_form.telefone.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.telefone.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Celular -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.celular.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.celular|add_class:"form-control" }}
+                                                                {% if perfil_form.celular.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.celular.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Endereço -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_cep.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_cep|add_class:"form-control" }}
+                                                                {% if perfil_form.end_cep.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_cep.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_rua_av.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_rua_av|add_class:"form-control" }}
+                                                                {% if perfil_form.end_rua_av.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_rua_av.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_numero.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_numero|add_class:"form-control" }}
+                                                                {% if perfil_form.end_numero.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_numero.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_bairro.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_bairro|add_class:"form-control" }}
+                                                                {% if perfil_form.end_bairro.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_bairro.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_cidade.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_cidade|add_class:"form-control" }}
+                                                                {% if perfil_form.end_cidade.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_cidade.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_estado.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_estado|add_class:"form-control" }}
+                                                                {% if perfil_form.end_estado.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_estado.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Campos de Propriedade -->
+                                                <div class="ibox">
+                                                    <div class="ibox-title pb-3 pt-3">
+                                                        <h4>Dados da Propriedade (Opcional)</h4>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        <!-- Nome da Propriedade -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.propriedade.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.propriedade|add_class:"form-control" }}
+                                                                {% if perfil_form.propriedade.help_text %}
+                                                                    <small class="form-text text-muted">{{ perfil_form.propriedade.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if perfil_form.propriedade.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.propriedade.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Cidade da Propriedade -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.propr_cidade.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.propr_cidade|add_class:"form-control" }}
+                                                                {% if perfil_form.propr_cidade.help_text %}
+                                                                    <small class="form-text text-muted">{{ perfil_form.propr_cidade.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if perfil_form.propr_cidade.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.propr_cidade.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Estado da Propriedade -->
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.propr_estado.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.propr_estado|add_class:"form-select" }}
+                                                                {% if perfil_form.propr_estado.help_text %}
+                                                                    <small class="form-text text-muted">{{ perfil_form.propr_estado.help_text }}</small>
+                                                                {% endif %}
+                                                                {% if perfil_form.propr_estado.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.propr_estado.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botão de Envio -->
+                                                <div class="form-group row pb-2">
+                                                    <div class="col-lg-10 mt-3">
+                                                        <button class="btn btn-primary btn-lg" type="submit">Fazer meu cadastro</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                  </div> <!-- end col-->
+                </div> <!-- end row-->
+              </div> <!-- end card-body-->
+            </div> <!-- end card-->
+          </div> <!-- end col-->
+        </div> <!-- end row-->
+
+      </div>    
+
+    </div> <!-- container -->
+  </section>
+
+{% endblock %}
+
+{% block extra_javascript %}
+<!-- Landing Page js -->
+<script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
+<script src="{% static 'frontend/assets/plugins/select2/select2.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#id_cpf').mask('000.000.000-00');
+        $('#id_cnpj').mask('00.000.000/0000-00');
+        $('#id_cpf_repres').mask('000.000.000-00');
+        $('#id_end_cep').mask('00000-000');
+        $('#id_telefone').mask('(00) 0000-0000');
+        $('#id_celular').mask('(00) 90000-0000');
+
+        // Restringe username para letras minúsculas, sem acentos e sem espaços
+        $('#id_username').on('input', function() {
+            let val = $(this).val();
+            // Remove acentos, espaços e caracteres não permitidos
+            val = val.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // remove acentos
+            val = val.toLowerCase(); // converte maiúsculas para minúsculas
+            val = val.replace(/[^a-z0-9]/g, ''); // permite apenas minúsculas e números
+            $(this).val(val);
+        });
+
+        // Inicializa o Select2 para os campos de estado
+        $('#id_emis_uf, #id_end_estado').select2();
+
+        // Preenche os campos de endereço com base no CEP
+        $('#id_end_cep').on('blur', function() {
+            var cep = $(this).val().replace(/\D/g, '');
+            if (cep.length === 8) {
+                $.getJSON('https://viacep.com.br/ws/' + cep + '/json/', function(data) {
+                    if (!("erro" in data)) {
+                        $('#id_end_rua_av').val(data.logradouro);
+                        $('#id_end_bairro').val(data.bairro);
+                        $('#id_end_cidade').val(data.localidade);
+                        $('#id_end_estado').val(data.uf).trigger('change'); // para select2
+                    } else {
+                        alert('CEP não encontrado.');
+                    }
+                });
+            }
+        });        
+    });
+
+    // Função para alternar a visibilidade da senha
+    function togglePassword(fieldId, btn) {
+        var input = document.getElementById(fieldId);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.querySelector('i').classList.remove('fa-eye');
+            btn.querySelector('i').classList.add('fa-eye-slash');
+        } else {
+            input.type = "password";
+            btn.querySelector('i').classList.remove('fa-eye-slash');
+            btn.querySelector('i').classList.add('fa-eye');
+        }
+    }
+
+</script>
+{% endblock %}

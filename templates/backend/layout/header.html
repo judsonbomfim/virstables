@@ -1,0 +1,50 @@
+{% load static %}
+{% load sass_tags %}
+
+<!-- Page Header Start-->
+<div class="page-header">
+  <div class="header-wrapper row m-0">
+    <div class="header-logo-wrapper col-auto p-0">
+      <div class="logo-wrapper"><a href="{% url 'home_backend:home' %}"><img class="img-fluid for-light" src="{% static 'backend/images/lgo_virtual_stables_site_w.png' %}" alt=""><img class="img-fluid for-dark" src="{% static 'backend/images/lgo_virtual_stables_site_w.png' %}" alt=""></a></div>
+      <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i></div>
+    </div>
+    <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0 h-100">
+      <div class="notification-slider">
+        <div class="d-flex h-100"></div>
+        <div class="d-flex h-100"></div>
+      </div>
+    </div>
+    <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
+      <ul class="nav-menus">
+        <li class="profile-nav onhover-dropdown pe-0 py-0">
+          <div class="d-flex profile-media">
+            <i data-feather="user"></i>
+            <div class="flex-grow-1">
+              <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+              <p class="mb-0">
+                {% for group in request.user.groups.all %}
+                  {{ group.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                  Sem grupo
+                {% endfor %}
+                <i class="middle fa-solid fa-angle-down"></i>
+              </p>
+            </div>
+          </div>
+          <ul class="profile-dropdown onhover-show-div">
+            <li>
+              <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i data-feather="log-in"></i>
+                <span>Sair</span>
+              </a>
+              <form id="logout-form" action="{% url 'users_frontend:logout' %}" method="post" style="display: none;">
+                {% csrf_token %}
+              </form>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!-- Page Header Ends-->

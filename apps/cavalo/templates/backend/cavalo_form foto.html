@@ -1,0 +1,123 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css_custom %}
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.snow.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.bubble.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/dropzone.min.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/filepond.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/filepond-plugin-image-preview.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card">
+        <div class="card-header border-l-primary border-3">
+          <h5 class="card-title">{{ page_subtitle }}</h5>
+        </div>
+        <div class="card-body">
+          <form action="{% url 'cavalo_backend:cavalo_foto_adicionar' cavalo.id %}" class="dropzone dropzone-secondary" id="myDropzone" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="cavalo_id" value="{{ cavalo.id }}" />
+            <div class="dz-message needsclick">
+              <i class="fa-solid fa-cloud-arrow-up fa-fade"></i>
+              <h6>Solte os arquivos aqui ou clique para fazer upload.</h6><span class="note needsclick">(Esta é apenas uma área de lançamento de demonstração. Os arquivos selecionados <strong>não</strong> são realmente enviados.)</span>
+            </div>
+          </form>
+          <br>
+          <a href="{% url 'cavalo_backend:cavalo_detalhe' cavalo.pk %}" class="btn btn-outline-primary"><i class="icofont icofont-save"></i> Concluir</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'backend/assets/js/editors/quill.js' %}"></script>
+  <script src="{% static 'backend/assets/js/custom-add-product3.js' %}"></script>
+  <script src="{% static 'backend/assets/js/dropzone/dropzone.min.js' %}"></script>
+  <script src="{% static 'backend/assets/js/dropzone/dropzone-script.js' %}"></script>
+  <script src="{% static 'backend/assets/js/filepond/filepond-plugin-image-preview.js' %}"></script>
+  <script src="{% static 'backend/assets/js/filepond/filepond-plugin-file-rename.js' %}"></script>
+  <script src="{% static 'backend/assets/js/filepond/filepond-plugin-image-transform.js' %}"></script>
+  <script src="{% static 'backend/assets/js/filepond/filepond.js' %}"></script>
+  <script src="{% static 'backend/assets/js/filepond/custom-filepond.js' %}"></script>
+  <script src="{% static 'backend/assets/js/height-equal.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.5/dist/autoNumeric.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Máscara lance
+      const lance_inicialInput = document.getElementById('{{ form.lance_inicial.id_for_label }}')
+      if (lance_inicialInput) {
+        new AutoNumeric(lance_inicialInput, {
+          currencySymbol: 'R$ ',
+          decimalCharacter: ',',
+          digitGroupSeparator: '.',
+          decimalPlaces: 2,
+          minimumValue: '0',
+          modifyValueOnWheel: false,
+          unformatOnSubmit: true
+        })
+      }
+      // Máscara para altura (ex: 1.62)
+      const alturaInput = document.getElementById('{{ form.altura.id_for_label }}')
+      if (alturaInput) {
+        new AutoNumeric(alturaInput, {
+          decimalCharacter: ',',
+          digitGroupSeparator: '',
+          decimalPlaces: 2,
+          minimumValue: '0',
+          maximumValue: '3.00', // ou '3.99' ou '9.99' conforme sua necessidade
+          modifyValueOnWheel: false,
+          unformatOnSubmit: true
+        })
+      }
+    })
+  </script>
+
+  <script>
+    Dropzone.options.myDropzone = {
+      paramName: 'file', // Nome do campo de arquivo esperado na view
+      maxFilesize: 5, // Tamanho máximo em MB
+      acceptedFiles: 'image/*', // Apenas imagens
+      addRemoveLinks: true, // Links para remover arquivos
+      dictDefaultMessage: 'Solte os arquivos aqui ou clique para fazer upload',
+      headers: {
+        'X-CSRF-Token': '{{ csrf_token }}' // Envia o token CSRF
+      },
+      init: function () {
+        this.on('success', function (file, response) {
+          if (response.status === 'ok') {
+            console.log('Upload bem-sucedido:', response.fotos)
+          } else {
+            console.error('Erro no upload:', response.erros)
+          }
+        })
+        this.on('error', function (file, errorMessage) {
+          console.error('Erro no upload:', errorMessage)
+        })
+      }
+    }
+  </script>
+
+  <script>
+    // Editor para descrição
+    const quillDescricao = new Quill('#editor-descricao', { theme: 'snow' })
+    const descricaoInput = document.getElementById('{{ form.descricao.id_for_label }}')
+    quillDescricao.root.innerHTML = descricaoInput.value
+    
+    // Editor para informações
+    const quillInformacoes = new Quill('#editor-informacoes', { theme: 'snow' })
+    const informacoesInput = document.getElementById('{{ form.informacoes.id_for_label }}')
+    quillInformacoes.root.innerHTML = informacoesInput.value
+    
+    // Atualiza os campos hidden antes de enviar o formulário
+    const form = document.querySelector('form')
+    form.addEventListener('submit', function (event) {
+      descricaoInput.value = quillDescricao.root.innerHTML
+      informacoesInput.value = quillInformacoes.root.innerHTML
+    })
+  </script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container-fluid basic_table">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ leilao.nome }}</h5>
+            <a href="{% url 'leilao_backend:leilao_editar' leilao.pk %}" class="btn btn-outline-primary"><i class="icofont icofont-edit"></i> Editar Leilão</a>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                {% if leilao.imagem %}
+                  <img src="{{ leilao.imagem.url }}" alt="Imagem do Leilão" class="img-fluid mb-3" />
+                {% else %}
+                  <p class="text-muted">Nenhuma imagem disponível.</p>
+                {% endif %}
+              </div>
+              <div class="col-md-9">
+                <p>
+                  <b>Data do Leilão:</b> {{ leilao.data_leilao|date:'d/m/Y - H:i' }}
+                </p>
+                <p>
+                  <b>Data Início dos Lances:</b> {{ leilao.data_inicio|date:'d/m/Y - H:i' }}
+                </p>
+                <p>
+                  <b>Data Fim dos Lances:</b> {{ leilao.data_fim|date:'d/m/Y - H:i' }}
+                </p>
+              </div>
+            </div>
+            {% if leilao.descricao %}
+              <hr />
+              <p>
+                <b>DESCRIÇÃO:</b> {{ leilao.descricao|safe }}
+              </p>
+            {% endif %}
+            {% if leilao.termos %}
+              <div class="mb-3">
+                <a href="{{ leilao.termos.url }}" target="_blank" class="btn btn-outline-primary">
+                  <i class="ti ti-file-text me-2"></i>
+                  Baixar Termos do Leilão (PDF)
+                </a>
+              </div>
+            {% endif %}
+              <hr />
+            <p>
+              <b>Status:</b> {{ leilao.get_status_display }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Lista de Cavalos</h5>
+            <a href="{% url 'cavalo_backend:cavalo_adicionar_leilao' leilao.id %}" class="btn btn-outline-primary"><i class="icofont icofont-plus"></i> Adicionar Cavalo</a>
+          </div>
+          <div class="card-block row">
+            <div class="col-sm-12 col-lg-12 col-xl-12">
+              <div class="table-responsive custom-scrollbar">
+                <table class="table">
+                  <thead class="table-success">
+                    <tr>
+                      <th scope="col">Nome</th>
+                      <th scope="col">Raça</th>
+                      <th scope="col">Último Lance</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for cavalo in cavalos %}
+                      <tr>
+                        <td scope="row">{{ cavalo.nome }}</td>
+                        <td>
+                          {% if cavalo.raca %}
+                            {{ cavalo.raca }}
+                          {% else %}
+                            -
+                          {% endif %}
+                        </td>
+                        <td>
+                          {% if cavalo.raca %}
+
+                          {% else %}
+                            -
+                          {% endif %}
+                        </td>
+                        <td scope="row">{{ cavalo.get_status_display }}</td>
+                        <td>
+                          <a href="{% url 'cavalo_backend:cavalo_detalhe' cavalo.id %}"><i class="icofont icofont-file-text text-primary fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Ver Detalhes"></i></a>
+                          <a href="{% url 'cavalo_backend:cavalo_editar' cavalo.id %}"><i class="icofont icofont-edit text-info fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Editar Leilão"></i></a>
+                          <a href="{% url 'cavalo_backend:cavalo_foto_adicionar' cavalo.id %}"><i class="icofont icofont-image text-warning fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Adicionar Foto"></i></a>
+                          <a href="{% url 'cavalo_backend:cavalo_video_adicionar' cavalo.id %}"><i class="icofont icofont-brand-youtube text-secondary fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Adicionar Vídeo"></i></a>
+                          <a href=""><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Leilão"></i></a>
+                        </td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="4">Nenhum leilão ativo no momento.</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'backend/assets/js/tooltip-init.js' %}"></script>
+{% endblock %}

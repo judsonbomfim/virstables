@@ -1,0 +1,97 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card">
+        <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Cavalos Individuais</h5>
+          <a href="{% url 'cavalo_backend:cavalo_adicionar' %}" class="btn btn-outline-primary"><i class="icofont icofont-plus"></i> Adicionar Cavalo</a>
+        </div>
+        <div class="card-block row">
+          <div class="col-sm-12 col-lg-12 col-xl-12">
+            <div class="table-responsive custom-scrollbar">
+              <table class="table">
+                <thead class="table-secondary">
+                  <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Raça</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for cavalo in cavalos %}
+                    <tr>
+                      <th scope="row">{{ cavalo.nome }}</th>
+                      <td>
+                        {% if cavalo.raca %}
+                          {{ cavalo.raca }}
+                        {% else %}
+                          -
+                        {% endif %}
+                      </td>
+                      <th scope="row">{{ cavalo.get_status_display }}</th>
+                      <td>
+                        <a href="{% url 'cavalo_backend:cavalo_detalhe' cavalo.id %}"><i class="icofont icofont-file-text text-primary fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Ver Detalhes"></i></a>
+                        <a href="{% url 'cavalo_backend:cavalo_editar' cavalo.id %}"><i class="icofont icofont-edit text-info fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Editar Cavalo"></i></a>
+                        <a href="#" class="abrir-modal-excluir" data-cavalo-id="{{ cavalo.pk }}" data-cavalo-nome="{{ cavalo.nome }}"><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Cavalo"></i></a>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="4">Nenhum leilão ativo no momento.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação -->
+  <div class="modal fade" id="modalExcluirCavalo" tabindex="-1" aria-labelledby="modalExcluirCavaloLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content border-danger">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalExcluirCavaloLabel"><i class="icofont icofont-ui-delete"></i> Excluir Cavalo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Tem certeza que deseja excluir o cavalo <strong id="modalCavaloNome"></strong>?<br />
+          </p>
+        </div>
+        <div class="modal-footer">
+          <form id="formExcluirCavalo" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+          </form>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+  <script>
+    document.querySelectorAll('.abrir-modal-excluir').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault()
+        var cavaloId = this.getAttribute('data-cavalo-id')
+        var cavaloNome = this.getAttribute('data-cavalo-nome')
+        document.getElementById('modalCavaloNome').textContent = cavaloNome
+        var form = document.getElementById('formExcluirCavalo')
+        form.action = '/painel/cavalo/excluir/' + cavaloId + '/'
+        var modal = new bootstrap.Modal(document.getElementById('modalExcluirCavalo'))
+        modal.show()
+      })
+    })
+  </script>
+{% endblock %}
