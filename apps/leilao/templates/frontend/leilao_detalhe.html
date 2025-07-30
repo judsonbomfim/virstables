@@ -82,14 +82,16 @@
             {% for item in cavalos_com_lances %}
               {% with cavalo=item.cavalo ultimo_lance=item.ultimo_lance %}
               <div class="col">
-                <article class="card h-100 mb-2 shadow-lg">
+                <article class="card mb-2 shadow-lg">
                   <!-- Card Body -->
                   <div class="card-body mb-0 pb-0">
-                    
+                    {% if cavalo.lote %}
+                    <div class="badge text-bg-success badge-label fs-base rounded position-absolute top-0 start-0 m-3">Lote {{cavalo.lote|stringformat:"02d"}}</div>
+                    {% endif %}
                     {% with destaque=cavalo.fotos.all|foto_destaque %}
-                      <div class="img-quadrada bg-light-subtle p-3 mb-3 border border-light rounded bg-light-subtle w-100 mb-2"
-                        style="background-image: url('{% if destaque %}{{ destaque.imagem.url }}{% elif cavalo.fotos.all %}{{ cavalo.fotos.all.0.imagem.url }}{% else %}{% static 'images/products/1.png' %}{% endif %}');">
-                      </div>
+                    <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
+                      <img src="{{ destaque.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
+                    </a>
                     {% endwith %}
                     
                     <!-- Title -->

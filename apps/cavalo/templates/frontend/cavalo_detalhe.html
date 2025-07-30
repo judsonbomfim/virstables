@@ -46,7 +46,7 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-xl-4">
-                    <div class="card card-top-sticky border-0">
+                    <div class="card border-0">
                       <div class="card-body p-0">
                         <!-- Crossfade -->
                         
@@ -152,11 +152,13 @@
 
                   <div class="col-xl-8">
                     <div class="p-0 p-md-4">
+                      {% if cavalo.lote %}
                       <div class="d-flex align-items-center justify-content-between">
                         <div>
-                          <span class="badge bg-success-subtle text-success px-2 py-1 fs-base rounded-pill">Lote {{cavalo.lote|stringformat:"02d"}}</span>
+                          <span class="badge bg-success-subtle text-success px-2 py-1 fs-4 rounded-pill">Lote {{cavalo.lote|stringformat:"02d"}}</span>
                         </div>
                       </div>
+                      {% endif %}
                       <div class="mt-3 mb-5">
                         <h1 class="fs-x2">{{cavalo.nome}}</h1>
                       </div>

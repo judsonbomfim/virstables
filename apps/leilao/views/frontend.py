@@ -15,12 +15,12 @@ def data_atual():
 
 def leilao_detalhe(request, slug):
     leilao = Leilao.objects.get(slug=slug)
-    cavalos = leilao.cavalos_leilao.all()
+    cavalos = leilao.cavalos_leilao.all().order_by('lote')
     
     # Buscar o último lance para cada cavalo
     cavalos_com_lances = []
     for cavalo in cavalos:
-        ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor', '-data').first()
+        ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor').first()
         cavalos_com_lances.append({
             'cavalo': cavalo,
             'ultimo_lance': ultimo_lance

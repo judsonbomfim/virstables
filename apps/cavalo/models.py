@@ -55,6 +55,9 @@ class Cavalo(models.Model):
         help_text="Status do cavalo"
     )
     
+    class Meta:
+        unique_together = ['leilao', 'lote']
+    
     def __str__(self):
         return self.nome
     

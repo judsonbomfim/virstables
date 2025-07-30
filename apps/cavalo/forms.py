@@ -1,5 +1,5 @@
 from django import forms
-
+from django.core.exceptions import ValidationError
 from apps.leilao.models import Leilao
 from .models import Cavalo, Foto, Video
 
@@ -23,6 +23,9 @@ class CavaloForm(forms.ModelForm):
             'registro': {
                 'unique': "Já existe um cavalo com este registro.",
             },
+            'lote': {
+                'required': "O número do lote é obrigatório.",
+            },
         }
         widgets = {
             # Define widgets if needed, e.g., for better UI
@@ -32,6 +35,27 @@ class CavaloForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Filtra apenas leilões com status 'aberto'
         self.fields['leilao'].queryset = Leilao.objects.filter(status='ativo')
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        leilao = cleaned_data.get('leilao')
+        lote = cleaned_data.get('lote')
+        
+        if leilao and lote:
+            # Verificar se já existe outro cavalo com o mesmo lote neste leilão
+            conflito = Cavalo.objects.filter(leilao=leilao, lote=lote)
+            
+            # Se estamos editando um cavalo existente, excluir ele da verificação
+            if self.instance.pk:
+                conflito = conflito.exclude(pk=self.instance.pk)
+            
+            if conflito.exists():
+                cavalo_conflito = conflito.first()
+                raise ValidationError({
+                    'lote': f'O lote {lote} já está sendo usado pelo cavalo "{cavalo_conflito.nome}" neste leilão.'
+                })
+        
+        return cleaned_data
 
 class VideoForm(forms.ModelForm):
     class Meta:
