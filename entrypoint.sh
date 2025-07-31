@@ -2,5 +2,4 @@
 python manage.py migrate
 python manage.py collectstatic --noinput
 nohup gunicorn core.wsgi:application --bind 0.0.0.0:8000 --log-level=info --timeout 120 
-# nohup celery -A core worker --loglevel=info &:
 tail -f /dev/null
