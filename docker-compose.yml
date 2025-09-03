@@ -22,6 +22,13 @@ services:
       - media_data:/app/media
     env_file:
       - .env
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_USER: ${DB_USER}
+      DB_PORT: ${DB_PORT:-5432}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
     depends_on:
       postgres:
         condition: service_healthy
@@ -32,7 +39,7 @@ services:
       - app-network
     command: >
       sh -c "
-        while ! pg_isready -h postgres -p 5432 -U postgres; do
+        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\" -U \"$DB_USER\"; do
           echo 'Aguardando PostgreSQL...'
           sleep 2
         done
@@ -58,7 +65,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -71,13 +78,19 @@ services:
     networks:
       - app-network
 
-  # ...existing code...
   celery:
     build:
       context: .
       dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_USER: ${DB_USER}
+      DB_PORT: ${DB_PORT:-5432}
     restart: always
     networks:
       - app-network
@@ -87,8 +100,7 @@ services:
       - app
     command: >
       sh -c "
-        # espera o Postgres ficar pronto (mesma lógica do app)
-        while ! pg_isready -h postgres -p 5432 -U postgres; do
+        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\" -U \"$DB_USER\"; do
           echo 'Aguardando PostgreSQL para Celery...'
           sleep 2
         done
@@ -102,6 +114,13 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_USER: ${DB_USER}
+      DB_PORT: ${DB_PORT:-5432}
     restart: always
     networks:
       - app-network
@@ -111,7 +130,7 @@ services:
       - app
     command: >
       sh -c "
-        while ! pg_isready -h postgres -p 5432 -U postgres; do
+        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\" -U \"$DB_USER\"; do
           echo 'Aguardando PostgreSQL para Celery Beat...'
           sleep 2
         done
