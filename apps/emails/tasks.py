@@ -76,7 +76,7 @@ def email_lance_confirmado(id):
     valor_lance = lance.valor if lance else "R$ 0,00"
     nome_cliente = cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
-    email_cliente = cliente.email if cliente else settings.DEFAULT_FROM_EMAIL
+    email_cliente = lance.usuario.email if lance else settings.DEFAULT_FROM_EMAIL
 
     context = {
         'url_site': 'https://www.virtualstables.com.br/',
@@ -110,7 +110,7 @@ def email_lance_coberto(id):
     valor_lance = lance.valor if lance else "R$ 0,00"
     nome_cliente = cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
-    email_cliente = cliente.email if cliente else settings.DEFAULT_FROM_EMAIL
+    email_cliente = lance.usuario.email if lance else settings.DEFAULT_FROM_EMAIL
 
     context = {
         'url_site': 'https://www.virtualstables.com.br/',
