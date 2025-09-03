@@ -26,7 +26,7 @@ def email_cadastro_analise(id):
     }
     html_content = render_to_string('partials/cadastro_analise.html', context)
     text_content = strip_tags(html_content)
-    subject = f"{title_email} - {nome_cliente}" if cliente else title_email
+    subject = f"{title_email}"
     # Enviar E-mail
     send_email(html_content, text_content, subject, [email_cliente])
 
@@ -47,7 +47,7 @@ def email_cadastro_confirmado(id):
     }
     html_content = render_to_string('partials/cadastro_confirmado.html', context)
     text_content = strip_tags(html_content)
-    subject = f"{title_email} - {nome_cliente}" if cliente else title_email
+    subject = f"{title_email}"
     # Enviar E-mail
     send_email(html_content, text_content, subject, [email_cliente])
 
@@ -73,7 +73,7 @@ def email_lance_confirmado(id):
     }
     html_content = render_to_string('partials/lance_confirmado.html', context)
     text_content = strip_tags(html_content)
-    subject = f"{title_email} - {nome_cliente}"
+    subject = f"{title_email}"
     # Enviar E-mail
     send_email(html_content, text_content, subject, [email_cliente])
 
@@ -98,6 +98,6 @@ def email_lance_coberto(id):
     }
     html_content = render_to_string('partials/lance_coberto.html', context)
     text_content = strip_tags(html_content)
-    subject = f"{title_email} - {nome_cliente}"
+    subject = f"{title_email}"
     # Enviar E-mail
     send_email(html_content, text_content, subject, [email_cliente])
