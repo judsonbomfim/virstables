@@ -39,7 +39,7 @@ services:
       - app-network
     command: >
       sh -c "
-        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\" -q; do
+        while ! pg_isready -h \$$DB_HOST -p \$$DB_PORT -q; do
           echo 'Aguardando PostgreSQL...'
           sleep 2
         done
