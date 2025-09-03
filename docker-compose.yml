@@ -22,16 +22,8 @@ services:
       - media_data:/app/media
     env_file:
       - .env
-    environment:
-      DB_HOST: ${DB_HOST:-postgres}
-      DB_USER: ${DB_USER}
-      DB_PORT: ${DB_PORT:-5432}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
-      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     restart: always
     expose:
       - "8000"
@@ -39,13 +31,10 @@ services:
       - app-network
     command: >
       sh -c "
-        while ! pg_isready -h \$$DB_HOST -p \$$DB_PORT -q; do
-          echo 'Aguardando PostgreSQL...'
-          sleep 2
-        done
-        echo 'PostgreSQL pronto!'
-        python manage.py migrate &&
-        python manage.py collectstatic --noinput &&
+        echo 'Aguardando PostgreSQL...'
+        sleep 10
+        python manage.py migrate
+        python manage.py collectstatic --noinput
         gunicorn core.wsgi:application --bind 0.0.0.0:8000
       "
   
@@ -64,11 +53,6 @@ services:
     restart: always
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p ${DB_PORT:-5432} -U ${POSTGRES_USER} -d postgres -q"]
-      interval: 10s
-      timeout: 5s
-      retries: 6
 
   redis:
     image: redis:7
@@ -84,13 +68,6 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
-    environment:
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
-      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      DB_HOST: ${DB_HOST:-postgres}
-      DB_USER: ${DB_USER}
-      DB_PORT: ${DB_PORT:-5432}
     restart: always
     networks:
       - app-network
@@ -98,15 +75,7 @@ services:
       - redis
       - postgres
       - app
-    command: >
-      sh -c "
-        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\" -q; do
-          echo 'Aguardando PostgreSQL para Celery...'
-          sleep 2
-        done
-        echo 'PostgreSQL pronto para Celery!'
-        celery -A core worker --loglevel=info
-      "
+    command: celery -A core worker --loglevel=info
 
   celery-beat:
     build:
@@ -114,13 +83,6 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
-    environment:
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
-      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      DB_HOST: ${DB_HOST:-postgres}
-      DB_USER: ${DB_USER}
-      DB_PORT: ${DB_PORT:-5432}
     restart: always
     networks:
       - app-network
@@ -128,15 +90,7 @@ services:
       - redis
       - postgres
       - app
-    command: >
-      sh -c "
-        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\" -q; do
-          echo 'Aguardando PostgreSQL para Celery Beat...'
-          sleep 2
-        done
-        echo 'PostgreSQL pronto para Celery Beat!'
-        celery -A core beat --loglevel=info
-      "
+    command: celery -A core beat --loglevel=info
 
 volumes:
   static_data:
