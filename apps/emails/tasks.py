@@ -55,12 +55,12 @@ def email_cadastro_confirmado(id):
 def email_lance_confirmado(id):
 
     print(">>>>> Enviando email de lance confirmado")
-    lance = Lance.objects.get(pk=id) if id else None
-    cavalo = lance.cavalo if lance else "Cavalo Desconhecido"
-    valor_lance = lance.valor if lance else "R$ 0,00"
-    nome_cliente = lance.usuario.perfil_cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
+    lance = Lance.objects.get(pk=id)    
+    cavalo = str(lance.cavalo)
+    valor_lance = f"R$ {lance.valor}"
+    nome_cliente = str(lance.usuario.perfil_cliente.nome_completo)
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
-    email_cliente = lance.usuario.email if lance else settings.DEFAULT_FROM_EMAIL
+    email_cliente = lance.usuario.email
     title_email = f'Lance Confirmado - {cavalo}'
     
     context = {
@@ -79,13 +79,13 @@ def email_lance_confirmado(id):
 
 @shared_task
 def email_lance_coberto(id):
-
-    lance = Lance.objects.get(pk=id) if id else None
-    cavalo = lance.cavalo if lance else "Cavalo Desconhecido"
-    valor_lance = lance.valor if lance else "R$ 0,00"
-    nome_cliente = lance.usuario.perfil_cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
+    
+    lance = Lance.objects.get(pk=id)    
+    cavalo = str(lance.cavalo)
+    valor_lance = f"R$ {lance.valor}"
+    nome_cliente = str(lance.usuario.perfil_cliente.nome_completo)
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
-    email_cliente = lance.usuario.email if lance else settings.DEFAULT_FROM_EMAIL
+    email_cliente = lance.usuario.email
     title_email = f"Lance Coberto - {cavalo}"
 
     context = {
