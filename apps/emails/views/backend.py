@@ -4,9 +4,9 @@ from django.shortcuts import render
 from apps.emails.tasks import email_lance_confirmado
 
 
-def viewEmail(request):
+def viewEmail(id=None):
     
-    email_lance_confirmado(1)
+    email_lance_confirmado(id)
     
     context = {
         'url_site': 'https://www.virtualstables.com.br/',
