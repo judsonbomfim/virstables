@@ -14,7 +14,7 @@ def email_cadastro_analise(id):
     cliente = PerfilCliente.objects.get(pk=id) if id else None
     nome_cliente = cliente.nome_completo if cliente else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
-    email_cliente = cliente.username.email if cliente else settings.DEFAULT_FROM_EMAIL
+    email_cliente = cliente.user.email if cliente else settings.DEFAULT_FROM_EMAIL
 
     context = {
         'url_site': 'https://www.virtualstables.com.br/',
@@ -43,7 +43,7 @@ def email_cadastro_confirmado(id):
     cliente = PerfilCliente.objects.get(pk=id) if id else None
     nome_cliente = cliente.nome_completo if cliente else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
-    email_cliente = cliente.username.email if cliente else settings.DEFAULT_FROM_EMAIL
+    email_cliente = cliente.user.email if cliente else settings.DEFAULT_FROM_EMAIL
 
     context = {
         'url_site': 'https://www.virtualstables.com.br/',
@@ -76,7 +76,7 @@ def email_lance_confirmado(id):
     valor_lance = lance.valor if lance else "R$ 0,00"
     nome_cliente = lance.usuario.perfil_cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
-    email_cliente = cliente.username.email if cliente else settings.DEFAULT_FROM_EMAIL
+    email_cliente = cliente.user.email if cliente else settings.DEFAULT_FROM_EMAIL
 
     context = {
         'url_site': 'https://www.virtualstables.com.br/',
@@ -110,7 +110,7 @@ def email_lance_coberto(id):
     valor_lance = lance.valor if lance else "R$ 0,00"
     nome_cliente = lance.usuario.perfil_cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
-    email_cliente = cliente.username.email if cliente else settings.DEFAULT_FROM_EMAIL
+    email_cliente = cliente.user.email if cliente else settings.DEFAULT_FROM_EMAIL
 
     context = {
         'url_site': 'https://www.virtualstables.com.br/',
