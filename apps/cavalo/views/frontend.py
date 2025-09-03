@@ -53,7 +53,9 @@ def dar_lance(request, cavalo_id):
             from django.core.exceptions import ValidationError
             
             lance_anterior = Lance.objects.filter(cavalo=cavalo).order_by('-data').first()
-            if lance_anterior:
+            lance_usuario = lance_anterior.usuario.id
+            # se usuário atual for diferente do ultimo lance
+            if lance_anterior and lance_usuario != request.user.id:
                 email_lance_coberto.delay(lance_anterior.id)
             
             lance = Lance(

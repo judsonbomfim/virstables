@@ -7,14 +7,6 @@ from django.core.mail import EmailMultiAlternatives
 
 def send_email(html_content, text_content, subject, email_cliente):
 
-    print('>>>>>>>>>>>>>>>>>>>> Enviando e-mail para:', email_cliente)
-    print('>>>>>>>>>>>>>>>>>>>> Assunto:', subject)
-    print('>>>>>>>>>>>>>>>>>>>> Corpo do e-mail:')
-    print(html_content)
-    print('>>>>>>>>>>>>>>>>>>>> Corpo do e-mail em texto:')
-    print(text_content)
-    print('>>>>>>>>>>>>>>>>>>>>')
-
     email = EmailMultiAlternatives(
         #subject
         subject,
