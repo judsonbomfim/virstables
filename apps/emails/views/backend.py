@@ -4,7 +4,7 @@ from django.shortcuts import render
 from apps.emails.tasks import email_lance_confirmado
 
 
-def viewEmail(id=None):
+def viewEmail(request, id):
     
     email_lance_confirmado(id)
     
@@ -15,4 +15,4 @@ def viewEmail(id=None):
         'valor_lance': 'R$ 100,00',
         'cavalo': 'TEMPLARIO VP',
     }
-    return render('partials/lance_coberto.html', context)
+    return render(request, 'partials/lance_coberto.html', context)
