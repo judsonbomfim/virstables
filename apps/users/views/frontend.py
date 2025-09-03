@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
+from apps.emails.tasks import email_cadastro_analise
 from ..forms import CustomUserCreationForm, PerfilClienteForm
 
 def cadastro(request):
@@ -33,7 +34,9 @@ def cadastro(request):
                 perfil = perfil_form.save(commit=False)
                 perfil.usuario = user
                 perfil.save()
-                
+
+                email_cadastro_analise.delay(perfil.id)
+
                 messages.success(request, 
                     f'Cadastro realizado com sucesso para {user.first_name} {user.last_name}! '
                     'Sua conta está em análise.')

@@ -23,18 +23,25 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
     restart: always
     expose:
       - "8000"
     networks:
       - app-network
     command: >
-      sh -c "python manage.py migrate &&
-            python manage.py collectstatic --noinput &&
-            gunicorn core.wsgi:application --bind 0.0.0.0:8000"
-
+      sh -c "
+        while ! pg_isready -h postgres -p 5432 -U postgres; do
+          echo 'Aguardando PostgreSQL...'
+          sleep 2
+        done
+        echo 'PostgreSQL pronto!'
+        python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        gunicorn core.wsgi:application --bind 0.0.0.0:8000
+      "
+  
   postgres:
     image: postgres:17
     environment:
@@ -50,6 +57,11 @@ services:
     restart: always
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7
@@ -58,6 +70,54 @@ services:
       - "6379:6379"
     networks:
       - app-network
+
+  # ...existing code...
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - app-network
+    depends_on:
+      - redis
+      - postgres
+      - app
+    command: >
+      sh -c "
+        # espera o Postgres ficar pronto (mesma lógica do app)
+        while ! pg_isready -h postgres -p 5432 -U postgres; do
+          echo 'Aguardando PostgreSQL para Celery...'
+          sleep 2
+        done
+        echo 'PostgreSQL pronto para Celery!'
+        celery -A core worker --loglevel=info
+      "
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - app-network
+    depends_on:
+      - redis
+      - postgres
+      - app
+    command: >
+      sh -c "
+        while ! pg_isready -h postgres -p 5432 -U postgres; do
+          echo 'Aguardando PostgreSQL para Celery Beat...'
+          sleep 2
+        done
+        echo 'PostgreSQL pronto para Celery Beat!'
+        celery -A core beat --loglevel=info
+      "
 
 volumes:
   static_data:

@@ -17,7 +17,8 @@ urlpatterns = [
     # URLs do Backend (painel administrativo personalizado)
     path('painel/', include('apps.home.urls_backend', namespace='home_backend')),
     path('painel/', include('apps.leilao.urls_backend', namespace='leilao_backend')),
-    path('painel/', include('apps.cavalo.urls_backend', namespace='cavalo_backend')),    
+    path('painel/', include('apps.cavalo.urls_backend', namespace='cavalo_backend')),
+    path('painel/', include('apps.emails.urls_backend', namespace='emails_backend')),
 ]
 
 

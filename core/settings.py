@@ -1,8 +1,8 @@
 from pathlib import Path
-import environ
-import urllib.parse
 import os
+import ssl
 from django.contrib.messages import constants as messages
+from celery.schedules import crontab
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = [
     h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',')
@@ -27,8 +27,6 @@ CSRF_TRUSTED_ORIGINS = [
     a.strip().replace('\\x3a', ':') for a in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
     if a.strip()
 ]
-
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
@@ -41,14 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django_celery_beat',
     'rest_framework',
     'sass_processor',
     'widget_tweaks',
-    'apps.home.apps.HomeConfig',
-    'apps.users.apps.UsersConfig',
     'apps.cavalo.apps.CavaloConfig',
+    'apps.emails.apps.EmailsConfig',
+    'apps.home.apps.HomeConfig',
     'apps.leilao.apps.LeilaoConfig',
+    'apps.site_config.apps.SiteConfigConfig',
+    'apps.users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -66,13 +65,15 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.site_config.context_processors.site_settings',
             ],
         },
     },
@@ -165,6 +166,36 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # CELERY
+REDIS_URL = os.getenv('REDIS_URL')
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE')
+CELERY_ENABLE_UTC = True
+CELERY_ENABLE_REMOTE_CONTROL = False
+
+
+# Adicione a configuração de agendamento de tarefas aqui
+CELERY_BEAT_SCHEDULE = {
+    # Exemplo de tarefa: 'nome-da-tarefa-agendada'
+    # 'send-summary-every-morning': {
+    #     'task': 'apps.emails.tasks.sua_tarefa_periodica',  # Caminho para a sua função de tarefa
+    #     'schedule': crontab(hour=8, minute=0),  # Executa todo dia às 8h da manhã
+    #     # 'args': (16, 16), # Argumentos para a tarefa, se houver
+    # },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
 
 CACHES = {
     'default': {
@@ -176,24 +207,7 @@ CACHES = {
     }
 }
 
-# CELERY_BROKER_URL = str(os.getenv('CELERY_BROKER_URL'))
-# CELERY_RESULT_BACKEND = str(os.getenv('CELERY_RESULT_BACKEND'))
 
-# CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-# CELERY_BEAT_SYNC_EVERY = None
-
-# CELERY_TIMEZONE = 'America/Sao_Paulo'
-
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ],
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.SessionAuthentication',
-#         'rest_framework.authentication.BasicAuthentication',
-#     ],
-# }
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'primary',
@@ -202,6 +216,20 @@ MESSAGE_TAGS = {
     messages.INFO: 'info',
     messages.WARNING: 'warning',
 }
+
+# E-mail
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# else:
+#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = str(os.getenv('EMAIL_HOST'))
+EMAIL_PORT = 587
+EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
+EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = str(os.getenv('DEFAULT_FROM_EMAIL'))
 
 
 # # Configurações AWS

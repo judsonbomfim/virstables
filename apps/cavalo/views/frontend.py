@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 from django.http import JsonResponse
 from apps.cavalo.models import Cavalo
+from apps.emails.tasks import email_lance_coberto, email_lance_confirmado
 from apps.leilao.models import Leilao, Lance
 
 # Create your views here.
@@ -39,8 +40,6 @@ def cavalo_detalhe(request, slug):
 
 @login_required(login_url='/login/')
 def dar_lance(request, cavalo_id):
-    print(f">>>>>> Método: {request.method}")
-    print(f">>>>>> Cavalo ID: {cavalo_id}")
     
     cavalo = get_object_or_404(Cavalo, id=cavalo_id)
     
@@ -53,6 +52,10 @@ def dar_lance(request, cavalo_id):
             from decimal import Decimal
             from django.core.exceptions import ValidationError
             
+            lance_anterior = Lance.objects.filter(cavalo=cavalo).order_by('-data').first()
+            if lance_anterior:
+                email_lance_coberto.delay(lance_anterior.id)
+            
             lance = Lance(
                 cavalo=cavalo,
                 leilao=cavalo.leilao,
@@ -61,7 +64,9 @@ def dar_lance(request, cavalo_id):
             )
             lance.clean()  # Valida as regras de negócio
             lance.save()
-            
+
+            email_lance_confirmado.delay(lance.id)
+
             print(f">>>>>> Lance salvo com sucesso: R$ {valor}")
             messages.success(request, f'Lance de R$ {valor} realizado com sucesso!')
             
