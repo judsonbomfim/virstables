@@ -15,4 +15,4 @@ def viewEmail(id=None):
         'valor_lance': 'R$ 100,00',
         'cavalo': 'TEMPLARIO VP',
     }
-    return render(request, 'partials/lance_coberto.html', context)
+    return render('partials/lance_coberto.html', context)
