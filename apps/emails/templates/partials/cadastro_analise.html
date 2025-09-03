@@ -1,13 +1,25 @@
 {% extends 'shared/base.html' %}
-{% load static i18n %}
 
-{% block title %}{{title_email}}{% endblock title %}
+{% block title %}Cadastro em Análise - Virtual Stables{% endblock %}
 
-{% block content %}
-  <h6 style="font-weight: 600">{{title_email}}</h6>
-  <p>Olá {{primeiro_nome}}</p>
-  <p>Seu cadastro está em análise e em breve você receberá uma confirmação.</p>
-  <p style="margin-bottom: 0">
-    Atenciosamente,<br />Virtual Stables
-  </p>
-{% endblock content %}
+{% block message %}
+    <p style="margin: 0 0 20px 0;">
+        Recebemos seu cadastro e nossa equipe está analisando suas informações.
+    </p>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 20px; margin: 20px 0;">
+        <p style="margin: 0; color: #856404; font-size: 14px;">
+            <strong>📧 Próximo passo:</strong> Você receberá um email de confirmação
+        </p>
+    </div>
+    
+    <p style="margin: 0 0 20px 0;">
+        Enquanto isso, você pode conhecer mais sobre nossos leilões e cavalos disponíveis em nosso site.
+    </p>
+{% endblock %}
+
+{% block button %}
+    <div class="button-container">
+        <a href="{{ url_site }}" class="btn">Explorar Leilões</a>
+    </div>
+{% endblock %}
