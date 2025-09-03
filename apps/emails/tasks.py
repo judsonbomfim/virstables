@@ -4,6 +4,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+from apps.emails.classes import send_email
 from apps.leilao.models import Lance
 from apps.users.models import PerfilCliente
 
@@ -15,27 +16,18 @@ def email_cadastro_analise(id):
     nome_cliente = cliente.nome_completo if cliente else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
     email_cliente = cliente.usuario.email if cliente else settings.DEFAULT_FROM_EMAIL
+    title_email = "Confirmação em Análise"
 
     context = {
-        'url_site': 'https://www.virtualstables.com.br/',
-        'title_email': "Confirmação de Cadastro",
+        'url_site': settings.URL_SITE,
+        'title_email': title_email,
         'primeiro_nome': primeiro_nome
     }
     html_content = render_to_string('partials/cadastro_analise.html', context)
     text_content = strip_tags(html_content)
-    subject = f"Cadastro em Análise - {nome_cliente}" if cliente else "Cadastro em Análise"
-    email = EmailMultiAlternatives(
-        #subject
-        subject,
-        #content
-        text_content,
-        #from email
-        settings.DEFAULT_FROM_EMAIL,
-        #to
-        [email_cliente],
-    )
-    email.attach_alternative(html_content, "text/html")
-    email.send()
+    subject = f"{title_email} - {nome_cliente}" if cliente else title_email
+    # Enviar E-mail
+    send_email(html_content, text_content, subject, email_cliente)
 
 @shared_task
 def email_cadastro_confirmado(id):
@@ -44,27 +36,18 @@ def email_cadastro_confirmado(id):
     nome_cliente = cliente.nome_completo if cliente else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
     email_cliente = cliente.usuario.email if cliente else settings.DEFAULT_FROM_EMAIL
-
+    title_email = "Confirmação de Cadastro"
+    
     context = {
-        'url_site': 'https://www.virtualstables.com.br/',
-        'title_email': "Confirmação de Cadastro",
+        'url_site': settings.URL_SITE,
+        'title_email': title_email,
         'primeiro_nome': primeiro_nome
     }
     html_content = render_to_string('partials/cadastro_confirmado.html', context)
     text_content = strip_tags(html_content)
-    subject = f"Confirmação de Cadastro - {nome_cliente}" if cliente else "Confirmação de Cadastro"
-    email = EmailMultiAlternatives(
-        #subject
-        subject,
-        #content
-        text_content,
-        #from email
-        settings.DEFAULT_FROM_EMAIL,
-        #to
-        [email_cliente],
-    )
-    email.attach_alternative(html_content, "text/html")
-    email.send()
+    subject = f"{title_email} - {nome_cliente}" if cliente else title_email
+    # Enviar E-mail
+    send_email(html_content, text_content, subject, email_cliente)
 
 @shared_task
 def email_lance_confirmado(id):
@@ -77,29 +60,20 @@ def email_lance_confirmado(id):
     nome_cliente = cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
     email_cliente = lance.usuario.email if lance else settings.DEFAULT_FROM_EMAIL
-
+    title_email = "Lance Confirmado"
+    
     context = {
-        'url_site': 'https://www.virtualstables.com.br/',
-        'title_email': "Lance Confirmado",
+        'url_site': settings.URL_SITE,
+        'title_email': title_email,
         'primeiro_nome': primeiro_nome,
         'valor_lance': valor_lance,
         'cavalo': cavalo,
     }
     html_content = render_to_string('partials/lance_confirmado.html', context)
     text_content = strip_tags(html_content)
-    subject = f"Lance Confirmado - {nome_cliente}" if cliente else "Lance Confirmado"
-    email = EmailMultiAlternatives(
-        #subject
-        subject,
-        #content
-        text_content,
-        #from email
-        settings.DEFAULT_FROM_EMAIL,
-        #to
-        [email_cliente],
-    )
-    email.attach_alternative(html_content, "text/html")
-    email.send()
+    subject = f"{title_email} - {nome_cliente}" if cliente else title_email
+    # Enviar E-mail
+    send_email(html_content, text_content, subject, email_cliente)
 
 @shared_task
 def email_lance_coberto(id):
@@ -111,26 +85,17 @@ def email_lance_coberto(id):
     nome_cliente = cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
     email_cliente = lance.usuario.email if lance else settings.DEFAULT_FROM_EMAIL
+    title_email = "Lance Coberto"
 
     context = {
-        'url_site': 'https://www.virtualstables.com.br/',
-        'title_email': "Lance Coberto",
+        'url_site': settings.URL_SITE,
+        'title_email': title_email,
         'primeiro_nome': primeiro_nome,
         'valor_lance': valor_lance,
         'cavalo': cavalo,
     }
     html_content = render_to_string('partials/lance_coberto.html', context)
     text_content = strip_tags(html_content)
-    subject = f"Lance Coberto - {nome_cliente}" if cliente else "Lance Coberto"
-    email = EmailMultiAlternatives(
-        #subject
-        subject,
-        #content
-        text_content,
-        #from email
-        settings.DEFAULT_FROM_EMAIL,
-        #to
-        [email_cliente],
-    )
-    email.attach_alternative(html_content, "text/html")
-    email.send()
+    subject = f"{title_email} - {nome_cliente}" if cliente else title_email
+    # Enviar E-mail
+    send_email(html_content, text_content, subject, email_cliente)
