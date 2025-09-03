@@ -13,10 +13,9 @@ def send_email(html_content, text_content, subject, email_cliente):
         #content
         text_content,
         #from email
-        settings.DEFAULT_FROM_EMAIL,
         f"{settings.PAINEL_TITLE} <{settings.DEFAULT_FROM_EMAIL}>",
         #to
-        [email_cliente],
+        email_cliente,
     )
     email.attach_alternative(html_content, "text/html")
     email.send()
