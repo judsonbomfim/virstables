@@ -19,6 +19,7 @@ def email_cadastro_analise(id):
     title_email = "Confirmação em Análise"
 
     context = {
+        'name_site': settings.PAINEL_TITLE,
         'url_site': settings.URL_SITE,
         'title_email': title_email,
         'primeiro_nome': primeiro_nome
@@ -39,6 +40,7 @@ def email_cadastro_confirmado(id):
     title_email = "Confirmação de Cadastro"
     
     context = {
+        'name_site': settings.PAINEL_TITLE,
         'url_site': settings.URL_SITE,
         'title_email': title_email,
         'primeiro_nome': primeiro_nome
@@ -60,9 +62,10 @@ def email_lance_confirmado(id):
     nome_cliente = cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
     email_cliente = lance.usuario.email if lance else settings.DEFAULT_FROM_EMAIL
-    title_email = "Lance Confirmado"
+    title_email = f'Lance Confirmado - {cavalo}'
     
     context = {
+        'name_site': settings.PAINEL_TITLE,
         'url_site': settings.URL_SITE,
         'title_email': title_email,
         'primeiro_nome': primeiro_nome,
@@ -85,9 +88,10 @@ def email_lance_coberto(id):
     nome_cliente = cliente.nome_completo if lance and hasattr(lance.usuario, 'perfil_cliente') else "Cliente"
     primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
     email_cliente = lance.usuario.email if lance else settings.DEFAULT_FROM_EMAIL
-    title_email = "Lance Coberto"
+    title_email = f"Lance Coberto - {cavalo}"
 
     context = {
+        'name_site': settings.PAINEL_TITLE,
         'url_site': settings.URL_SITE,
         'title_email': title_email,
         'primeiro_nome': primeiro_nome,
