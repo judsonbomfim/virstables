@@ -1,13 +1,20 @@
 {% extends 'shared/base.html' %}
-{% load static i18n %}
 
-{% block title %}{{title_email}}{% endblock title %}
+{% block title %}Lance Confirmado - Virtual Stables{% endblock %}
 
-{% block content %}
-  <h6 style="font-weight: 600">{{title_email}}</h6>
-  <p>Olá {{primeiro_nome}}</p>
-  <p>Seu lance de <b>R$ {{valor_lance}}</b> no cavalo <b>{{cavalo}}</b> foi registrado com sucesso!</p>
-  <p style="margin-bottom: 0">
-    Atenciosamente,<br />Virtual Stables
-  </p>
-{% endblock content %}
+{% block message %}
+    <p style="margin: 0 0 20px 0;">
+        Seu lance de <span class="highlight">{{ valor_lance }}</span> 
+        no cavalo <span class="highlight">{{ cavalo }}</span> foi confirmado com sucesso!
+    </p>
+    
+    <p style="margin: 0 0 20px 0;">
+        Continue acompanhando o leilão para saber se seu lance permanece como o maior.
+    </p>
+{% endblock %}
+
+{% block button %}
+    <div class="button-container">
+        <a href="{{ url_site }}" class="btn">Acompanhar Leilão</a>
+    </div>
+{% endblock %}

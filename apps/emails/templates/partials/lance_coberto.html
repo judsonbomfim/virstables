@@ -1,17 +1,21 @@
 {% extends 'shared/base.html' %}
-{% load static i18n %}
 
-{% block title %}{{title_email}}{% endblock title %}
+{% block title %}Lance Coberto - Virtual Stables{% endblock %}
 
-{% block content %}
-  <h6 style="font-weight: 600">{{title_email}}</h6>
-  <p>Olá {{primeiro_nome}}</p>
-  <p>Seu lance de <b>R$ {{valor_lance}}</b> no cavalo <b>{{cavalo}}</b> foi coberto por outro cliente!</p>
-  <p>Retorne ao nosso site e faça um novo lance</p>
-  <a href="{{url_site}}" target="_blank"><button style="background-color: #746350; color: #fff; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;">Fazer novo lance</button></a>
-  <br>
-  <br>
-  <p style="margin-bottom: 0">
-    Atenciosamente,<br />Virtual Stables
-  </p>
-{% endblock content %}
+{% block message %}
+    <p style="margin: 0 0 20px 0;">
+        Seu lance de <span class="highlight">{{ valor_lance }}</span> 
+        no cavalo <span class="highlight">{{ cavalo }}</span> foi coberto por outro cliente!
+    </p>
+    
+    <p style="margin: 0 0 20px 0;">
+        Não perca a oportunidade de continuar participando deste leilão. 
+        Você ainda pode fazer um novo lance e conquistar este excelente animal.
+    </p>
+{% endblock %}
+
+{% block button %}
+    <div class="button-container">
+        <a href="{{ url_site }}" class="btn">Fazer Novo Lance</a>
+    </div>
+{% endblock %}

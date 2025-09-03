@@ -1,112 +1,241 @@
-{% load static %}
-{% load sass_tags %}
-
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Cuba admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
-    <meta name="keywords" content="admin template, Cuba admin template, dashboard template, flat admin template, responsive admin template, web app">
-    <meta name="author" content="pixelstrap">
-    <link rel="icon" href="{{url_site}}/static/backend/images/lgo_virtual_stables_site_favicon.png" type="image/x-icon">
-    <link rel="shortcut icon" href="{{url_site}}/static/backend/images/lgo_virtual_stables_site_favicon.png" type="image/x-icon">
-    <title>{% block title %}{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{{ title_email }}{% endblock %}</title>
+    <!--[if mso]>
+    <nxml:namespace xmlns:nxml="urn:schemas-microsoft-com:office:office" />
+    <nxml:namespace xmlns:nxml="urn:schemas-microsoft-com:office:word" />
+    <![endif]-->
     <style type="text/css">
-      body{
-      font-family: work-Sans, sans-serif;
-      background-color: #f6f7fb;
-      display: block;
-      width: 650px;
-      padding: 0 12px;
-      }
-      a{
-      text-decoration: none;
-      }
-      span {
-      font-size: 14px;
-      }
-      p {
-        font-size: 13px;
-        line-height: 1.7;
-        letter-spacing: 0.7px;
-        margin-top: 0;
-      }
-      .text-center{
-      text-align: center
-      }
-      @media only screen and (max-width: 767px){
-        body{
-            width: auto;
-            margin: 20px auto;
+        /* Reset styles */
+        body, table, td, p, a, li, blockquote {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
         }
-        .logo-sec{
-          width: 500px !important;
+        table, td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
         }
-      }
-      @media only screen and (max-width: 575px){
-        .logo-sec{
-          width: 400px !important;
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
         }
-      }
-      @media only screen and (max-width: 480px){
-        .logo-sec{
-          width: 300px !important;
+
+        /* Base styles */
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-      }
-      @media only screen and (max-width: 360px){
-        .logo-sec{
-          width: 250px !important;
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
         }
-      }
+        
+        .header {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .logo {
+            max-width: 200px;
+            height: auto;
+        }
+        
+        .content {
+            padding: 40px 30px;
+            background-color: #ffffff;
+        }
+        
+        .title {
+            color: #333333;
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            line-height: 1.2;
+        }
+        
+        .greeting {
+            color: #333333;
+            font-size: 16px;
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+        }
+        
+        .message {
+            color: #555555;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0 0 30px 0;
+        }
+        
+        .highlight {
+            color: #8B4513;
+            font-weight: 600;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background-color: #8B4513;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #6B3410;
+        }
+        
+        .footer-message {
+            color: #555555;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 20px 0 0 0;
+        }
+        
+        .signature {
+            color: #333333;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 30px 0 0 0;
+        }
+        
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e5e5e5;
+        }
+        
+        .footer-text {
+            color: #888888;
+            font-size: 12px;
+            line-height: 1.4;
+            margin: 0;
+        }
+        
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .header,
+            .content,
+            .footer {
+                padding: 20px !important;
+            }
+            
+            .title {
+                font-size: 20px !important;
+            }
+            
+            .message,
+            .greeting {
+                font-size: 14px !important;
+            }
+            
+            .btn {
+                padding: 12px 24px !important;
+                font-size: 14px !important;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .email-container {
+                background-color: #1a1a1a !important;
+            }
+            .content {
+                background-color: #1a1a1a !important;
+            }
+            .title,
+            .greeting,
+            .signature {
+                color: #ffffff !important;
+            }
+            .message,
+            .footer-message {
+                color: #cccccc !important;
+            }
+        }
     </style>
-  </head>
-  <body style="margin: 30px auto;">
-    <table style="width: 100%">
-      <tbody>
-        <tr>
-          <td>
-            <table style="background-color: #f6f7fb; width: 100%">
-              <tbody>
-                <tr>
-                  <td>
-                    <table style="margin: 0 auto; margin-bottom: 30px">
-                      <tbody>
-                        <tr class="logo-sec" style="display: flex; align-items: center; justify-content: space-between; width: 650px;">
-                          <td><img class="img-fluid" src="{{url_site}}/static/backend/images/logo_virtual_stables_site.png" alt=""></td>
-                          <td style="text-align: right; color:#999"><span></span></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <table style="margin: 0 auto; background-color: #fff; border-radius: 8px">
-                      <tbody>
-                        <tr>
-                          <td style="padding: 30px"> 
-                            {% block content %}{% endblock %}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <table style="margin: 0 auto; margin-top: 30px">
-                      <tbody>       
-                        <tr style="text-align: center">
-                          <td> 
-                            <p style="color: #999; margin-bottom: 0">© 2025 VIRTUAL STABLES - Todos os Direitos Reservados!</p>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </body>
+</head>
+<body>
+    <div style="background-color: #f4f4f4; padding: 20px 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+                <td align="center">
+                    <div class="email-container">
+                        <!-- Header -->
+                        <div class="header">
+                            <img src="{{ url_site }}/static/backend/images/logo_virtual_stables_site.png" 
+                                 alt="Virtual Stables" 
+                                 class="logo">
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="content">
+                            {% block content %}
+                            <h1 class="title">{{ title_email }}</h1>
+                            
+                            <p class="greeting">Olá {{ primeiro_nome }},</p>
+                            
+                            <div class="message">
+                                {% block message %}
+                                <!-- Conteúdo específico do email será inserido aqui -->
+                                {% endblock %}
+                            </div>
+                            
+                            {% block button %}
+                            <!-- Botão de ação (opcional) -->
+                            {% endblock %}
+                            
+                            <p class="footer-message">
+                                Retorne ao nosso site e acompanhe todos os leilões.
+                            </p>
+                            
+                            <p class="signature">
+                                Atenciosamente,<br>
+                                Virtual Stables
+                            </p>
+                            {% endblock %}
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="footer">
+                            <p class="footer-text">
+                                © 2025 VIRTUAL STABLES - Todos os Direitos Reservados!<br>
+                                <a href="{{ url_site }}" style="color: #8B4513; text-decoration: none;">www.virtualstables.com.br</a>
+                            </p>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
 </html>
