@@ -39,7 +39,7 @@ services:
       - app-network
     command: >
       sh -c "
-        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\" -U \"$DB_USER\" -d postgres; do
+        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\"; d
           echo 'Aguardando PostgreSQL...'
           sleep 2
         done
@@ -65,10 +65,10 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p ${DB_PORT:-5432} -U ${POSTGRES_USER} -d postgres"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p ${DB_PORT:-5432}"]
+      interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 6
 
   redis:
     image: redis:7
@@ -100,7 +100,7 @@ services:
       - app
     command: >
       sh -c "
-        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\" -U \"$DB_USER\" -d postgres; do
+        while ! pg_isready -h \"$DB_HOST\" -p \"$DB_PORT\"; do
           echo 'Aguardando PostgreSQL para Celery...'
           sleep 2
         done
