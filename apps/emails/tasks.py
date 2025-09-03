@@ -27,7 +27,7 @@ def email_cadastro_analise(id):
     text_content = strip_tags(html_content)
     subject = f"{title_email} - {nome_cliente}" if cliente else title_email
     # Enviar E-mail
-    send_email(html_content, text_content, subject, email_cliente)
+    send_email(html_content, text_content, subject, [email_cliente])
 
 @shared_task
 def email_cadastro_confirmado(id):
@@ -47,7 +47,7 @@ def email_cadastro_confirmado(id):
     text_content = strip_tags(html_content)
     subject = f"{title_email} - {nome_cliente}" if cliente else title_email
     # Enviar E-mail
-    send_email(html_content, text_content, subject, email_cliente)
+    send_email(html_content, text_content, subject, [email_cliente])
 
 @shared_task
 def email_lance_confirmado(id):
@@ -73,7 +73,7 @@ def email_lance_confirmado(id):
     text_content = strip_tags(html_content)
     subject = f"{title_email} - {nome_cliente}" if cliente else title_email
     # Enviar E-mail
-    send_email(html_content, text_content, subject, email_cliente)
+    send_email(html_content, text_content, subject, [email_cliente])
 
 @shared_task
 def email_lance_coberto(id):
@@ -98,4 +98,4 @@ def email_lance_coberto(id):
     text_content = strip_tags(html_content)
     subject = f"{title_email} - {nome_cliente}" if cliente else title_email
     # Enviar E-mail
-    send_email(html_content, text_content, subject, email_cliente)
+    send_email(html_content, text_content, subject, [email_cliente])
