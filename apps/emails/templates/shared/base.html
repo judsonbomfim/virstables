@@ -164,24 +164,6 @@
             }
         }
         
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            .email-container {
-                background-color: #1a1a1a !important;
-            }
-            .content {
-                background-color: #1a1a1a !important;
-            }
-            .title,
-            .greeting,
-            .signature {
-                color: #ffffff !important;
-            }
-            .message,
-            .footer-message {
-                color: #cccccc !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -198,7 +180,7 @@
                         </div>
                         
                         <!-- Content -->
-                        <div class="content" style="background-color: #FFF;">
+                        <div class="content">
                             {% block content %}
                             <h1 class="title">{{ title_email }}</h1>
                             
