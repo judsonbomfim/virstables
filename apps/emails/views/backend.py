@@ -10,9 +10,9 @@ def viewEmail(request, email_id):
     
     context = {
         'url_site': 'https://www.virtualstables.com.br/',
-        'title_email': "Lance Coberto",
+        'title_email': "Lance Confirmado",
         'primeiro_nome': 'Judson',
         'valor_lance': 'R$ 100,00',
         'cavalo': 'TEMPLARIO VP',
     }
-    return render(request, 'partials/cadastro_analise.html', context)
+    return render(request, 'partials/lance_confirmado.html', context)

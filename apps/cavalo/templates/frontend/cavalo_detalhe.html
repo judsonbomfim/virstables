@@ -263,7 +263,12 @@
         </div> <!-- end row-->
 
       </div>
-
+      <div class="row mb-4 py-4">
+        <div class="col-12 text-start">
+          <a href="{% url 'leilao_frontend:leilao_detalhe' cavalo.leilao.slug %}" class="btn btn-outline-primary">
+            <i class="ti ti-arrow-left me-1"></i> Voltar ao Leilão {{ cavalo.leilao.nome }}
+          </a>
+        </div>
     </div> <!-- container -->
   </section>
 
