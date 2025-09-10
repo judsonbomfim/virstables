@@ -18,8 +18,8 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - static_data:/app/static
-      - media_data:/app/media
+      - ./static:/app/static
+      - ./media:/app/media
     env_file:
       - .env
     depends_on:
@@ -94,8 +94,6 @@ services:
     command: celery -A core beat --loglevel=info
 
 volumes:
-  static_data:
-  media_data:
   postgres_data:
 
 networks:
