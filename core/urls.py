@@ -15,7 +15,7 @@ urlpatterns = [
     path('', include('apps.users.urls_frontend', namespace='users_frontend')),
 
     # URLs do Backend (painel administrativo personalizado)
-    path('painel/home/', include('apps.home.urls_backend', namespace='home_backend')),
+    path('painel/', include('apps.home.urls_backend', namespace='home_backend')),
     path('painel/leilao/', include('apps.leilao.urls_backend', namespace='leilao_backend')),
     path('painel/cavalo/', include('apps.cavalo.urls_backend', namespace='cavalo_backend')),
     path('painel/emails/', include('apps.emails.urls_backend', namespace='emails_backend')),
