@@ -229,10 +229,10 @@ def cavalo_form_foto(request, id=None):
 
             try:
                 img = Image.open(arquivo)
-                if img.width > 1200:
-                    proporcao = 1200 / float(img.width)
+                if img.width > 1440:
+                    proporcao = 1440 / float(img.width)
                     nova_altura = int(float(img.height) * proporcao)
-                    img = img.resize((1200, nova_altura), Image.Resampling.LANCZOS)
+                    img = img.resize((1440, nova_altura), Image.Resampling.LANCZOS)
                 img_io = BytesIO()
                 img_format = img.format if img.format else 'JPEG'
                 img.save(img_io, format=img_format)

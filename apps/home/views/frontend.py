@@ -1,9 +1,10 @@
+import pytz
 from django.shortcuts import render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from apps.leilao.models import Leilao
 from django.utils import timezone
-import pytz
+from apps.site_config.models import SiteSettings, Banner, Logo
 
 def data_atual():
     fuso_br = pytz.timezone('America/Sao_Paulo')
@@ -13,12 +14,18 @@ def data_atual():
 # Create your views here.
 # @login_required(login_url='/login/')
 def home(request):
+    site_settings = SiteSettings.objects.first()
+    banners = Banner.objects.order_by('ordem')
+    logos = Logo.objects.order_by('ordem')
     
     leiloes = Leilao.objects.all().order_by('-data_inicio').filter(status='ativo')  # type: ignore
     hoje = data_atual()
     context = {
         'painel_title': settings.PAINEL_TITLE,
         'page_title': 'Home',
+        'site_settings': site_settings,
+        'banners': banners,
+        'logos': logos,
         'leiloes': leiloes,
         'data_hoje': hoje,
     }

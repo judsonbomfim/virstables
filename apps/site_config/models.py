@@ -13,3 +13,29 @@ class SiteSettings(models.Model):
     class Meta:
         verbose_name = "Configuração do Site"
         verbose_name_plural = "Configurações do Site"
+
+class Banner(models.Model):
+    titulo = models.CharField(max_length=255)
+    imagem = models.ImageField(upload_to='banners/')
+    link = models.URLField(max_length=255, blank=True)
+    ordem = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.titulo
+
+    class Meta:
+        verbose_name = "Banner"
+        verbose_name_plural = "Banners"
+
+class Logo(models.Model):
+    titulo = models.CharField(max_length=255)
+    imagem = models.ImageField(upload_to='logos/')
+    link = models.URLField(max_length=255, blank=True)
+    ordem = models.PositiveIntegerField(default=0) 
+
+    def __str__(self):
+        return self.imagem.name
+
+    class Meta:
+        verbose_name = "Logo"
+        verbose_name_plural = "Logos"
