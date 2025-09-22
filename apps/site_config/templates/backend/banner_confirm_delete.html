@@ -1,0 +1,12 @@
+{% extends 'backend/shared/base.html' %}
+{% block content %}
+  <div class="container">
+    <h2>Excluir Banner</h2>
+    <p>Tem certeza que deseja excluir o banner "{{ banner.titulo }}"?</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Excluir</button>
+      <a href="{% url 'site_config_backend:site_config_detalhes' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+{% endblock %}

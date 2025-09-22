@@ -1,0 +1,37 @@
+{% extends 'frontend/base_breve.html' %}
+
+{% load static i18n %}
+
+{% block title %}
+  EM BREVE
+{% endblock %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+  <div class="auth-box d-flex align-items-center">
+    <div class="container-xxl">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-xl-4">
+          <div class="card rounded-3 p-0 rounded-4">
+            <div class="card-body p-0 text-center p-2">
+              <a href="{{link_leilao}}" target="_blank" class="d-block text-decoration-none">
+                <img src="{% static 'frontend/images/QmYWwndxZ-512x512.jpg' %}" alt="logo" class="img-fluid rounded-3" height="200"/>
+                <div class="btn btn-primary w-100">CLIQUI AQUI</div>
+              </a>
+            </div>
+          </div>
+          <p class="text-center text-muted mt-0 mb-0">
+            © 2025 VIRTUAL STABLES - by <a href="https://www.criativa.digital" target="_blank"><span class="fw-bold">CRIATIVA DIGITAL</span></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_javascript %}
+  <script src="{% static 'js/pages/coming-soon.js' %}"></script>
+{% endblock %}
