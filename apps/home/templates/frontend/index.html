@@ -1,4 +1,4 @@
-<!--                 
+<!--                    
 * Author: WebAppLayers
 * Product Name: INSPINIA
 * Version: 4.2.0
@@ -6,7 +6,7 @@
 * Website:  https://webapplayers.com
 * Contact: support@webapplayers.com
 * License: For each use you must have a valid license purchased only from above link in order to legally use the theme for your project.
-   -->
+      -->
 
 {% extends 'frontend/base.html' %}
 
@@ -128,101 +128,57 @@
   </section>
 
   <!-- Artigos -->
+  <!-- Artigos -->
   <section class="section-custom border-top border-bottom border-light" id="artigos">
     <div class="container">
       <div class="row">
         <div class="col-12 text-center">
           <h2 class="mt-3 fw-bold mb-5">Artigos</h2>
         </div>
-      </div> <!-- end row -->
-
+      </div>
       <div class="row g-4">
-        <div class="col-lg-4">
-          <article class="card rounded-3 border-0 shadow-sm">
-            <!-- Badge -->
-            <div class="badge text-bg-dark badge-label position-absolute top-0 start-0 m-3">Technology</div>
+        {% for post in posts %}
+          <div class="col-lg-4">
+            <article class="card rounded-3 border-0 shadow-lg">
+              <!-- Badge (opcional: categoria ou tag) -->
+              {% if post.categoria %}
+                <div class="badge text-bg-dark badge-label position-absolute top-0 start-0 m-3">{{ post.categoria }}</div>
+              {% endif %}
 
-            <!-- Card image -->
-            <img class="card-img-top rounded-top-3" src="{% static 'frontend/assets/images/blog/blog-4.jpg' %}" alt="Tech Innovations" />
+              <!-- Card image -->
+              {% if post.imagem %}
+                <a class="link-primary fw-semibold" href="{% url 'blog_frontend:post_detalhe' post.slug %}"><img class="card-img-top rounded-top-3" src="{{ post.imagem.url }}" alt="{{ post.titulo }}" /></a>
+              {% else %}
+                <img class="card-img-top rounded-top-3" src="{% static 'frontend/assets/images/blog/blog-default.jpg' %}" alt="{{ post.titulo }}" />
+              {% endif %}
 
-            <!-- Card Body -->
-            <div class="card-body">
-              <!-- Title -->
-              <h6 class="card-title fs-lg lh-base mb-2"><a href="" class="link-reset">The Future of Artificial Intelligence</a></h6>
-              <p class="mb-3 text-muted">Discover how AI is transforming industries and what the future holds for this cutting-edge technology.</p>
-              <p class="d-flex flex-wrap gap-3 text-muted mb-0 mt-3 align-items-center fs-base">
-                <span><i class="ti ti-calendar fs-md"></i> Jan 12, 2025</span>
-              </p>
-            </div>
-            <!-- Card footer -->
-            <div class="card-footer bg-transparent d-flex justify-content-between border-0">
-              <a class="link-primary fw-semibold" href="">
-                Leia mais
-                <i class="ti ti-arrow-right"></i>
-              </a>
-            </div>
-          </article>
-        </div> <!-- end col -->
-
-        <div class="col-lg-4">
-          <article class="card rounded-3 border-0 shadow-sm">
-            <!-- Badge -->
-            <div class="badge text-bg-dark badge-label position-absolute top-0 start-0 m-3">Data Science</div>
-
-            <!-- Card image -->
-            <img class="card-img-top rounded-top-3" src="{% static 'frontend/assets/images/blog/blog-5.jpg' %}" alt="Data Science Trends" />
-
-            <!-- Card Body -->
-            <div class="card-body">
-              <!-- Title -->
-              <h6 class="card-title fs-lg lh-base mb-2"><a href="" class="link-reset">The Future of Artificial Intelligence</a></h6>
-              <p class="mb-3 text-muted">Discover how AI is transforming industries and what the future holds for this cutting-edge technology.</p>
-              <p class="d-flex flex-wrap gap-3 text-muted mb-0 mt-3 align-items-center fs-base">
-                <span><i class="ti ti-calendar fs-md"></i> Jan 12, 2025</span>
-              </p>
-            </div>
-            <!-- Card footer -->
-            <div class="card-footer bg-transparent d-flex justify-content-between border-0">
-              <a class="link-primary fw-semibold" href="">
-                Leia mais
-                <i class="ti ti-arrow-right"></i>
-              </a>
-            </div>
-          </article>
-        </div> <!-- end col -->
-
-        <div class="col-lg-4">
-          <article class="card rounded-3 border-0 shadow-sm">
-            <!-- Badge -->
-            <div class="badge text-bg-dark badge-label position-absolute top-0 start-0 m-3">Business</div>
-
-            <!-- Card image -->
-            <img class="card-img-top rounded-top-3" src="{% static 'frontend/assets/images/blog/blog-3.jpg' %}" alt="Entrepreneur Tips" />
-
-            <!-- Card Body -->
-            <div class="card-body">
-              <!-- Title -->
-              <h6 class="card-title fs-lg lh-base mb-2"><a href="" class="link-reset">The Future of Artificial Intelligence</a></h6>
-              <p class="mb-3 text-muted">Discover how AI is transforming industries and what the future holds for this cutting-edge technology.</p>
-              <p class="d-flex flex-wrap gap-3 text-muted mb-0 mt-3 align-items-center fs-base">
-                <span><i class="ti ti-calendar fs-md"></i> Jan 12, 2025</span>
-              </p>
-            </div>
-            <!-- Card footer -->
-            <div class="card-footer bg-transparent d-flex justify-content-between border-0">
-              <a class="link-primary fw-semibold" href="">
-                Leia mais
-                <i class="ti ti-arrow-right"></i>
-              </a>
-            </div>
-          </article>
-        </div> <!-- end col -->
-      </div> <!-- end row -->
-    </div> <!-- end container -->
+              <!-- Card Body -->
+              <div class="card-body">
+                <!-- Title -->
+                <h6 class="card-title fs-lg lh-base mb-2"><a href="{% url 'blog_frontend:post_detalhe' post.slug %}" class="link-reset">{{ post.titulo }}</a></h6>
+                <p class="mb-3 text-muted">{{ post.resumo }}</p>
+                <p class="d-flex flex-wrap gap-3 text-muted mb-0 mt-3 align-items-center fs-base">
+                  <span><i class="ti ti-calendar fs-md"></i> {{ post.updated_at|date:'d M Y' }}</span>
+                </p>
+              </div>
+              <!-- Card footer -->
+              <div class="card-footer bg-transparent d-flex justify-content-between border-0">
+                <a class="link-primary fw-semibold" href="{% url 'blog_frontend:post_detalhe' post.slug %}">
+                  Leia mais
+                  <i class="ti ti-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+          </div>
+        {% empty %}
+          <div class="col-12 text-center text-muted">Nenhum artigo encontrado.</div>
+        {% endfor %}
+      </div>
+    </div>
   </section>
 
   <!-- Formulário de contato -->
-  <section class="section-custom bg-light bg-opacity-30" id="contact">
+  {% comment %} <section class="section-custom bg-light bg-opacity-30" id="contact">
     <div class="container">
       <div class="row">
         <div class="col-12 text-center">
@@ -291,7 +247,7 @@
         </div> <!-- end col -->
       </div> <!-- end row -->
     </div> <!-- end container -->
-  </section>
+  </section> {% endcomment %}
 {% endblock %}
 
 {% block extra_javascript %}

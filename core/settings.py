@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'sass_processor',
     'widget_tweaks',
+    'apps.blog.apps.BlogConfig',
     'apps.cavalo.apps.CavaloConfig',
     'apps.emails.apps.EmailsConfig',
     'apps.home.apps.HomeConfig',

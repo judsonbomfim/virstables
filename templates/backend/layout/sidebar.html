@@ -69,6 +69,17 @@
               </li>
             </ul>
           </li>
+          <li class="sidebar-list">
+            <i class="fa-solid fa-thumbtack"></i><a class="sidebar-link sidebar-title" href="#"><i class="icofont icofont-court-hammer text-secondary lead"></i> <span>Artigos</span></a>
+            <ul class="sidebar-submenu">
+              <li>
+                <a href="{% url 'blog_backend:post_lista' %}">Listar Artigos</a>
+              </li>
+              <li>
+                <a href="{% url 'blog_backend:post_adicionar' %}">Adicionar Artigo</a>
+              </li>
+            </ul>
+          </li>
         </ul>
       </div>
       <div class="right-arrow" id="right-arrow">

@@ -1,9 +1,12 @@
+{% load site_info_tags %}
+{% get_site_settings as site %}
+
 {% load static %}
 <footer class="section-custom section-footer br-footer pb-2">
   <div class="container">
     <div class="row g-4 justify-content-between">
       <div class="row justify-content-between">
-        <div class="col-lg-6">
+        <div class="col-lg-4">
           <img src="{% static 'frontend/images/logo-virtual-stables-site-w.png' %}" alt="logo" height="80" />
           <p class="mt-3 fs-sm text-white">Leilões virtuais com a mais alta qualidade e profissionalismo!</p>
         </div> <!-- end col -->
@@ -11,13 +14,20 @@
         <div class="col-lg-6">
           <div class="row g-4">
             <div class="col-12 col-md-4 ms-auto">
+              <h5 class="text-white mb-4 ps-2 text-end">CONTATO</h5>
+              <div class="d-flex mt-4 mb-2 text-end text-white">
+                {{ site.email }} <br>
+                {{ site.telefone }}
+              </div>  
+            </div>
+            <div class="col-12 col-md-4 ms-auto">
               <h5 class="text-white mb-4 ps-2 text-end">REDE SOCIAIS</h5>
               <div class="d-flex mt-4 mb-2 justify-content-end">
-                <a href="{{ site_settings.facebook }}" class="btn btn-sm btn-icon rounded-circle btn-primary" title="Facebook"><i data-lucide="facebook" class="fs-sm"></i></a>
-                <a href="{{ site_settings.twitter }}" class="btn btn-sm btn-icon rounded-circle btn-primary" title="Twitter-x"><i class="ti ti-brand-x fs-sm"></i></a>
-                <a href="{{ site_settings.instagram }}" class="btn btn-sm btn-icon rounded-circle btn-primary" title="Instagram"><i data-lucide="instagram" class="fs-sm"></i></a>
-                <a href="{{ site_settings.whatsapp }}" class="btn btn-sm btn-icon rounded-circle btn-primary" title="WhatsApp"><i data-lucide="dribbble" class="fs-sm"></i></a>
-              </div>
+                <a href="{{ site.facebook }}" target="_blank" class="btn btn-sm btn-icon rounded-circle btn-primary" title="Facebook"><i class="ti ti-brand-facebook fs-3"></i></a>
+                <a href="{{ site.twitter }}" target="_blank" class="btn btn-sm btn-icon rounded-circle btn-primary" title="Twitter-x"><i class="ti ti-brand-twitter fs-3"></i></a>
+                <a href="{{ site.instagram }}" target="_blank" class="btn btn-sm btn-icon rounded-circle btn-primary" title="Instagram"><i class="ti ti-brand-instagram fs-3"></i></a>
+                <a href="https://wa.me/55{{ site.telefone|only_digits }}" target="_blank" class="btn btn-sm btn-icon rounded-circle btn-primary" title="WhatsApp"><i class="ti ti-brand-whatsapp fs-3"></i></a>
+              </div>  
             </div>
           </div> <!-- end row -->
         </div> <!-- end col -->
