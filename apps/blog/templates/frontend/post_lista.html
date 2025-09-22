@@ -4,7 +4,11 @@
 {% block title %}{{ page_title }}{% endblock title %}
 
 {% block content %}
-<div class="container py-5">
+
+  {% include "frontend/partials/subtitle.html" %}
+<section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="post_lista">
+
+<div class="container py-3">
     <div class="row">
         <div class="col-lg-8">
             {% for post in posts %}
@@ -41,4 +45,6 @@
         </div>
     </div>
 </div>
+
+</section>
 {% endblock content %}

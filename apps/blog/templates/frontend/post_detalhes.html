@@ -6,45 +6,48 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container mt-5">
-    <div class="row">
-      <div class="card col-lg-8 p-4">
-        <article>
-          <header class="mb-4">
-            <h1 class="fw-bolder mb-1">{{ post.titulo }}</h1>
-            <div class="text-muted fst-italic mb-2">Postado em {{ post.created_at|date:'d/m/Y' }} por {{ post.autor.get_full_name|default:post.autor.username }}</div>
-            {% if post.categoria %}
-              <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ post.categoria.nome }}</a>
+  {% include 'frontend/partials/subtitle.html' %}
+  <section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="artigo">
+    <div class="container mt-3">
+      <div class="row">
+        <div class="card col-lg-8 p-4">
+          <article>
+            <header class="mb-4">
+              <h1 class="fw-bolder mb-1">{{ post.titulo }}</h1>
+              <div class="text-muted fst-italic mb-2">Postado em {{ post.created_at|date:'d/m/Y' }} por {{ post.autor.get_full_name|default:post.autor.username }}</div>
+              {% if post.categoria %}
+                <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ post.categoria.nome }}</a>
+              {% endif %}
+            </header>
+            {% if post.imagem %}
+              <figure class="mb-4">
+                <img class="img-fluid rounded" src="{{ post.imagem.url }}" alt="{{ post.titulo }}" />
+              </figure>
             {% endif %}
-          </header>
-          {% if post.imagem %}
-            <figure class="mb-4">
-              <img class="img-fluid rounded" src="{{ post.imagem.url }}" alt="{{ post.titulo }}" />
-            </figure>
-          {% endif %}
-          <section class="mb-5">{{ post.conteudo|safe }}</section>
-        </article>
-      </div>
-      <div class="col-lg-4">
-        <div class="card mb-4">
-          <div class="card-header">
-            <h3>Outros Artigos</h3>
-          </div>
-          <div class="card-body">
-            <div class="align-items-center">
-              <ul class="list-group list-group-flush fs-sm">
-                {% for post_a in posts %}
-                <li class="list-group-item ps-0">
-                  <a href="{% url 'blog_frontend:post_detalhe' post_a.slug %}" class="link-reset fw-medium">{{ post_a.titulo }}</a>
-                </li>
-                {% empty %}
+            <section class="mb-5">{{ post.conteudo|safe }}</section>
+          </article>
+        </div>
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3>Outros Artigos</h3>
+            </div>
+            <div class="card-body">
+              <div class="align-items-center">
+                <ul class="list-group list-group-flush fs-sm">
+                  {% for post_a in posts %}
+                    <li class="list-group-item ps-0">
+                      <a href="{% url 'blog_frontend:post_detalhe' post_a.slug %}" class="link-reset fw-medium">{{ post_a.titulo }}</a>
+                    </li>
+                  {% empty %}
                     <li>Nenhum artigo encontrado.</li>
-                {% endfor %}
-              </ul>
+                  {% endfor %}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 {% endblock %}
