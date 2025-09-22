@@ -5,6 +5,5 @@ app_name = 'home'
 
 urlpatterns = [
     # frontend
-    path('home', frontend.home, name='home'),
-    path('', frontend.home_breve, name='home_breve'),
+    path('', frontend.home, name='home'),
 ]
