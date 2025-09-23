@@ -127,7 +127,7 @@
         <div class="row align-items-center m-2 m-lg-5">
 
           <div class="col-lg-12 text-center">
-            <h2 class="mb-2 lh-base">CAVALOS INDIVIDUAIS</h2>
+            <h2 class="mb-2 lh-base">VENDA PERMANENTE</h2>
           </div>
 
           <!-- Lista de cavalos -->
@@ -144,9 +144,15 @@
                     <div class="badge text-bg-success badge-label fs-base rounded position-absolute top-0 start-0 m-3">Lote {{cavalo.lote|stringformat:"02d"}}</div>
                     {% endif %}
                     {% with destaque=cavalo.fotos.all|foto_destaque %}
-                    <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
-                      <img src="{{ destaque.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
-                    </a>
+                      {% if destaque %}
+                        <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
+                          <img src="{{ destaque.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
+                        </a>
+                      {% else %}
+                        <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
+                          <img src="{{ cavalo.fotos.all.first.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
+                        </a>
+                      {% endif %}
                     {% endwith %}
                     
                     <!-- Title -->

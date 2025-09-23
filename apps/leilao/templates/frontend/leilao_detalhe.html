@@ -77,8 +77,6 @@
           <!-- Lista de cavalos -->
           <div class="col-12 px-2 px-md-5 py-5 bg-white rounded-3">
             <div class="row row-cols-xxl-3 row-cols-lg-3 row-cols-sm-2 row-col-1 g-2">
-
-            
             {% for item in cavalos_com_lances %}
               {% with cavalo=item.cavalo ultimo_lance=item.ultimo_lance %}
               <div class="col">
@@ -89,9 +87,15 @@
                     <div class="badge text-bg-success badge-label fs-base rounded position-absolute top-0 start-0 m-3">Lote {{cavalo.lote|stringformat:"02d"}}</div>
                     {% endif %}
                     {% with destaque=cavalo.fotos.all|foto_destaque %}
-                    <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
-                      <img src="{{ destaque.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
-                    </a>
+                      {% if destaque %}
+                        <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
+                          <img src="{{ destaque.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
+                        </a>
+                      {% else %}
+                        <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
+                          <img src="{{ cavalo.fotos.all.first.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
+                        </a>
+                      {% endif %}
                     {% endwith %}
                     
                     <!-- Title -->
