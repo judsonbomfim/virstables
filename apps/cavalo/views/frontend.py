@@ -20,6 +20,10 @@ def index(request):
     return render(request, 'backend/index.html', context)
 
 def cavalo_detalhe(request, slug):
+
+    from apps.site_config.models import SiteSettings
+    site = SiteSettings.objects.first()
+    
     cavalo = Cavalo.objects.get(slug=slug)
     leilao = Leilao.objects.filter(cavalos_leilao=cavalo).first()  # ou ajuste conforme sua relação
 
@@ -34,6 +38,7 @@ def cavalo_detalhe(request, slug):
         'cavalo': cavalo,
         'leilao': leilao,
         'ultimo_lance': ultimo_lance,
+        'site': site,
     }
     return render(request, 'frontend/cavalo_detalhe.html', context)
 

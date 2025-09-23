@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from apps.blog.models import Post
+from apps.cavalo.models import Cavalo
 from apps.leilao.models import Leilao
 from django.utils import timezone
 from apps.site_config.models import SiteSettings, Banner, Logo
@@ -17,9 +18,9 @@ def data_atual():
 def home(request):
     site_settings = SiteSettings.objects.first()
     banners = Banner.objects.order_by('ordem')
-    logos = Logo.objects.order_by('ordem')
-    
+    logos = Logo.objects.order_by('ordem')    
     leiloes = Leilao.objects.all().order_by('-data_inicio').filter(status='ativo')
+    cavalos = Cavalo.objects.all().order_by('-data_cadastro').filter(leilao__isnull=True)
     posts = Post.objects.all().order_by('-created_at')[:3]
     hoje = data_atual()
     context = {
@@ -29,6 +30,7 @@ def home(request):
         'banners': banners,
         'logos': logos,
         'leiloes': leiloes,
+        'cavalos': cavalos,
         'posts': posts,
         'data_hoje': hoje,
     }
