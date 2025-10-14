@@ -12,6 +12,8 @@ urlpatterns = [
     path('adicionar/foto/', backend.cavalo_form_foto, name='cavalo_foto_upload'),
     path('detalhe/<int:id>/', backend.cavalo_detalhe, name='cavalo_detalhe'),
     path('editar/<int:id_cavalo>/', backend.cavalo_form, name='cavalo_editar'),
+    path('editar/<int:id_cavalo>/', backend.cavalo_form, name='cavalo_editar'),
+    path('excluir/<int:id>/', backend.cavalo_excluir, name='cavalo_excluir'),
     path('excluir/video/<int:id>/', backend.cavalo_video_excluir, name='cavalo_video_excluir'),
     path('excluir/foto/<int:id>/', backend.cavalo_foto_excluir, name='cavalo_foto_excluir'),
 ]

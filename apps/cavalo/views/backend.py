@@ -173,7 +173,10 @@ def cavalo_form(request, id_cavalo=None, id_leilao=None):
 def cavalo_form_video(request,id):
             
     cavalo = get_object_or_404(Cavalo, pk=id)
-    leilao_nome = cavalo.leilao.nome
+    if cavalo.leilao:
+        leilao_nome = cavalo.leilao.nome
+    else:
+        leilao_nome = ""
 
     if request.method == 'POST':
         form = VideoForm(request.POST)
@@ -282,6 +285,44 @@ def cavalo_form_foto(request, id=None):
 
     return render(request, 'backend/cavalo_form foto.html', context)
 
+
+# ...existing code...
+@login_required(login_url='/login/')
+@group_required('Administradores')
+def cavalo_excluir(request, id):
+    cavalo = get_object_or_404(Cavalo, pk=id)
+    if request.method == 'POST':
+        from django.db import transaction
+        import os
+        try:
+            with transaction.atomic():
+                # Excluir fotos e arquivos físicos
+                fotos = Foto.objects.filter(cavalo=cavalo)
+                for foto in fotos:
+                    try:
+                        # Remove via storage (compatível com S3, etc.)
+                        if foto.imagem:
+                            caminho_local = foto.imagem.path if hasattr(foto.imagem, 'path') else None
+                            foto.imagem.delete(save=False)
+                            # (Opcional) garantir remoção local se ainda existir
+                            if caminho_local and os.path.isfile(caminho_local):
+                                try:
+                                    os.remove(caminho_local)
+                                except Exception:
+                                    pass
+                    except Exception as e:
+                        messages.warning(request, f'Falha ao remover arquivo da foto {foto.id}: {e}')
+                    foto.delete()
+
+                # Excluir vídeos (não há arquivo físico, apenas registro)
+                Video.objects.filter(cavalo=cavalo).delete()
+
+                # Finalmente excluir o cavalo
+                cavalo.delete()
+                messages.success(request, 'Cavalo e mídias associadas excluídos com sucesso!')
+        except Exception as e:
+            messages.error(request, f'Erro ao excluir cavalo: {e}')
+        return redirect('cavalo_backend:cavalo_lista')
 
 @login_required(login_url='/login/')
 @group_required('Administradores')
