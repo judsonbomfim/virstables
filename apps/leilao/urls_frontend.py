@@ -1,9 +1,10 @@
 from django.urls import path
 from .views import frontend
 
-app_name = 'leilao'
+app_name = 'leilao_frontend'
 
 urlpatterns = [
-    path('', frontend.leilao_detalhe, name='leilao_detalhe'),
-    path('<slug:slug>/', frontend.leilao_detalhe, name='leilao_detalhe'),    
+    # lista
+    path('', frontend.leilao_lista, name='leilao_lista'),
+    path('leilao/<slug:slug>/', frontend.leilao_detalhe, name='leilao_detalhe'),
 ]

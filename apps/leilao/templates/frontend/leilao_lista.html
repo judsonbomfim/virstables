@@ -1,0 +1,86 @@
+{% extends 'frontend/base.html' %}
+
+{% load static i18n cavalo_extras %}
+
+{% block html_attribute %}
+  data-bs-theme="light"
+{% endblock %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block body_attribute %}
+  class="bg-body-secondary" data-bs-spy="scroll" data-bs-target="#navbar-example"
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'frontend/css/contador.css' %}" />
+{% endblock %}
+
+{% block content %}
+  {% include "frontend/partials/subtitle.html" %}
+
+    <!-- Leilões -->
+  <section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="leiloes">
+    <div class="container">
+      {% for leilao in leiloes %}
+        <div class="card shadow-lg">
+          <div class="row align-items-center my-5">
+            <div class="col-lg-5 col-xl-5">
+              <div class="position-relative">
+                <!-- Main image -->
+                <a href="{% url 'leilao_frontend:leilao_detalhe' leilao.slug %}">
+                  {% if leilao.imagem %}
+                    <img src="{{ leilao.imagem.url }}" class="rounded-3 shadow-lg img-fluid w-75 mx-auto d-block z-1 position-relative" alt="{{ leilao.nome }}" />
+                  {% else %}
+                    <img src="{% static 'frontend/images/img-leilao-site.jpg' %}" class="rounded-3 shadow-lg img-fluid w-75 mx-auto d-block z-1 position-relative" alt="{{ leilao.nome }}" />
+                  {% endif %}
+                </a>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-7 p-4">
+              <h2 class="mb-4 lh-base">{{ leilao.nome }}</h2>
+              <p class="mb-2 lead">
+                <b>Prazo para Pré-Lances:</b>
+              </p>
+              <p class="mb-2 lead">
+                Início: <b>{{ leilao.data_inicio|date:'d/m/Y' }}</b> ({{ leilao.data_inicio|time:'H:i' }})<br />
+                Término: <b>{{ leilao.data_fim|date:'d/m/Y' }}</b> ({{ leilao.data_fim|time:'H:i' }}):
+              </p>
+              <p class="mb-2 lead">
+                Transmissão: <b>{{ leilao.data_leilao|date:'l, d/m/Y H:i' }}</b>
+              </p>
+              <br />
+              {% include 'frontend/partials/contador.html' %}
+              <button type="button" class="btn btn-lg btn-primary mt-4" onclick="window.location.href='{% url 'leilao_frontend:leilao_detalhe' leilao.slug %}'">VER LOTES</button>
+            </div>
+            <!-- end col -->
+          </div> <!-- end row -->
+        </div>
+      {% empty %}
+        <div class="alert alert-info">Nenhum leilão disponível no momento.</div>
+      {% endfor %}
+    </div> <!-- end container -->
+  </section>
+
+{% endblock %}
+
+{% block extra_javascript %}
+  <!-- Landing Page js -->
+  <script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
+
+  <script>      
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.data-leilao').forEach(function (input) {
+        const card = input.closest('.card')
+        if (!card) return
+        if (input.value) {
+          startCountdown(card, input.value)
+        }
+      })
+    })
+  </script>
+{% endblock %}

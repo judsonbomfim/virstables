@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from ..models import Post, Category
 
-def post_lista(request):
+def post_list(request):
     posts = Post.objects.filter(published=True)
     categories = Category.objects.all()
     
@@ -13,9 +13,9 @@ def post_lista(request):
     context = {
         'posts': posts,
         'categories': categories,
-        'page_title': 'Blog'
+        'page_title': 'Artigos'
     }
-    return render(request, 'frontend/post_lista.html', context)
+    return render(request, 'frontend/post_list.html', context)
 
 def post_detalhe(request, slug):
     post = get_object_or_404(Post, slug=slug, published=True)

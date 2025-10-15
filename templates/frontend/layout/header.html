@@ -20,7 +20,16 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav fw-medium gap-2 fs-sm mx-auto mt-2 mt-lg-0" id="navbar-example">
           <li class="nav-item">
-            <a class="nav-link active" href="#hero">Home</a>
+            <a href="{% url 'home_frontend:home' %}" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'leilao_frontend:leilao_lista' %}" class="nav-link">Leilões</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'cavalo_frontend:venda_permanente' %}" class="nav-link">Venda Permanente</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'blog_frontend:post_home' %}" class="nav-link">Artigos</a>
           </li>
           <li class="nav-item">
             <a href="{% url 'users_frontend:cadastro' %}" class="nav-link">Cadastro</a>

@@ -226,24 +226,21 @@
 
                       <div class="row">
 
-                        <div class="container my-4">
+                        <div class="container my-4 justify-content-center">
                           <div class="row pb-3">
                             <div class="col-12 col-md-4 text-center fw-bold">PAIS</div>
                             <div class="col-12 col-md-4 text-center fw-bold">AVÓS</div>
                             <div class="col-12 col-md-4 text-center fw-bold">BISAVÓS</div>
                           </div>
-                          <div class="row align-items-center">
+                          <div class="row align-items-center mb-5">
                             <!-- PAIS -->
                             <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
-                              <div class="p-2 mb-4 bg-primary bg-opacity-75 text-white">{{ cavalo.pai }}</div>
-                              <div class="p-2 bg-primary bg-opacity-75 text-white">{{ cavalo.mae }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-75 text-white">{{ cavalo.pai }}</div>
                             </div>
                             <!-- AVÓS -->
-                            <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
-                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_paterno }}</div>
-                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_paterna }}</div>
-                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_materno }}</div>
-                              <div class="p-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_materna }}</div>
+                            <div class="col-12 col-md-4 text-center">
+                              <div class="p-2 mb-5 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_paterno }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_paterna }}</div>
                             </div>
                             <!-- BISAVÓS -->
                             <div class="col-12 col-md-4 text-center">
@@ -251,12 +248,26 @@
                               <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno2 }}</div>
                               <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno3 }}</div>
                               <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno4 }}</div>
+                            </div>
+                          </div>
+                          <div class="row align-items-center">
+                            <!-- PAIS -->
+                            <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
+                              <div class="p-2 bg-primary bg-opacity-75 text-white">{{ cavalo.mae }}</div>
+                            </div>
+                            <!-- AVÓS -->
+                            <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
+                              <div class="p-2 mb-5 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_materno }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_materna }}</div>
+                            </div>
+                            <!-- BISAVÓS -->
+                            <div class="col-12 col-md-4 text-center">
                               <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno1 }}</div>
                               <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno2 }}</div>
                               <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno3 }}</div>
                               <div class="p-2 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno4 }}</div>
                             </div>
-                          </div>                          
+                          </div>                     
                         </div>
 
                       </div>

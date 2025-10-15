@@ -19,6 +19,7 @@ def index(request):
     
     return render(request, 'backend/index.html', context)
 
+@login_required(login_url='/login/')
 def cavalo_detalhe(request, slug):
 
     from apps.site_config.models import SiteSettings
@@ -41,6 +42,21 @@ def cavalo_detalhe(request, slug):
         'site': site,
     }
     return render(request, 'frontend/cavalo_detalhe.html', context)
+
+@login_required(login_url='/login/')
+def venda_permanente(request):
+    from apps.site_config.models import SiteSettings
+    site = SiteSettings.objects.first()
+    
+    cavalos = Cavalo.objects.filter(leilao__isnull=True).order_by('-data_cadastro')
+    
+    context = {
+        'painel_title': settings.PAINEL_TITLE,
+        'page_title': 'Cavalos à Venda Permanente',
+        'cavalos': cavalos,
+        'site': site,
+    }
+    return render(request, 'frontend/cavalo_venda_permanente.html', context)
 
 
 @login_required(login_url='/login/')

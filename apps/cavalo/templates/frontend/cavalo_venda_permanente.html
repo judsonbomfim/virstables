@@ -1,0 +1,127 @@
+{% extends 'frontend/base.html' %}
+
+{% load static i18n cavalo_extras %}
+
+{% block html_attribute %}
+  data-bs-theme="light"
+{% endblock %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block body_attribute %}
+  class="bg-body-secondary" data-bs-spy="scroll" data-bs-target="#navbar-example"
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'frontend/css/contador.css' %}" />
+{% endblock %}
+
+{% block content %}
+  {% include "frontend/partials/subtitle.html" %}
+
+  <!-- Cavalos -->
+  <section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="cavalos">
+    <div class="container">
+      
+      <div class="card shadow-lg">
+
+        <div class="my-5">
+
+          <div class="col-lg-12 text-center">
+            <h2 class="mb-2 lh-base">VENDA PERMANENTE</h2>
+          </div>
+
+          <!-- Lista de cavalos -->
+          <div class="col-12 px-2 px-md-5 py-5 bg-white rounded-3">
+            <div class="row row-cols-xxl-3 row-cols-lg-3 row-cols-sm-2 row-col-1 g-2">
+
+            
+            {% for cavalo in cavalos %}
+              <div class="col">
+                <article class="card mb-2 shadow-lg">
+                  <!-- Card Body -->
+                  <div class="card-body mb-0 pb-0">
+                    {% if cavalo.lote %}
+                    <div class="badge text-bg-success badge-label fs-base rounded position-absolute top-0 start-0 m-3">Lote {{cavalo.lote|stringformat:"02d"}}</div>
+                    {% endif %}
+                    {% with destaque=cavalo.fotos.all|foto_destaque %}
+                      {% if destaque %}
+                        <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
+                          <img src="{{ destaque.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
+                        </a>
+                      {% else %}
+                        <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="href">
+                          <img src="{{ cavalo.fotos.all.first.imagem.url }}" alt="" class="img-fluid rounded-3 mb-3" />
+                        </a>
+                      {% endif %}
+                    {% endwith %}
+                    
+                    <!-- Title -->
+                    <h2 class="fs-xxl 1h-base mb-2 text-center w-100 text-uppercase">
+                      <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="link-reset">{{ cavalo.nome }}</a>
+                    </h2>
+                    
+                    <!-- Detalhes do cavalo -->
+                    <div class="row text-center pb-0">
+                      <div class="col-6 col-md-6">
+                        <div class="row">
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Raça:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.raca }}</p>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Pelagem:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.pelagem }}</p>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Altura:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.altura|floatformat:2 }} m</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-md-6">
+                        <div class="row">
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Sexo:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.get_sexo_display }}</p>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Nascimento:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.nascimento|date:'d/m/Y' }}</p>
+                          </div>
+                          <div class="col-12">
+                            <h6 class="mb-0 text-muted text-uppercase">Criador:</h6>
+                            <p class="fw-medium mb-2">{{ cavalo.criador }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card footer -->
+                  <div class="card-footer bg-transparent d-grid gap-2 w-100">
+                    <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="btn btn-primary w-100">
+                       Mais Informações
+                    </a>
+                  </div>
+
+                </article>                
+              </div> <!-- end col -->
+            {% empty %}
+              <div class="col-12 text-center bg-light bg-opacity-30 p-3 w-100">
+                <p class="text-muted">Nenhum lote disponível no momento.</p>
+              </div>
+            {% endfor %}
+            </div>
+          </div>
+          <!-- Fim Lista de cavalos -->
+        </div> <!-- end row -->
+      </div> <!-- end card -->
+    </div> <!-- end container -->
+
+
+  </section>
+{% endblock %}
+
