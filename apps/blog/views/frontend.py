@@ -13,7 +13,7 @@ def post_list(request):
     context = {
         'posts': posts,
         'categories': categories,
-        'page_title': 'Artigos'
+        'page_title': 'Opinião'
     }
     return render(request, 'frontend/post_list.html', context)
 

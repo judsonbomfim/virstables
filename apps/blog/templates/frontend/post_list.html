@@ -5,10 +5,8 @@
 
 {% block content %}
 
-  {% include "frontend/partials/subtitle.html" %}
-
-  <!-- Artigos -->
-  <section class="section-custom border-top border-bottom border-light" id="artigos">
+  <!-- Opiniões -->
+  <section class="section-custom border-top border-bottom border-light" id="opiniao">
     <div class="container">
       <div class="row g-4">
         {% for post in posts %}
@@ -45,7 +43,7 @@
             </article>
           </div>
         {% empty %}
-          <div class="col-12 text-center text-muted">Nenhum artigo encontrado.</div>
+          <div class="col-12 text-center text-muted">Nenhuma opnião encontrado.</div>
         {% endfor %}
       </div>
     </div>

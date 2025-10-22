@@ -216,7 +216,7 @@
                 <div class="text-danger">{{ form.bisavo_materno4.errors }}</div>
               {% endif %}
             </div>
-            {% if leilao %}
+            {% if form.leilao %}
               <div class="form-group mb-3">
                 <label class="form-label" for="{{ form.lance_inicial.id_for_label }}">Lance Inicial</label>
                 <input type="text" class="form-control" id="{{ form.lance_inicial.id_for_label }}" name="{{ form.lance_inicial.name }}" value="{{ form.lance_inicial.value|default_if_none:'' }}" placeholder="R$ 100,00" maxlength="5"  required />

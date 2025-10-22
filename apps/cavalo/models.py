@@ -23,7 +23,7 @@ class Cavalo(models.Model):
     nascimento = models.DateField(blank=True, null=True, help_text="Data de nascimento do cavalo")
     geracao = models.CharField(max_length=50, blank=True, null=True, help_text="Geração do cavalo")
     altura = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, help_text="Altura em metros")
-    sexo = models.CharField(max_length=10, blank=True, null=True, choices=[('M', 'Macho'), ('F', 'Fêmea'), ('C', 'Castrado')])
+    sexo = models.CharField(max_length=10, blank=True, null=True, choices=[('M', 'Macho'), ('F', 'Fêmea'), ('C', 'Castrado'), ('G', 'Garanhão')])
     pelagem = models.CharField(max_length=30, blank=True, null=True, help_text="Tipo de pelagem")
     criador = models.CharField(max_length=100, blank=True, null=True, help_text="Criador do cavalo")
     vendedor = models.CharField(max_length=100, blank=True, null=True, help_text="Vendedor do cavalo")

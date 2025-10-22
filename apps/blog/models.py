@@ -45,5 +45,5 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        verbose_name = "Artigo"
-        verbose_name_plural = "Artigos"
+        verbose_name = "Opinião"
+        verbose_name_plural = "Opiniões"

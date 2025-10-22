@@ -116,7 +116,7 @@
       {% endfor %}
     </div> <!-- end container -->
   </section>
-
+{% comment %} 
   <!-- Cavalos -->
   {% if cavalos %}
   <section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="cavalos">
@@ -220,12 +220,12 @@
   </section>
   {% endif %}
 
-  <!-- Artigos -->
-  <section class="section-custom border-top border-bottom border-light" id="artigos">
+  <!-- Opinião -->
+  <section class="section-custom border-top border-bottom border-light" id="opinioes">
     <div class="container">
       <div class="row">
         <div class="col-12 text-center">
-          <h2 class="mt-3 fw-bold mb-5">Artigos</h2>
+          <h2 class="mt-3 fw-bold mb-5">Opinião</h2>
         </div>
       </div>
       <div class="row g-4">
@@ -263,11 +263,11 @@
             </article>
           </div>
         {% empty %}
-          <div class="col-12 text-center text-muted">Nenhum artigo encontrado.</div>
+          <div class="col-12 text-center text-muted">Nenhuma opnião encontrado.</div>
         {% endfor %}
       </div>
     </div>
-  </section>
+  </section> {% endcomment %}
   
 
   <!-- Formulário de contato -->

@@ -4,5 +4,5 @@ from django.apps import AppConfig
 class BlogConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.blog'
-    verbose_name = 'Artigo'
-    verbose_name_plural = 'Artigos'
+    verbose_name = 'Opinião'
+    verbose_name_plural = 'Opiniões'
