@@ -1,8 +1,6 @@
 from pathlib import Path
 import os
-import ssl
 from django.contrib.messages import constants as messages
-from celery.schedules import crontab
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -16,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+DEBUG = True
 
 ALLOWED_HOSTS = [
     h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',')
@@ -27,6 +25,8 @@ CSRF_TRUSTED_ORIGINS = [
     a.strip().replace('\\x3a', ':') for a in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
     if a.strip()
 ]
+
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
     'rest_framework',
     'sass_processor',
     'widget_tweaks',
-    'apps.blog.apps.BlogConfig',
     'apps.cavalo.apps.CavaloConfig',
     'apps.emails.apps.EmailsConfig',
     'apps.home.apps.HomeConfig',
@@ -168,25 +168,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CELERY
 REDIS_URL = os.getenv('REDIS_URL')
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_URL = str(os.getenv('CELERY_BROKER_URL'))
+CELERY_RESULT_BACKEND = str(os.getenv('CELERY_RESULT_BACKEND'))
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SYNC_EVERY = None
 CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE')
-CELERY_ENABLE_UTC = True
-CELERY_ENABLE_REMOTE_CONTROL = False
-
-
-# Adicione a configuração de agendamento de tarefas aqui
-CELERY_BEAT_SCHEDULE = {
-    # Exemplo de tarefa: 'nome-da-tarefa-agendada'
-    # 'send-summary-every-morning': {
-    #     'task': 'apps.emails.tasks.sua_tarefa_periodica',  # Caminho para a sua função de tarefa
-    #     'schedule': crontab(hour=8, minute=0),  # Executa todo dia às 8h da manhã
-    #     # 'args': (16, 16), # Argumentos para a tarefa, se houver
-    # },
-}
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -219,10 +206,6 @@ MESSAGE_TAGS = {
 }
 
 # E-mail
-# if DEBUG:
-#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# else:
-#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = str(os.getenv('EMAIL_HOST'))
 EMAIL_PORT = 587
