@@ -14,7 +14,6 @@ def data_atual():
     return agora.replace(tzinfo=None)
 
 # Create your views here.
-@login_required(login_url='/login/')
 def home(request):
     site_settings = SiteSettings.objects.first()
     banners = Banner.objects.order_by('ordem')
