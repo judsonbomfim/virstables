@@ -106,10 +106,9 @@
                           </div>
 
                           <!-- Lance-->
-                           {% if exibir_lance == 's' %}
                           <div class="row text-center my-3">
                             {% include "frontend/partials/messages.html" %}
-
+                            {% if exibir_lance == 's' %}
                             {% if user.is_authenticated %}
                               <form method="post" action="{% url 'cavalo_frontend:dar_lance' cavalo.id %}" id="lanceForm">
                                 {% csrf_token %}
@@ -144,8 +143,12 @@
                               </a>
                             </div>
                             {% endif %}
+                            {% else %}
+                            <div class="alert alert-info text-center" role="alert">
+                              <p>Lance Indisponível!</p>
+                            </div>
+                            {% endif %} <!-- fim exibir lance-->
                           </div>
-                          {% endif %}
                           <!-- Fim Lance-->
                         {% else %}
                           <div class="row my-3 text-center">
