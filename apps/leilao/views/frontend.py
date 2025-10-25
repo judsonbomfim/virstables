@@ -41,10 +41,11 @@ def leilao_detalhe(request, slug):
             'cavalo': cavalo,
             'ultimo_lance': ultimo_lance
         })
-    if leilao.data_inicio > hoje and leilao.data_fim < hoje:
-        exibir_lance = 's'
-    else:
-        exibir_lance = 'n'
+    if leilao:
+        if leilao.data_inicio <= hoje <= leilao.data_fim:
+            exibir_lance = 's'
+        else:
+            exibir_lance = 'n'
     
     hoje = data_atual()
     context = {

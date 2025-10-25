@@ -33,9 +33,11 @@ def cavalo_detalhe(request, slug):
     if leilao:
         # ultimo_lance = leilao.lance_leilao.order_by('-data').first()
         ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor', '-data').first()
-    
-    if leilao.data_inicio > hoje and leilao.data_fim < hoje:
-        exibir_lance = 's'
+
+        if leilao.data_inicio <= hoje <= leilao.data_fim:
+            exibir_lance = 's'
+        else:
+            exibir_lance = 'n'
 
     context = {
         'painel_title': settings.PAINEL_TITLE,
