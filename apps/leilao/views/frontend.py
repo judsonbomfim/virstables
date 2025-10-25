@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from apps.cavalo.classes import exibirLance
 from apps.leilao.models import Leilao, Lance
 from django.utils import timezone
 import pytz
@@ -38,13 +39,9 @@ def leilao_detalhe(request, slug):
             'cavalo': cavalo,
             'ultimo_lance': ultimo_lance
         })
-        
+
+    exibir_lance = exibirLance(leilao.id)        
     hoje = data_atual()
-    
-    exibir_lance = 'n'   
-    hoje_date = hoje.date() if hasattr(hoje, 'date') else hoje    
-    if leilao.data_inicio <= hoje_date <= leilao.data_fim:
-        exibir_lance = 's'    
     
     context = {
         'painel_title': settings.PAINEL_TITLE,

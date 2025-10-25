@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from apps.cavalo.models import Cavalo
 from apps.emails.tasks import email_lance_coberto, email_lance_confirmado
 from apps.leilao.models import Leilao, Lance
+from apps.cavalo.classes import exibirLance
 
 # Create your views here.
 def index(request):    
@@ -20,9 +21,6 @@ def index(request):
 
 def cavalo_detalhe(request, slug):
     
-    import datetime
-    hoje_date = datetime.date.today()
-    
     from apps.site_config.models import SiteSettings
     site = SiteSettings.objects.first()
     
@@ -33,10 +31,8 @@ def cavalo_detalhe(request, slug):
     if leilao:
         # ultimo_lance = leilao.lance_leilao.order_by('-data').first()
         ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor', '-data').first()
-        
-        exibir_lance = 'n'   
-        if leilao.data_inicio <= hoje_date <= leilao.data_fim:
-            exibir_lance = 's'    
+
+        exibir_lance = exibirLance(leilao.id)
 
     context = {
         'painel_title': settings.PAINEL_TITLE,
