@@ -71,7 +71,37 @@
   <!-- Landing Page js -->
   <script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
 
-  <script>      
+  <script>
+    function startCountdown(card, dataFimStr) {
+      const eventCountDown = new Date(dataFimStr.replace(' ', 'T')).getTime()
+      const daysEl = card.querySelector('[id^="days-"]')
+      const hoursEl = card.querySelector('[id^="hours-"]')
+      const minutesEl = card.querySelector('[id^="minutes-"]')
+      const secondsEl = card.querySelector('[id^="seconds-"]')
+      if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+        console.warn('Contador não encontrado para card', card)
+        return
+      }
+      const count = setInterval(function () {
+        const now = new Date().getTime()
+        const timeleft = eventCountDown - now
+        const days = Math.floor(timeleft / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+        const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((timeleft % (1000 * 60)) / 1000)
+        daysEl.innerHTML = days
+        hoursEl.innerHTML = hours
+        minutesEl.innerHTML = minutes
+        secondsEl.innerHTML = seconds
+        if (timeleft < 0) {
+          clearInterval(count)
+          daysEl.innerHTML = ''
+          hoursEl.innerHTML = ''
+          minutesEl.innerHTML = ''
+          secondsEl.innerHTML = ''
+        }
+      }, 1000)
+    }
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.data-leilao').forEach(function (input) {
         const card = input.closest('.card')
@@ -83,3 +113,4 @@
     })
   </script>
 {% endblock %}
+
