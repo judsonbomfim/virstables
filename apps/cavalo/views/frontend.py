@@ -28,6 +28,7 @@ def cavalo_detalhe(request, slug):
     leilao = Leilao.objects.filter(cavalos_leilao=cavalo).first()  # ou ajuste conforme sua relação
 
     ultimo_lance = None
+    exibir_lance = 'n'
     if leilao:
         # ultimo_lance = leilao.lance_leilao.order_by('-data').first()
         ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor', '-data').first()
