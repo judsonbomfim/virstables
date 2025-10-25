@@ -27,9 +27,6 @@ def leilao_lista(request):
 
 def leilao_detalhe(request, slug):
     
-    import datetime
-    hoje = datetime.date.today()
-    
     leilao = Leilao.objects.get(slug=slug)
     cavalos = leilao.cavalos_leilao.all().order_by('lote')
     
@@ -41,13 +38,14 @@ def leilao_detalhe(request, slug):
             'cavalo': cavalo,
             'ultimo_lance': ultimo_lance
         })
-    if leilao:
-        if leilao.data_inicio <= hoje <= leilao.data_fim:
-            exibir_lance = 's'
-        else:
-            exibir_lance = 'n'
-    
+        
     hoje = data_atual()
+    
+    exibir_lance = 'n'   
+    hoje_date = hoje.date() if hasattr(hoje, 'date') else hoje    
+    if leilao.data_inicio <= hoje_date <= leilao.data_fim:
+        exibir_lance = 's'    
+    
     context = {
         'painel_title': settings.PAINEL_TITLE,
         'page_title': f'Leilão: {leilao.nome}',

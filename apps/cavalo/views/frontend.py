@@ -21,7 +21,7 @@ def index(request):
 def cavalo_detalhe(request, slug):
     
     import datetime
-    hoje = datetime.date.today()
+    hoje_date = datetime.date.today()
     
     from apps.site_config.models import SiteSettings
     site = SiteSettings.objects.first()
@@ -33,11 +33,10 @@ def cavalo_detalhe(request, slug):
     if leilao:
         # ultimo_lance = leilao.lance_leilao.order_by('-data').first()
         ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor', '-data').first()
-
-        if leilao.data_inicio <= hoje <= leilao.data_fim:
-            exibir_lance = 's'
-        else:
-            exibir_lance = 'n'
+        
+        exibir_lance = 'n'   
+        if leilao.data_inicio <= hoje_date <= leilao.data_fim:
+            exibir_lance = 's'    
 
     context = {
         'painel_title': settings.PAINEL_TITLE,
