@@ -156,11 +156,13 @@
                       <span class="text-primary fs-3 fw-semibold">R$ {{ cavalo.lance_inicial|floatformat:2 }}</span>
                       <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
                     </div>
+                    {% if exibir_lance == 's' %}
                     <div class="alert alert-warning text-center" role="alert">
                       <a class="alert-link">Seja o primeiro a confirmar o lance</a>!
                     </div>
+                    {% endif %}
                   {% endif %}
-
+                  
                   <!-- Card footer -->
                   <div class="card-footer bg-transparent d-grid gap-2 w-100">
                     <input type="hidden" class="data-leilao" value="{{ leilao.data_fim|date:'Y-m-d H:i:s' }}" />
@@ -173,9 +175,11 @@
                         <i class="ti ti-gavel me-1"></i> Primeiro Lance
                       </a>
                     {% endif %}
+                    {% if exibir_lance == 's' %}
                     <a href="{% url 'cavalo_frontend:cavalo_detalhe' cavalo.slug %}" class="btn btn-primary w-100">
                        Mais Informações
                     </a>
+                    {% endif %}
                   </div>
 
                 </article>                

@@ -97,13 +97,16 @@
                               <span class="text-muted fs-4">Lance Inicial:</span>
                               <span class="text-primary fs-3 fw-semibold">R$ {{ cavalo.lance_inicial|floatformat:2 }}</span>
                               <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
+                              {% if exibir_lance == 's' %}
                               <div class="alert alert-warning text-center mb-0" role="alert">
                                   <a class="alert-link">Seja o primeiro a confirmar o lance</a>!
                               </div>
+                              {% endif %}
                           {% endif %}
                           </div>
 
                           <!-- Lance-->
+                           {% if exibir_lance == 's' %}
                           <div class="row text-center my-3">
                             {% include "frontend/partials/messages.html" %}
 
@@ -142,6 +145,7 @@
                             </div>
                             {% endif %}
                           </div>
+                          {% endif %}
                           <!-- Fim Lance-->
                         {% else %}
                           <div class="row my-3 text-center">

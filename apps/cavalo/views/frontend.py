@@ -10,7 +10,6 @@ from apps.emails.tasks import email_lance_coberto, email_lance_confirmado
 from apps.leilao.models import Leilao, Lance
 
 # Create your views here.
-@login_required(login_url='/login/')
 def index(request):    
     context = {
         'painel_title': settings.PAINEL_TITLE,
@@ -19,9 +18,11 @@ def index(request):
     
     return render(request, 'backend/index.html', context)
 
-@login_required(login_url='/login/')
 def cavalo_detalhe(request, slug):
-
+    
+    import datetime
+    hoje = datetime.date.today()
+    
     from apps.site_config.models import SiteSettings
     site = SiteSettings.objects.first()
     
@@ -32,6 +33,9 @@ def cavalo_detalhe(request, slug):
     if leilao:
         # ultimo_lance = leilao.lance_leilao.order_by('-data').first()
         ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor', '-data').first()
+    
+    if leilao.data_inicio > hoje and leilao.data_fim < hoje:
+        exibir_lance = 's'
 
     context = {
         'painel_title': settings.PAINEL_TITLE,
@@ -40,10 +44,10 @@ def cavalo_detalhe(request, slug):
         'leilao': leilao,
         'ultimo_lance': ultimo_lance,
         'site': site,
+        'exibir_lance': exibir_lance,
     }
     return render(request, 'frontend/cavalo_detalhe.html', context)
 
-@login_required(login_url='/login/')
 def venda_permanente(request):
     from apps.site_config.models import SiteSettings
     site = SiteSettings.objects.first()
@@ -57,7 +61,6 @@ def venda_permanente(request):
         'site': site,
     }
     return render(request, 'frontend/cavalo_venda_permanente.html', context)
-
 
 @login_required(login_url='/login/')
 def dar_lance(request, cavalo_id):
