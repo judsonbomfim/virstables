@@ -90,7 +90,7 @@ services:
 
 volumes:
   static_data:
-  # media_data:
+  media_data:
   postgres_data:
 
 networks:
