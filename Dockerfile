@@ -22,9 +22,22 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar o código do projeto
 COPY . .
 
-# Criar usuário não-root para segurança
-RUN adduser --disabled-password --gecos '' appuser && \
-    chown -R appuser:appuser /app
+# Criar diretórios de media ANTES de mudar usuário
+RUN mkdir -p /app/media/banners \
+    /app/media/cavalos \
+    /app/media/leiloes \
+    /app/media/fotos_cavalos \
+    /app/media/leilao \
+    /app/static
+
+# Criar usuário não-root
+RUN adduser --disabled-password --gecos '' appuser
+
+# Dar permissões ao appuser
+RUN chown -R appuser:appuser /app && \
+    chmod -R 755 /app/media /app/static
+
+# Mudar para usuário não-root
 USER appuser
 
 # Expor a porta do Gunicorn
