@@ -47,33 +47,40 @@ class Lance(models.Model):
     def __str__(self):
         return f"Lance de R${self.valor} por {self.usuario.username} em {self.leilao}"
 
-    def clean(self):
-        from django.core.exceptions import ValidationError
+def clean(self):
+    from django.core.exceptions import ValidationError
+    
+    # Validar se os campos obrigatórios existem
+    if not hasattr(self.cavalo, 'incremento_lance') or self.cavalo.incremento_lance is None:
+        raise ValidationError('O cavalo não possui incremento de lance configurado.')
+    
+    if not hasattr(self.cavalo, 'lance_inicial') or self.cavalo.lance_inicial is None:
+        raise ValidationError('O cavalo não possui lance inicial configurado.')
+    
+    # Verificar se há lance anterior
+    ultimo_lance = Lance.objects.filter(cavalo=self.cavalo).order_by('-valor').first()
+    
+    if ultimo_lance:
+        # Lance deve ser maior que o anterior + incremento
+        valor_minimo = ultimo_lance.valor + self.cavalo.incremento_lance
+        if self.valor < valor_minimo:
+            raise ValidationError(f'O lance deve ser de pelo menos R$ {valor_minimo:.2f}')
         
-        # Verificar se há lance anterior
-        ultimo_lance = Lance.objects.filter(cavalo=self.cavalo).order_by('-valor').first()
-        
-        if ultimo_lance:
-            # Lance deve ser maior que o anterior + incremento
-            valor_minimo = ultimo_lance.valor + self.cavalo.incremento_lance
-            if self.valor < valor_minimo:
-                raise ValidationError(f'O lance deve ser de pelo menos R$ {valor_minimo:.2f}')
+        # NOVA VALIDAÇÃO: Verificar se é múltiplo do incremento
+        diferenca = self.valor - ultimo_lance.valor
+        if diferenca % self.cavalo.incremento_lance != 0:
+            raise ValidationError(f'O lance deve ser um múltiplo de R$ {self.cavalo.incremento_lance:.2f} acima do lance anterior.')
             
-            # NOVA VALIDAÇÃO: Verificar se é múltiplo do incremento
-            diferenca = self.valor - ultimo_lance.valor
-            if diferenca % self.cavalo.incremento_lance != 0:
-                raise ValidationError(f'O lance deve ser um múltiplo de R$ {self.cavalo.incremento_lance:.2f} acima do lance anterior.')
-                
-        else:
-            # Primeiro lance deve ser maior ou igual ao lance inicial
-            if self.valor < self.cavalo.lance_inicial:
-                raise ValidationError(f'O lance deve ser de pelo menos R$ {self.cavalo.lance_inicial:.2f}')
-            
-            # NOVA VALIDAÇÃO: Verificar se é múltiplo do incremento a partir do lance inicial
-            diferenca = self.valor - self.cavalo.lance_inicial
-            if diferenca % self.cavalo.incremento_lance != 0:
-                raise ValidationError(f'O lance deve ser o lance inicial (R$ {self.cavalo.lance_inicial:.2f}) ou um múltiplo de R$ {self.cavalo.incremento_lance:.2f} acima dele.')
+    else:
+        # Primeiro lance deve ser maior ou igual ao lance inicial
+        if self.valor < self.cavalo.lance_inicial:
+            raise ValidationError(f'O lance deve ser de pelo menos R$ {self.cavalo.lance_inicial:.2f}')
         
-        # Verificar se o leilão está ativo
-        if self.leilao.status != 'ativo':
-            raise ValidationError('Não é possível dar lance em leilão inativo.')
+        # NOVA VALIDAÇÃO: Verificar se é múltiplo do incremento a partir do lance inicial
+        diferenca = self.valor - self.cavalo.lance_inicial
+        if diferenca % self.cavalo.incremento_lance != 0:
+            raise ValidationError(f'O lance deve ser o lance inicial (R$ {self.cavalo.lance_inicial:.2f}) ou um múltiplo de R$ {self.cavalo.incremento_lance:.2f} acima dele.')
+    
+    # Verificar se o leilão está ativo
+    if self.leilao.status != 'ativo':
+        raise ValidationError('Não é possível dar lance em leilão inativo.')
