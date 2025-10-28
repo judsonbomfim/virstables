@@ -74,6 +74,12 @@ def dar_lance(request, cavalo_id):
             from decimal import Decimal
             from django.core.exceptions import ValidationError
             
+            # Buscar o leilão do cavalo
+            leilao = Leilao.objects.filter(cavalos_leilao=cavalo).first()
+            
+            if not leilao:
+                raise ValidationError('Este cavalo não está em nenhum leilão ativo.')
+            
             lance_anterior = Lance.objects.filter(cavalo=cavalo).order_by('-data').first()
             
             # CORREÇÃO: Verificar se lance_anterior existe ANTES de acessar .usuario
@@ -82,7 +88,7 @@ def dar_lance(request, cavalo_id):
             
             lance = Lance(
                 cavalo=cavalo,
-                leilao=cavalo.leilao,
+                leilao=leilao,  # Usar a variável leilao que buscamos acima
                 usuario=request.user,
                 valor=Decimal(valor)
             )
