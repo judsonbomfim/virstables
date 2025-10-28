@@ -75,9 +75,9 @@ def dar_lance(request, cavalo_id):
             from django.core.exceptions import ValidationError
             
             lance_anterior = Lance.objects.filter(cavalo=cavalo).order_by('-data').first()
-            lance_usuario = lance_anterior.usuario.id
-            # se usuário atual for diferente do ultimo lance
-            if lance_anterior and lance_usuario != request.user.id:
+            
+            # CORREÇÃO: Verificar se lance_anterior existe ANTES de acessar .usuario
+            if lance_anterior and lance_anterior.usuario.id != request.user.id:
                 email_lance_coberto.delay(lance_anterior.id)
             
             lance = Lance(
@@ -96,7 +96,6 @@ def dar_lance(request, cavalo_id):
             
         except ValidationError as e:
             # Captura especificamente erros de validação
-            # CORREÇÃO: Extrair a mensagem sem colchetes
             if hasattr(e, 'messages') and e.messages:
                 error_message = e.messages[0]  # Pega a primeira mensagem
             else:
