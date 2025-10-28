@@ -74,21 +74,16 @@ def dar_lance(request, cavalo_id):
             from decimal import Decimal
             from django.core.exceptions import ValidationError
             
-            # Buscar o leilão do cavalo
-            leilao = Leilao.objects.filter(cavalos_leilao=cavalo).first()
-            
-            if not leilao:
-                raise ValidationError('Este cavalo não está em nenhum leilão ativo.')
-            
             lance_anterior = Lance.objects.filter(cavalo=cavalo).order_by('-data').first()
-            
-            # CORREÇÃO: Verificar se lance_anterior existe ANTES de acessar .usuario
-            if lance_anterior and lance_anterior.usuario.id != request.user.id:
-                email_lance_coberto.delay(lance_anterior.id)
+            if lance_anterior:
+                lance_usuario = lance_anterior.usuario.id
+                # se usuário atual for diferente do ultimo lance
+                if lance_anterior and lance_usuario != request.user.id:
+                    email_lance_coberto.delay(lance_anterior.id)
             
             lance = Lance(
                 cavalo=cavalo,
-                leilao=leilao,  # Usar a variável leilao que buscamos acima
+                leilao=cavalo.leilao,
                 usuario=request.user,
                 valor=Decimal(valor)
             )
@@ -102,6 +97,7 @@ def dar_lance(request, cavalo_id):
             
         except ValidationError as e:
             # Captura especificamente erros de validação
+            # CORREÇÃO: Extrair a mensagem sem colchetes
             if hasattr(e, 'messages') and e.messages:
                 error_message = e.messages[0]  # Pega a primeira mensagem
             else:
