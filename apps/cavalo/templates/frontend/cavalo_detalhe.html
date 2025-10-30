@@ -240,13 +240,30 @@
                       
                       {% if cavalo.videos.all %}
                       <div class="row mb-4">
-                        <div class="ratio ratio-16x9">
-                          {% for video in cavalo.videos.all %}
-                            <div class="ratio ratio-16x9 mb-3">
-                              <iframe src="{{ video.url_youtube }}" title="{{ cavalo.nome }}" allowfullscreen></iframe>
-                            </div>
-                          {% endfor %}
-                        </div>
+                        <h5 class="text-uppercase text-muted fs-xs mb-2">Vídeos:</h5>
+                        {% for video in cavalo.videos.all %}
+                          <div class="ratio ratio-16x9 mb-3">
+                            {% if 'youtube.com' in video.url_youtube or 'youtu.be' in video.url_youtube %}
+                              {% with video_id=video.url_youtube|slice:"-11:" %}
+                                <iframe 
+                                  src="https://www.youtube.com/embed/{{ video_id }}" 
+                                  title="{{ cavalo.nome }} - Vídeo {{ forloop.counter }}" 
+                                  frameborder="0"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                  referrerpolicy="strict-origin-when-cross-origin"
+                                  allowfullscreen>
+                                </iframe>
+                              {% endwith %}
+                            {% else %}
+                              <iframe 
+                                src="{{ video.url_youtube }}" 
+                                title="{{ cavalo.nome }} - Vídeo {{ forloop.counter }}" 
+                                frameborder="0"
+                                allowfullscreen>
+                              </iframe>
+                            {% endif %}
+                          </div>
+                        {% endfor %}
                       </div>
                       {% endif %}
 
