@@ -17,8 +17,24 @@ def send_email(html_content, text_content, subject, recipient_list):
     Função auxiliar para enviar e-mails
     """
     try:
-        # Em desenvolvimento, usa o método que funciona (mesmo do test_email)
-        if settings.DEBUG:
+        # Tenta primeiro com EmailMultiAlternatives do Django (funciona melhor em produção)
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=recipient_list
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send(fail_silently=False)
+        
+        logger.info(f'✅ E-mail enviado (Django) para: {", ".join(recipient_list)}')
+        
+    except Exception as django_error:
+        logger.warning(f'⚠️ Falha com método Django: {str(django_error)}')
+        logger.info('🔄 Tentando método alternativo com smtplib...')
+        
+        # Fallback: tenta com smtplib diretamente
+        try:
             for recipient in recipient_list:
                 msg = MIMEMultipart('alternative')
                 msg['Subject'] = subject
@@ -31,27 +47,18 @@ def send_email(html_content, text_content, subject, recipient_list):
                 msg.attach(part2)
                 
                 context_ssl = ssl.create_default_context()
-                context_ssl.check_hostname = False
-                context_ssl.verify_mode = ssl.CERT_NONE
+                if settings.DEBUG:
+                    context_ssl.check_hostname = False
+                    context_ssl.verify_mode = ssl.CERT_NONE
                 
-                with smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT) as server:
+                with smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT, timeout=30) as server:
                     server.starttls(context=context_ssl)
                     server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
                     server.send_message(msg)
                 
-                logger.info(f'✅ E-mail enviado para: {recipient}')
-        else:
-            # Em produção, usa o método padrão do Django
-            send_mail(
-                subject=subject,
-                message=text_content,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=recipient_list,
-                html_message=html_content,
-                fail_silently=False,
-            )
-            logger.info(f'✅ E-mails enviados para: {", ".join(recipient_list)}')
-            
-    except Exception as e:
-        logger.error(f'❌ Erro ao enviar e-mail: {str(e)}')
-        raise
+                logger.info(f'✅ E-mail enviado (smtplib) para: {recipient}')
+                
+        except Exception as smtp_error:
+            error_msg = f'❌ Erro final ao enviar e-mail: {str(smtp_error)}'
+            logger.error(error_msg)
+            raise Exception(error_msg)

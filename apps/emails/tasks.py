@@ -33,7 +33,6 @@ def email_cadastro_analise(id):
     html_content = render_to_string('partials/cadastro_analise.html', context)
     text_content = strip_tags(html_content)
     subject = f"{title_email}"
-    # Enviar E-mail
     send_email(html_content, text_content, subject, [email_cliente])
 
 @shared_task
@@ -53,7 +52,6 @@ def email_cadastro_confirmado(id):
     html_content = render_to_string('partials/cadastro_confirmado.html', context)
     text_content = strip_tags(html_content)
     subject = f"{title_email}"
-    # Enviar E-mail
     send_email(html_content, text_content, subject, [email_cliente])
 
 @shared_task
@@ -80,7 +78,6 @@ def email_lance_confirmado(id):
     subject = f"{title_email}"
     
     logger.info(f'📧 Enviando e-mail de lance confirmado para: {email_cliente}')
-    # Enviar E-mail
     send_email(html_content, text_content, subject, [email_cliente])
     logger.info(f'✅ E-mail de lance confirmado enviado com sucesso')
 
@@ -107,7 +104,6 @@ def email_lance_coberto(id):
     subject = f"{title_email}"
     
     logger.info(f'📧 Enviando e-mail de lance coberto para: {email_cliente}')
-    # Enviar E-mail
     send_email(html_content, text_content, subject, [email_cliente])
     logger.info(f'✅ E-mail de lance coberto enviado com sucesso')
 
@@ -117,11 +113,11 @@ def email_recuperacao_senha(user_id, uid, token):
     try:
         user = User.objects.get(id=user_id)
         
-        # Usa apenas as configurações do settings.py
+        # Usa URL_SITE do settings (remove barra final se existir)
         site_name = getattr(settings, 'PAINEL_TITLE', 'Virtual Stables')
-        site_url = getattr(settings, 'URL_SITE')
+        site_url = getattr(settings, 'URL_SITE', 'http://localhost:8000').rstrip('/')
         
-        # URL de reset
+        # URL de reset (sem barra dupla)
         reset_url = f"{site_url}/reset/{uid}/{token}/"
         
         # Contexto do e-mail
@@ -133,15 +129,16 @@ def email_recuperacao_senha(user_id, uid, token):
         }
         
         # Renderizar template HTML
-        html_message = render_to_string('partials/recuperacao_senha.html', context)
+        html_message = render_to_string('emails/recuperacao_senha.html', context)
         plain_message = strip_tags(html_message)
         
         subject = f'{site_name} - Recuperação de Senha'
         
         logger.info(f'📧 Enviando e-mail de recuperação para: {user.email}')
         logger.info(f'🔗 Link de recuperação: {reset_url}')
+        logger.info(f'🌐 URL base usada: {site_url}')
         
-        # Usar a mesma função send_email que funciona
+        # Usar a função send_email
         send_email(html_message, plain_message, subject, [user.email])
         
         logger.info(f'✅ E-mail de recuperação enviado com sucesso para {user.email}')
@@ -152,6 +149,6 @@ def email_recuperacao_senha(user_id, uid, token):
         logger.error(error_msg)
         return error_msg
     except Exception as e:
-        error_msg = f'Erro ao enviar e-mail: {str(e)}'
+        error_msg = f'❌ Erro ao enviar e-mail: {str(e)}'
         logger.error(error_msg)
         raise
