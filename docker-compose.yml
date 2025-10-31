@@ -11,19 +11,13 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - virstables-network
-    # NÃO expor porta publicamente
 
   redis:
     image: redis:7
     container_name: virstables-redis
     restart: always
-    # REMOVER estas linhas para não expor publicamente:
-    # ports:
-    #   - "6379:6379"
     networks:
       - virstables-network
-    # Adicionar proteção
-    command: redis-server --requirepass ${REDIS_PASSWORD:-redis_strong_password_2024}
 
   app:
     build: .
@@ -60,11 +54,12 @@ services:
     build: .
     container_name: virstables-celery-beat
     restart: always
-    command: celery -A core beat -l info
+    command: celery -A core beat -l info --schedule=/tmp/celerybeat-schedule
     env_file:
       - .env
     volumes:
       - .:/app
+      - celerybeat_data:/tmp
     depends_on:
       - postgres
       - redis
@@ -93,6 +88,7 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
+  celerybeat_data:
 
 networks:
   virstables-network:
