@@ -229,6 +229,7 @@
                       <th scope="col">Nome</th>
                       <th scope="col">Cidade/Estado</th>
                       <th scope="col">Lance</th>
+                      <th scope="col">Lance</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -239,6 +240,13 @@
                             {{ lance.usuario.perfil_cliente.end_cidade }}/{{ lance.usuario.perfil_cliente.end_estado }}
                         </td>
                         <td scope="row">R$ {{ lance.valor|floatformat:2 }}</td>
+                        <td scope="row">
+                          <a href="{% url 'users_backend:cliente_detalhe' lance.usuario.perfil_cliente.id %}" 
+                           class="btn btn-sm btn-outline-primary" 
+                           title="Ver Detalhes">
+                          <i class="icofont icofont-eye"></i>
+                        </a>
+                        </td>
                       </tr>
                     {% empty %}
                       <tr>
