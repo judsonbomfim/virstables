@@ -119,7 +119,7 @@ def email_recuperacao_senha(user_id, uid, token):
         
         # Usa apenas as configurações do settings.py
         site_name = getattr(settings, 'PAINEL_TITLE', 'Virtual Stables')
-        site_url = getattr(settings, 'SITE_URL', 'http://localhost:8000')
+        site_url = getattr(settings, 'URL_SITE')
         
         # URL de reset
         reset_url = f"{site_url}/reset/{uid}/{token}/"
