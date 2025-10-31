@@ -129,14 +129,10 @@ def email_recuperacao_senha(user_id, uid, token):
         }
         
         # Renderizar template HTML
-        html_message = render_to_string('emails/recuperacao_senha.html', context)
+        html_message = render_to_string('partials/recuperacao_senha.html', context)
         plain_message = strip_tags(html_message)
         
         subject = f'{site_name} - Recuperação de Senha'
-        
-        logger.info(f'📧 Enviando e-mail de recuperação para: {user.email}')
-        logger.info(f'🔗 Link de recuperação: {reset_url}')
-        logger.info(f'🌐 URL base usada: {site_url}')
         
         # Usar a função send_email
         send_email(html_message, plain_message, subject, [user.email])
