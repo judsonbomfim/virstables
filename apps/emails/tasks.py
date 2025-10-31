@@ -116,6 +116,8 @@ def email_recuperacao_senha(user_id, uid, token):
         # Usa URL_SITE do settings (remove barra final se existir)
         site_name = getattr(settings, 'PAINEL_TITLE', 'Virtual Stables')
         site_url = getattr(settings, 'URL_SITE', 'http://localhost:8000').rstrip('/')
+        title_email = f"Redefinir senha - {site_name}"
+        primeiro_nome = user.first_name.split()[0] if user.first_name else user.username
         
         # URL de reset (sem barra dupla)
         reset_url = f"{site_url}/reset/{uid}/{token}/"
@@ -124,6 +126,8 @@ def email_recuperacao_senha(user_id, uid, token):
         context = {
             'name_site': settings.PAINEL_TITLE,
             'url_site': settings.URL_SITE,
+            'title_email': title_email,
+            'primeiro_nome': primeiro_nome,
             'reset_url': reset_url,
             'site_name': site_name,
             'site_url': site_url,
