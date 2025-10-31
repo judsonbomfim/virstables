@@ -7,7 +7,14 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
-from apps.emails.tasks import email_cadastro_analise
+from django.contrib.auth.views import (
+    PasswordResetView, 
+    PasswordResetDoneView,
+    PasswordResetConfirmView,
+    PasswordResetCompleteView
+)
+from django.contrib.auth.models import User
+from apps.emails.tasks import email_cadastro_analise, email_recuperacao_senha
 from ..forms import CustomUserCreationForm, PerfilClienteForm
 
 def cadastro(request):
@@ -27,7 +34,7 @@ def cadastro(request):
                     user.first_name = nomes[0] if nomes else ''
                     user.last_name = ' '.join(nomes[1:]) if len(nomes) > 1 else ''
                 
-                user.is_active = True  # Inativo até aprovação
+                user.is_active = True
                 user.save()
                 
                 # Criar o perfil
@@ -59,6 +66,7 @@ def cadastro(request):
 
     return render(request, 'frontend/conta/cadastro.html', context)
 
+
 class CustomLoginView(LoginView):
     template_name = 'frontend/conta/login.html'
 
@@ -70,5 +78,46 @@ class CustomLoginView(LoginView):
         
         # SE NÃO HOUVER 'next', usar as regras de grupo
         if self.request.user.groups.filter(name='Administradores').exists():
-            return reverse_lazy('home_backend:home')  # Redireciona para o backend
-        return reverse_lazy('home_frontend:home')  # Redireciona para o frontend
+            return reverse_lazy('home_backend:home')
+        return reverse_lazy('home_frontend:home')
+
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'frontend/conta/password_reset.html'
+    success_url = reverse_lazy('users_frontend:password_reset_done')
+    from_email = settings.DEFAULT_FROM_EMAIL
+    
+    def form_valid(self, form):
+        """Override para enviar e-mail via Celery"""
+        # Não chama o super().form_valid() para evitar envio de e-mail padrão
+        email = form.cleaned_data['email']
+        users = User.objects.filter(email=email, is_active=True)
+        
+        if users.exists():
+            for user in users:
+                # Gera o token de reset
+                from django.contrib.auth.tokens import default_token_generator
+                from django.utils.http import urlsafe_base64_encode
+                from django.utils.encoding import force_bytes
+                
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                
+                # Enviar e-mail via Celery
+                email_recuperacao_senha.delay(user.id, uid, token)
+        
+        # Redireciona para a página de confirmação
+        return redirect(self.success_url)
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'frontend/conta/password_reset_done.html'
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'frontend/conta/password_reset_confirm.html'
+    success_url = reverse_lazy('users_frontend:password_reset_complete')
+
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'frontend/conta/password_reset_complete.html'
