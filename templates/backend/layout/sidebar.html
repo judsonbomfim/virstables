@@ -62,7 +62,16 @@
           </li>
           <li class="sidebar-list">
             <i class="fa-solid fa-thumbtack"></i>
-            <a class="sidebar-link sidebar-title" href="#"><i class="icofont icofont-animal-horse-head-alt-1 text-secondary lead"></i> <span>Configurações do Site</span></a>
+            <a class="sidebar-link sidebar-title" href="#"><i class="icofont icofont-users-social text-secondary lead"></i> <span>Clientes</span></a>
+            <ul class="sidebar-submenu">
+              <li>
+                <a href="{% url 'users_backend:cliente_lista' %}">Listar Clientes</a>
+              </li>
+            </ul>
+          </li>
+          <li class="sidebar-list">
+            <i class="fa-solid fa-thumbtack"></i>
+            <a class="sidebar-link sidebar-title" href="#"><i class="icofont icofont-settings text-secondary lead"></i> <span>Configurações do Site</span></a>
             <ul class="sidebar-submenu">
               <li>
                 <a href="{% url 'site_config_backend:site_config_detalhes' %}">Configurações</a>
@@ -70,7 +79,7 @@
             </ul>
           </li>
           <li class="sidebar-list">
-            <i class="fa-solid fa-thumbtack"></i><a class="sidebar-link sidebar-title" href="#"><i class="icofont icofont-court-hammer text-secondary lead"></i> <span>Opinião</span></a>
+            <i class="fa-solid fa-thumbtack"></i><a class="sidebar-link sidebar-title" href="#"><i class="icofont icofont-edit text-secondary lead"></i> <span>Opinião</span></a>
             <ul class="sidebar-submenu">
               <li>
                 <a href="{% url 'blog_backend:post_lista' %}">Listar Opinião</a>

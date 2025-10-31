@@ -1,0 +1,154 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Detalhes do Cliente</h5>
+            <div>
+              <a href="{% url 'users_backend:cliente_editar' perfil.id %}" class="btn btn-outline-primary">
+                <i class="icofont icofont-edit"></i> Editar
+              </a>
+            </div>
+          </div>
+          <div class="card-body">
+            
+            <!-- Status e Aprovação -->
+            <div class="alert {% if perfil.usuario.is_active %}alert-success{% else %}alert-warning{% endif %}">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Status: </strong>
+                  {% if perfil.usuario.is_active %}
+                    Ativo
+                  {% else %}
+                    Inativo/Aguardando Aprovação
+                  {% endif %}
+                </div>
+                <div>
+                  <form method="post" action="{% url 'users_backend:cliente_aprovar' perfil.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    {% if not perfil.usuario.is_active %}
+                      <button type="submit" name="acao" value="aprovar" class="btn btn-sm btn-success">
+                        <i class="icofont icofont-check"></i> Aprovar Cliente
+                      </button>
+                    {% else %}
+                      <button type="submit" name="acao" value="reprovar" class="btn btn-sm btn-warning">
+                        <i class="icofont icofont-close"></i> Desativar Cliente
+                      </button>
+                    {% endif %}
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dados de Acesso -->
+            <h6 class="text-primary mb-3"><i class="icofont icofont-user"></i> Dados de Acesso</h6>
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <p><strong>Username:</strong> {{ perfil.usuario.username }}</p>
+                <p><strong>Email:</strong> {{ perfil.usuario.email }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Nome Completo:</strong> {{ perfil.usuario.get_full_name|default:"-" }}</p>
+                <p><strong>Data de Cadastro:</strong> {{ perfil.usuario.date_joined|date:"d/m/Y H:i" }}</p>
+              </div>
+            </div>
+
+            <hr>
+
+            <!-- Dados Pessoais -->
+            <h6 class="text-primary mb-3"><i class="icofont icofont-id-card"></i> Dados Pessoais</h6>
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <p><strong>CPF:</strong> {{ perfil.cpf }}</p>
+                <p><strong>RG/IE:</strong> {{ perfil.rg_ie }}</p>
+                <p><strong>UF Emissão:</strong> {{ perfil.get_emis_uf_display }}</p>
+              </div>
+              <div class="col-md-6">
+                {% if perfil.cnpj %}
+                  <p><strong>CNPJ:</strong> {{ perfil.cnpj }}</p>
+                {% endif %}
+                <p><strong>Data Nasc./Fund.:</strong> {{ perfil.nasc_fund|date:"d/m/Y" }}</p>
+                {% if perfil.profis_cnae %}
+                  <p><strong>Profissão/CNAE:</strong> {{ perfil.profis_cnae }}</p>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if perfil.representante %}
+              <div class="row mb-4">
+                <div class="col-12">
+                  <p><strong>Representante:</strong> {{ perfil.representante }}</p>
+                  {% if perfil.cpf_repres %}
+                    <p><strong>CPF Representante:</strong> {{ perfil.cpf_repres }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+
+            <hr>
+
+            <!-- Endereço -->
+            <h6 class="text-primary mb-3"><i class="icofont icofont-location-pin"></i> Endereço</h6>
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <p><strong>CEP:</strong> {{ perfil.end_cep }}</p>
+                <p><strong>Rua/Av:</strong> {{ perfil.end_rua_av }}</p>
+                <p><strong>Número:</strong> {{ perfil.end_numero }}</p>
+                {% if perfil.end_complem %}
+                  <p><strong>Complemento:</strong> {{ perfil.end_complem }}</p>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <p><strong>Bairro:</strong> {{ perfil.end_bairro }}</p>
+                <p><strong>Cidade:</strong> {{ perfil.end_cidade }}</p>
+                <p><strong>Estado:</strong> {{ perfil.get_end_estado_display }}</p>
+              </div>
+            </div>
+
+            <hr>
+
+            <!-- Contato -->
+            <h6 class="text-primary mb-3"><i class="icofont icofont-phone"></i> Contato</h6>
+            <div class="row mb-4">
+              <div class="col-md-6">
+                {% if perfil.telefone %}
+                  <p><strong>Telefone:</strong> {{ perfil.telefone }}</p>
+                {% endif %}
+                <p><strong>Celular:</strong> {{ perfil.celular }}</p>
+              </div>
+            </div>
+
+            {% if perfil.propriedade %}
+              <hr>
+              <!-- Propriedade -->
+              <h6 class="text-primary mb-3"><i class="icofont icofont-home"></i> Propriedade</h6>
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <p><strong>Nome:</strong> {{ perfil.propriedade }}</p>
+                </div>
+                <div class="col-md-6">
+                  {% if perfil.propr_cidade %}
+                    <p><strong>Cidade:</strong> {{ perfil.propr_cidade }}</p>
+                  {% endif %}
+                  {% if perfil.propr_estado %}
+                    <p><strong>Estado:</strong> {{ perfil.get_propr_estado_display }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+
+          </div>
+          <div class="card-footer">
+            <a href="{% url 'users_backend:cliente_lista' %}" class="btn btn-outline-secondary">
+              <i class="icofont icofont-arrow-left"></i> Voltar
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

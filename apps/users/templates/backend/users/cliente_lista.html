@@ -1,0 +1,73 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Lista de Clientes</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive custom-scrollbar">
+              <table class="table table-hover">
+                <thead class="table-secondary">
+                  <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>CPF/CNPJ</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for cliente in clientes %}
+                    <tr>
+                      <td>{{ cliente.id }}</td>
+                      <td>{{ cliente.usuario.get_full_name|default:cliente.usuario.username }}</td>
+                      <td>
+                        {% if cliente.cpf %}{{ cliente.cpf }}{% endif %}
+                        {% if cliente.cnpj %}<br><small class="text-muted">CNPJ: {{ cliente.cnpj }}</small>{% endif %}
+                      </td>
+                      <td>{{ cliente.usuario.email }}</td>
+                      <td>
+                        {% if cliente.celular %}{{ cliente.celular }}{% endif %}
+                        {% if cliente.telefone %}<br><small class="text-muted">{{ cliente.telefone }}</small>{% endif %}
+                      </td>
+                      <td>
+                        {% if cliente.usuario.is_active %}
+                          <span class="badge badge-light-success">Ativo</span>
+                        {% else %}
+                          <span class="badge badge-light-warning">Inativo</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <a href="{% url 'users_backend:cliente_detalhe' cliente.id %}" 
+                           class="btn btn-sm btn-outline-primary" 
+                           title="Ver Detalhes">
+                          <i class="icofont icofont-eye"></i>
+                        </a>
+                        <a href="{% url 'users_backend:cliente_editar' cliente.id %}" 
+                           class="btn btn-sm btn-outline-secondary" 
+                           title="Editar">
+                          <i class="icofont icofont-edit"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="7" class="text-center text-muted">Nenhum cliente cadastrado</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

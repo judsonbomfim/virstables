@@ -1,0 +1,295 @@
+{% extends 'backend/shared/base.html' %}
+{% load static widget_tweaks %}
+
+{% block css_custom %}
+  <link rel="stylesheet" href="{% static 'frontend/assets/plugins/select2/select2.min.css' %}" />
+  <style>
+    .form-section {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .form-section:last-child {
+      border-bottom: none;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-10 offset-lg-1">
+        <div class="card">
+          <div class="card-header border-l-primary border-3">
+            <h5 class="mb-0">Editar Cliente</h5>
+          </div>
+          <div class="card-body">
+            <form method="post" class="form-horizontal">
+              {% csrf_token %}
+
+              <!-- Dados de Identificação -->
+              <div class="form-section">
+                <h6 class="text-primary mb-3"><i class="icofont icofont-user"></i> Identificação</h6>
+                
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.nome_completo.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.nome_completo|add_class:"form-control" }}
+                    {% if form.nome_completo.help_text %}
+                      <small class="form-text text-muted">{{ form.nome_completo.help_text }}</small>
+                    {% endif %}
+                    {% if form.nome_completo.errors %}
+                      <div class="text-danger">{{ form.nome_completo.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.cpf.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.cpf|add_class:"form-control" }}
+                    {% if form.cpf.errors %}
+                      <div class="text-danger">{{ form.cpf.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.cnpj.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.cnpj|add_class:"form-control" }}
+                    {% if form.cnpj.errors %}
+                      <div class="text-danger">{{ form.cnpj.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.rg_ie.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.rg_ie|add_class:"form-control" }}
+                    {% if form.rg_ie.errors %}
+                      <div class="text-danger">{{ form.rg_ie.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.emis_uf.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.emis_uf|add_class:"form-control select2" }}
+                    {% if form.emis_uf.errors %}
+                      <div class="text-danger">{{ form.emis_uf.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.nasc_fund.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.nasc_fund|add_class:"form-control" }}
+                    {% if form.nasc_fund.errors %}
+                      <div class="text-danger">{{ form.nasc_fund.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.profis_cnae.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.profis_cnae|add_class:"form-control" }}
+                    {% if form.profis_cnae.errors %}
+                      <div class="text-danger">{{ form.profis_cnae.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Endereço -->
+              <div class="form-section">
+                <h6 class="text-primary mb-3"><i class="icofont icofont-location-pin"></i> Endereço</h6>
+                
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.end_cep.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.end_cep|add_class:"form-control" }}
+                    {% if form.end_cep.errors %}
+                      <div class="text-danger">{{ form.end_cep.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.end_rua_av.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.end_rua_av|add_class:"form-control" }}
+                    {% if form.end_rua_av.errors %}
+                      <div class="text-danger">{{ form.end_rua_av.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.end_numero.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.end_numero|add_class:"form-control" }}
+                    {% if form.end_numero.errors %}
+                      <div class="text-danger">{{ form.end_numero.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.end_complem.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.end_complem|add_class:"form-control" }}
+                    {% if form.end_complem.errors %}
+                      <div class="text-danger">{{ form.end_complem.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.end_bairro.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.end_bairro|add_class:"form-control" }}
+                    {% if form.end_bairro.errors %}
+                      <div class="text-danger">{{ form.end_bairro.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.end_cidade.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.end_cidade|add_class:"form-control" }}
+                    {% if form.end_cidade.errors %}
+                      <div class="text-danger">{{ form.end_cidade.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.end_estado.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.end_estado|add_class:"form-control select2" }}
+                    {% if form.end_estado.errors %}
+                      <div class="text-danger">{{ form.end_estado.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contato -->
+              <div class="form-section">
+                <h6 class="text-primary mb-3"><i class="icofont icofont-phone"></i> Contato</h6>
+                
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.telefone.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.telefone|add_class:"form-control" }}
+                    {% if form.telefone.errors %}
+                      <div class="text-danger">{{ form.telefone.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.celular.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.celular|add_class:"form-control" }}
+                    {% if form.celular.errors %}
+                      <div class="text-danger">{{ form.celular.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Propriedade -->
+              <div class="form-section">
+                <h6 class="text-primary mb-3"><i class="icofont icofont-home"></i> Propriedade (Opcional)</h6>
+                
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.propriedade.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.propriedade|add_class:"form-control" }}
+                    {% if form.propriedade.errors %}
+                      <div class="text-danger">{{ form.propriedade.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.propr_cidade.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.propr_cidade|add_class:"form-control" }}
+                    {% if form.propr_cidade.errors %}
+                      <div class="text-danger">{{ form.propr_cidade.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                  <label class="col-lg-3 col-form-label">{{ form.propr_estado.label }}</label>
+                  <div class="col-lg-9">
+                    {{ form.propr_estado|add_class:"form-control select2" }}
+                    {% if form.propr_estado.errors %}
+                      <div class="text-danger">{{ form.propr_estado.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botões -->
+              <div class="form-group row">
+                <div class="col-lg-12 text-end">
+                  <a href="{% url 'users_backend:cliente_detalhe' perfil.id %}" class="btn btn-outline-secondary">
+                    <i class="icofont icofont-close"></i> Cancelar
+                  </a>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="icofont icofont-save"></i> Salvar Alterações
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'frontend/assets/plugins/select2/select2.min.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      // Máscaras
+      $('#id_cpf').mask('000.000.000-00');
+      $('#id_cnpj').mask('00.000.000/0000-00');
+      $('#id_end_cep').mask('00000-000');
+      $('#id_telefone').mask('(00) 0000-0000');
+      $('#id_celular').mask('(00) 90000-0000');
+
+      // Select2
+      $('.select2').select2();
+
+      // Buscar CEP
+      $('#id_end_cep').on('blur', function() {
+        var cep = $(this).val().replace(/\D/g, '');
+        if (cep.length === 8) {
+          $.getJSON('https://viacep.com.br/ws/' + cep + '/json/', function(data) {
+            if (!("erro" in data)) {
+              $('#id_end_rua_av').val(data.logradouro);
+              $('#id_end_bairro').val(data.bairro);
+              $('#id_end_cidade').val(data.localidade);
+              $('#id_end_estado').val(data.uf).trigger('change');
+            } else {
+              alert('CEP não encontrado.');
+            }
+          });
+        }
+      });
+    });
+  </script>
+{% endblock %}

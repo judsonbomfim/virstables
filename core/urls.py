@@ -22,6 +22,7 @@ urlpatterns = [
     path('painel/emails/', include('apps.emails.urls_backend', namespace='emails_backend')),
     path('painel/site_config/', include('apps.site_config.urls_backend', namespace='site_config_backend')),
     path('painel/opiniao/', include('apps.blog.urls_backend', namespace='blog_backend')),
+    path('painel/users/', include('apps.users.urls_backend', namespace='users_backend')),
 ]
 
 
