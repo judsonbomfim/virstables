@@ -89,6 +89,7 @@ volumes:
   static_volume:
   media_volume:
   celerybeat_data:
+  redis_data:
 
 networks:
   virstables-network:
