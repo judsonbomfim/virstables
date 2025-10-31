@@ -122,7 +122,8 @@ def email_recuperacao_senha(user_id, uid, token):
         
         # Contexto do e-mail
         context = {
-            'user': user,
+            'name_site': settings.PAINEL_TITLE,
+            'url_site': settings.URL_SITE,
             'reset_url': reset_url,
             'site_name': site_name,
             'site_url': site_url,
