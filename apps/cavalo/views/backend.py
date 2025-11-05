@@ -40,10 +40,9 @@ def cavalo_lista(request):
 
     cavalos = Cavalo.objects.filter(leilao__isnull=True)
     print(f"Total de cavalos disponíveis: {cavalos.count()}")  # Debugging line
-    page_title = 'Cavalos Individuais Disponíveis'
     context = {
         'painel_title': settings.PAINEL_TITLE,
-        'page_title': page_title,
+        'page_title': 'Cavalos Individuais Disponíveis',
         'page_icon': 'icofont icofont-animal-horse-head-alt-1',
         'pagesub_title': 'Cavalos Disponíveis',
         'cavalos': cavalos,

@@ -27,6 +27,7 @@ services:
       - .:/app
       - static_volume:/app/static
       - media_volume:/app/media
+      - ./config:/app/config:ro
     depends_on:
       - postgres
       - redis

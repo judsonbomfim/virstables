@@ -14,6 +14,7 @@ urlpatterns = [
     path('cavalo/', include('apps.cavalo.urls_frontend', namespace='cavalo_frontend')),
     path('', include('apps.users.urls_frontend', namespace='users_frontend')),
     path('opiniao/', include('apps.blog.urls_frontend', namespace='blog_frontend')),
+    path('analytics/', include('apps.analytics.urls')),
 
     # URLs do Backend (painel administrativo personalizado)
     path('painel/', include('apps.home.urls_backend', namespace='home_backend')),
@@ -23,6 +24,7 @@ urlpatterns = [
     path('painel/site_config/', include('apps.site_config.urls_backend', namespace='site_config_backend')),
     path('painel/opiniao/', include('apps.blog.urls_backend', namespace='blog_backend')),
     path('painel/users/', include('apps.users.urls_backend', namespace='users_backend')),
+    
 ]
 
 

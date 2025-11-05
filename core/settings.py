@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.leilao.apps.LeilaoConfig',
     'apps.site_config.apps.SiteConfigConfig',
     'apps.users.apps.UsersConfig',
+    'apps.analytics',
 ]
 
 MIDDLEWARE = [
@@ -245,6 +246,10 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # SSL/TLS Configuration
 EMAIL_SSL_CERTFILE = None
 EMAIL_SSL_KEYFILE = None
+
+# Google Analytics
+GA_PROPERTY_ID = os.getenv('GA_PROPERTY_ID', '')
+GA_CREDENTIALS_PATH = os.getenv('GA_CREDENTIALS_PATH', '')
 
 
 # # Configurações AWS
