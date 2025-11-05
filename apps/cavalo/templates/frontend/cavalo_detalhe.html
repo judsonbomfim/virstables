@@ -172,43 +172,47 @@
                           <div class="row text-center my-3">
                             {% include "frontend/partials/messages.html" %}
                             {% if exibir_lance == 's' %}
-                            {% if user.is_authenticated %}
-                              <form method="post" action="{% url 'cavalo_frontend:dar_lance' cavalo.id %}" id="lanceForm">
-                                {% csrf_token %}
-                                <div class="row g-2 align-items-end justify-content-center">
-                                  <div class="col-auto">
-                                    <label for="valor_lance" class="form-label small text-muted">Valor do Lance (R$)</label>
-                                    <input type="number" 
-                                          class="form-control" 
-                                          id="valor_lance" 
-                                          name="valor" 
-                                          placeholder="{% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance }}{% else %}{{ cavalo.lance_inicial }}{% endif %}"
-                                          min="{% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance }}{% else %}{{ cavalo.lance_inicial }}{% endif %}"
-                                          step="{{ cavalo.incremento_lance }}"
-                                          required>
+                              {% if user.is_authenticated %}
+                                <form method="post" action="{% url 'cavalo_frontend:dar_lance' cavalo.id %}" id="lanceForm">
+                                  {% csrf_token %}
+                                  <div class="row g-2 align-items-end justify-content-center">
+                                    <div class="col-auto">
+                                      <label for="valor_lance" class="form-label small text-muted">Valor do Lance (R$)</label>
+                                      <input type="number" 
+                                            class="form-control" 
+                                            id="valor_lance" 
+                                            name="valor" 
+                                            placeholder="{% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance }}{% else %}{{ cavalo.lance_inicial }}{% endif %}"
+                                            min="{% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance }}{% else %}{{ cavalo.lance_inicial }}{% endif %}"
+                                            step="{{ cavalo.incremento_lance }}"
+                                            required>
+                                    </div>
+                                    <div class="col-auto">
+                                      <button type="button" class="btn btn-secondary" id="btnDarLance">
+                                        <i class="ti ti-gavel fs-lg me-1"></i> 
+                                        {% if ultimo_lance %}Dar um Lance{% else %}Primeiro Lance{% endif %}
+                                      </button>
+                                    </div>
                                   </div>
-                                  <div class="col-auto">
-                                    <button type="button" class="btn btn-secondary" id="btnDarLance">
-                                      <i class="ti ti-gavel fs-lg me-1"></i> 
-                                      {% if ultimo_lance %}Dar um Lance{% else %}Primeiro Lance{% endif %}
-                                    </button>
-                                  </div>
-                                </div>
-                                <small class="text-muted d-block mt-1">
-                                  Lance mínimo: R$ {% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance|floatformat:2 }}{% else %}{{ cavalo.lance_inicial|floatformat:2 }}{% endif %}
-                                </small>
-                              </form>
-                            {% else %}
-                            <div class="alert alert-info text-center" role="alert">
-                              <p>Você precisa estar logado para dar lances.</p>
-                              <a href="{% url 'users_frontend:login' %}?next={{ request.get_full_path }}" class="btn btn-primary">
-                                <i class="ti ti-login me-1"></i> Fazer Login
-                              </a>
+                                  <small class="text-muted d-block mt-1">
+                                    Lance mínimo: R$ {% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance|floatformat:2 }}{% else %}{{ cavalo.lance_inicial|floatformat:2 }}{% endif %}
+                                  </small>
+                                </form>
+                              {% else %}
+                              <div class="alert alert-info text-center" role="alert">
+                                <p>Você precisa estar logado para dar lances.</p>
+                                <a href="{% url 'users_frontend:login' %}?next={{ request.get_full_path }}" class="btn btn-primary">
+                                  <i class="ti ti-login me-1"></i> Fazer Login
+                                </a>
+                              </div>
+                              {% endif %}
+                            {% elif exibir_lance == 'f' %}
+                            <div class="alert alert-danger text-center" role="alert">
+                              <p>Lances Finalizados!</p>
                             </div>
-                            {% endif %}
                             {% else %}
-                            <div class="alert alert-info text-center" role="alert">
-                              <p>Lance Indisponível!</p>
+                            <div class="alert alert-warning text-center" role="alert">
+                              Lances iniciam em <b>{{ leilao.data_inicio|date:"d/m/Y H:i" }}</b>
                             </div>
                             {% endif %} <!-- fim exibir lance-->
                           </div>

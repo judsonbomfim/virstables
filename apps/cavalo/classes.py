@@ -12,5 +12,6 @@ def exibirLance(leilao):
     
     if data_inicio <= hoje_date <= data_fim:
         exibir_lance = 's'
-        
+    elif data_inicio > data_fim:
+        exibir_lance = 'f'
     return exibir_lance
