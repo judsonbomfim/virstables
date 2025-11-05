@@ -17,8 +17,8 @@ class GoogleAnalyticsService:
         credentials_path = settings.GA_CREDENTIALS_PATH
         self.property_id = settings.GA_PROPERTY_ID
         
-        # if not os.path.exists(credentials_path):
-        #     raise FileNotFoundError(f"Arquivo de credenciais não encontrado: {credentials_path}")
+        if not os.path.exists(credentials_path):
+            raise FileNotFoundError(f"Arquivo de credenciais não encontrado: {credentials_path}")
         
         credentials = service_account.Credentials.from_service_account_file(
             credentials_path,
