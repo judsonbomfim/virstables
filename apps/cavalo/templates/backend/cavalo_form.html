@@ -51,7 +51,8 @@
             </div>
             <div class="form-group mb-3">
               <label class="form-label" for="{{ form.nascimento.id_for_label }}">Data de Nascimento</label>
-              <input type="date" class="form-control" id="{{ form.nascimento.id_for_label }}" name="{{ form.nascimento.name }}" value="{{ form.nascimento.value|default_if_none:'' }}" required />              {% if form.nascimento.errors %}
+              <input type="date" class="form-control" id="{{ form.nascimento.id_for_label }}" name="{{ form.nascimento.name }}" value="{{ form.nascimento.value|stringformat:"s" }}" />
+              {% if form.nascimento.errors %}
                 <div class="text-danger">{{ form.nascimento.errors }}</div>
               {% endif %}
             </div>
@@ -61,14 +62,6 @@
               <input type="hidden" id="{{ form.descricao.id_for_label }}" name="{{ form.descricao.name }}" value="{{ form.descricao.value|default_if_none:'' }}" />
               {% if form.descricao.errors %}
                 <div class="text-danger">{{ form.descricao.errors }}</div>
-              {% endif %}
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.informacoes.id_for_label }}">Informações Adicionais</label>
-              <div id="editor-informacoes" class="quill-editor h-150"></div>
-              <input type="hidden" id="{{ form.informacoes.id_for_label }}" name="{{ form.informacoes.name }}" value="{{ form.informacoes.value|default_if_none:'' }}" />
-              {% if form.informacoes.errors %}
-                <div class="text-danger">{{ form.informacoes.errors }}</div>
               {% endif %}
             </div>
             <div class="form-group mb-3">
@@ -87,8 +80,8 @@
             </div>
             <div class="form-group mb-3">
               <label class="form-label" for="{{ form.sexo.id_for_label }}">Sexo</label>
-              <select class="form-control" id="{{ form.sexo.id_for_label }}" name="{{ form.sexo.name }}" required>
-                <option value="" disabled {% if not form.sexo.value %}selected{% endif %}>Selecione...</option>
+              <select class="form-control" id="{{ form.sexo.id_for_label }}" name="{{ form.sexo.name }}">
+                <option value="" {% if not form.sexo.value %}selected{% endif %}>Selecione...</option>
                 {% for value, label in form.sexo.field.choices %}
                   <option value="{{ value }}" {% if form.sexo.value == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
@@ -99,7 +92,7 @@
             </div>
             <div class="form-group mb-3">
               <label class="form-label" for="{{ form.pelagem.id_for_label }}">Pelagem</label>
-              <input type="text" class="form-control" id="{{ form.pelagem.id_for_label }}" name="{{ form.pelagem.name }}" value="{{ form.pelagem.value|default_if_none:'' }}" required />
+              <input type="text" class="form-control" id="{{ form.pelagem.id_for_label }}" name="{{ form.pelagem.name }}" value="{{ form.pelagem.value|default_if_none:'' }}" />
               {% if form.pelagem.errors %}
                 <div class="text-danger">{{ form.pelagem.errors }}</div>
               {% endif %}
@@ -223,20 +216,36 @@
                 <div class="text-danger">{{ form.bisavo_materno4.errors }}</div>
               {% endif %}
             </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.lance_inicial.id_for_label }}">Lance Inicial</label>
-              <input type="text" class="form-control" id="{{ form.lance_inicial.id_for_label }}" name="{{ form.lance_inicial.name }}" value="{{ form.lance_inicial.value|default_if_none:'' }}" placeholder="R$ 100,00" maxlength="5"  required />
-              {% if form.lance_inicial.errors %}
-                <div class="text-danger">{{ form.lance_inicial.errors }}</div>
-              {% endif %}
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" for="{{ form.parcela.id_for_label }}">Número de Parcelas</label>
-              <input type="number" class="form-control" id="{{ form.parcela.id_for_label }}" name="{{ form.parcela.name }}" value="{{ form.parcela.value|default_if_none:'' }}" placeholder="30" maxlength="3"  required />
-              {% if form.parcela.errors %}
-                <div class="text-danger">{{ form.parcela.errors }}</div>
-              {% endif %}
-            </div>
+            {% if form.leilao %}
+              <div class="form-group mb-3">
+                <label class="form-label" for="{{ form.lance_inicial.id_for_label }}">Lance Inicial</label>
+                <input type="text" class="form-control" id="{{ form.lance_inicial.id_for_label }}" name="{{ form.lance_inicial.name }}" value="{{ form.lance_inicial.value|default_if_none:'' }}" placeholder="R$ 100,00" maxlength="5"  required />
+                {% if form.lance_inicial.errors %}
+                  <div class="text-danger">{{ form.lance_inicial.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label" for="{{ form.incremento_lance.id_for_label }}">Incremento de Lance</label>
+                <input type="text" class="form-control" id="{{ form.incremento_lance.id_for_label }}" name="{{ form.incremento_lance.name }}" value="{{ form.incremento_lance.value|default_if_none:'' }}" placeholder="R$ 100,00" maxlength="5"  required />
+                {% if form.incremento_lance.errors %}
+                  <div class="text-danger">{{ form.incremento_lance.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label" for="{{ form.parcela.id_for_label }}">Número de Parcelas</label>
+                <input type="number" class="form-control" id="{{ form.parcela.id_for_label }}" name="{{ form.parcela.name }}" value="{{ form.parcela.value|default_if_none:'' }}" placeholder="30" maxlength="3"  required />
+                {% if form.parcela.errors %}
+                  <div class="text-danger">{{ form.parcela.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label" for="{{ form.lote.id_for_label }}">Número do Lote</label>
+                <input type="number" class="form-control" id="{{ form.lote.id_for_label }}" name="{{ form.lote.name }}" value="{{ form.lote.value|default_if_none:'' }}" placeholder="1" min="1" required />
+                {% if form.lote.errors %}
+                  <div class="text-danger">{{ form.lote.errors }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
             <div class="form-group mb-3">
               <label class="form-label" for="{{ form.status.id_for_label }}">Status</label>
               <select class="form-control" id="{{ form.status.id_for_label }}" name="{{ form.status.name }}" required>
@@ -263,6 +272,7 @@
   <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.5/dist/autoNumeric.min.js"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function() {
+      // Configuração para Lance Inicial
       const lance_inicialInput = document.getElementById('{{ form.lance_inicial.id_for_label }}');
       if (lance_inicialInput) {
         new AutoNumeric(lance_inicialInput, {
@@ -275,9 +285,24 @@
             unformatOnSubmit: true
         });
       }
+
+      // Configuração para Incremento de Lance
+      const incremento_lanceInput = document.getElementById('{{ form.incremento_lance.id_for_label }}');
+      if (incremento_lanceInput) {
+        new AutoNumeric(incremento_lanceInput, {
+            currencySymbol: 'R$ ',
+            decimalCharacter: ',',
+            digitGroupSeparator: '.',
+            decimalPlaces: 2,
+            minimumValue: '0',
+            modifyValueOnWheel: false,
+            unformatOnSubmit: true
+        });
+      }
+
       // Máscara para altura (ex: 1.62)
       const alturaInput = document.getElementById('{{ form.altura.id_for_label }}');
-      if (alturaInput && alturaInput.value) {
+      if (alturaInput) {
         new AutoNumeric(alturaInput, {
             decimalCharacter: ',',
             digitGroupSeparator: '',
@@ -295,16 +320,17 @@
       // Preenche o Quill com o valor do campo, mesmo após erro
       quillDescricao.root.innerHTML = descricaoInput.value || '';
 
-      // Editor para informações
-      const quillInformacoes = new Quill('#editor-informacoes', { theme: 'snow' });
-      const informacoesInput = document.getElementById('{{ form.informacoes.id_for_label }}');
-      quillInformacoes.root.innerHTML = informacoesInput.value || '';
-
-      // Atualiza os campos hidden antes de enviar o formulário
-      const form = document.querySelector('form');
+      const form = document.querySelector('form[action*="cavalo"]');
       form.addEventListener('submit', function (event) {
         descricaoInput.value = quillDescricao.root.innerHTML;
-        informacoesInput.value = quillInformacoes.root.innerHTML;
+
+        if (quillDescricao.getText().trim().length === 0) {
+          alert('Preencha o campo Descrição.');
+          event.preventDefault();
+          return false;
+        }
+        // Debug: veja o valor do campo hidden
+        // console.log('Descrição enviada:', descricaoInput.value);
       });
   });
   </script>

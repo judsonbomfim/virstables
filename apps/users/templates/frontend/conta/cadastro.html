@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block title %}
-  Home
+  Cadastro
 {% endblock %}
 
 {% block body_attribute %}
@@ -22,10 +22,7 @@
 
 {% block content %}
 
-  {% include "frontend/partials/subtitle.html" %}
-
-
-<section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="leiloes">
+<section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="cadastro">
     <div class="container">
       <div class="card shadow-lg">
 
@@ -39,8 +36,7 @@
                       <div class="card-body p-0">
 
                         <div class="avatar avatar-xl mx-auto mt-3">
-                            <span
-                                class="avatar-title bg-primary-subtle text-primary rounded-circle fw-bold">
+                            <span class="avatar-title bg-primary-subtle text-primary rounded-circle fw-bold">
                                 <i data-lucide="shield-user" class="text-primary fs-28 fill-primary"></i>
                             </span>
                         </div>
@@ -50,35 +46,27 @@
                         <p class="text-muted mb-3">* Cadastro sujeito a análise</p>
                         </div>                        
 
-                      </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                  </div> <!-- end col-->
+                      </div>
+                    </div>
+                  </div>
 
                   <div class="col-xl-8">
                     <div class="p-0 p-md-4">
 
                         <div class="wrapper wrapper-content animated fadeInRight">
                             <div class="row">
-                                <div class="col-lg-12"> <!-- Usa a largura total da página -->
+                                <div class="col-lg-12">
                                     <div class="ibox">
                                         <div class="ibox-content">
-                                            <!-- Exibe mensagens de erro ou sucesso -->
-                                            {% if messages %}
-                                                <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissable">
-                                                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                                                    {% for message in messages %}
-                                                        {{ message }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
+                                            {% include "frontend/partials/messages.html" %}
 
                                             <form method="post" class="form-horizontal">
                                                 {% csrf_token %}
 
                                                 <!-- Dados do Usuário -->
                                                 <div class="ibox">
-                                                    <div class="ibox-title pb-3">
-                                                        <h3>Dados de Acesso</h3>
+                                                    <div class="ibox-title">
+                                                        <h5>Dados de Acesso</h5>
                                                     </div>
                                                     <div class="ibox-content">
                                                         <div class="form-group row pb-2">
@@ -93,38 +81,41 @@
                                                                 {% endif %}
                                                             </div>
                                                         </div>
+
                                                         <div class="form-group row pb-2">
                                                             <label class="col-lg-3 col-form-label">{{ user_form.email.label }}</label>
                                                             <div class="col-lg-9">
-                                                                {{ user_form.email|add_class:"form-control"|attr:"type:email" }}
-                                                                {% if user_form.email.help_text %}
-                                                                    <small class="form-text text-muted">{{ user_form.email.help_text }}</small>
-                                                                {% endif %}
+                                                                {{ user_form.email|add_class:"form-control" }}
                                                                 {% if user_form.email.errors %}
                                                                     <span class="text-danger">{{ user_form.email.errors }}</span>
                                                                 {% endif %}
                                                             </div>
                                                         </div>
+
                                                         <div class="form-group row pb-2">
                                                             <label class="col-lg-3 col-form-label">{{ user_form.password1.label }}</label>
                                                             <div class="col-lg-9">
                                                                 <div class="input-group">
                                                                     {{ user_form.password1|add_class:"form-control" }}
-                                                                    <button type="button" class="btn btn-outline-light" onclick="togglePassword('id_password1', this)">
+                                                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('id_password1', this)">
                                                                         <i class="fa fa-eye"></i>
                                                                     </button>
                                                                 </div>
+                                                                {% if user_form.password1.help_text %}
+                                                                    <small class="form-text text-muted">{{ user_form.password1.help_text }}</small>
+                                                                {% endif %}
                                                                 {% if user_form.password1.errors %}
                                                                     <span class="text-danger">{{ user_form.password1.errors }}</span>
                                                                 {% endif %}
                                                             </div>
                                                         </div>
+
                                                         <div class="form-group row pb-2">
                                                             <label class="col-lg-3 col-form-label">{{ user_form.password2.label }}</label>
                                                             <div class="col-lg-9">
                                                                 <div class="input-group">
                                                                     {{ user_form.password2|add_class:"form-control" }}
-                                                                    <button type="button" class="btn btn-outline-light" onclick="togglePassword('id_password2', this)">
+                                                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('id_password2', this)">
                                                                         <i class="fa fa-eye"></i>
                                                                     </button>
                                                                 </div>
@@ -136,33 +127,234 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Dados do Perfil -->
+                                                <!-- Dados Pessoais -->
                                                 <div class="ibox">
-                                                    <div class="ibox-title pb-3">
-                                                        <h3>Dados do Cliente</h3>
+                                                    <div class="ibox-title">
+                                                        <h5>Dados Pessoais</h5>
                                                     </div>
                                                     <div class="ibox-content">
-                                                        {% for field in perfil_form %}
-                                                            <div class="form-group row pb-2">
-                                                                <label class="col-lg-3 col-form-label">{{ field.label }}</label>
-                                                                <div class="col-lg-9">
-                                                                    {{ field|add_class:"form-control" }}
-                                                                    {% if field.help_text %}
-                                                                        <small class="form-text text-muted">{{ field.help_text }}</small>
-                                                                    {% endif %}
-                                                                    {% if field.errors %}
-                                                                        <span class="text-danger">{{ field.errors }}</span>
-                                                                    {% endif %}
-                                                                </div>
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.nome_completo.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.nome_completo|add_class:"form-control" }}
+                                                                {% if perfil_form.nome_completo.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.nome_completo.errors }}</span>
+                                                                {% endif %}
                                                             </div>
-                                                        {% endfor %}
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.cpf.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.cpf|add_class:"form-control" }}
+                                                                {% if perfil_form.cpf.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.cpf.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.cnpj.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.cnpj|add_class:"form-control" }}
+                                                                {% if perfil_form.cnpj.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.cnpj.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.rg_ie.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.rg_ie|add_class:"form-control" }}
+                                                                {% if perfil_form.rg_ie.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.rg_ie.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.emis_uf.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.emis_uf|add_class:"form-control select2" }}
+                                                                {% if perfil_form.emis_uf.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.emis_uf.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.nasc_fund.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.nasc_fund|add_class:"form-control" }}
+                                                                {% if perfil_form.nasc_fund.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.nasc_fund.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.profis_cnae.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.profis_cnae|add_class:"form-control" }}
+                                                                {% if perfil_form.profis_cnae.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.profis_cnae.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Endereço -->
+                                                <div class="ibox">
+                                                    <div class="ibox-title">
+                                                        <h5>Endereço</h5>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_cep.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_cep|add_class:"form-control" }}
+                                                                {% if perfil_form.end_cep.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_cep.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_rua_av.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_rua_av|add_class:"form-control" }}
+                                                                {% if perfil_form.end_rua_av.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_rua_av.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_numero.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_numero|add_class:"form-control" }}
+                                                                {% if perfil_form.end_numero.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_numero.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_complem.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_complem|add_class:"form-control" }}
+                                                                {% if perfil_form.end_complem.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_complem.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_bairro.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_bairro|add_class:"form-control" }}
+                                                                {% if perfil_form.end_bairro.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_bairro.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_cidade.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_cidade|add_class:"form-control" }}
+                                                                {% if perfil_form.end_cidade.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_cidade.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.end_estado.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.end_estado|add_class:"form-control select2" }}
+                                                                {% if perfil_form.end_estado.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.end_estado.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Contato -->
+                                                <div class="ibox">
+                                                    <div class="ibox-title">
+                                                        <h5>Contato</h5>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.telefone.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.telefone|add_class:"form-control" }}
+                                                                {% if perfil_form.telefone.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.telefone.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.celular.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.celular|add_class:"form-control" }}
+                                                                {% if perfil_form.celular.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.celular.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Propriedade (Opcional) -->
+                                                <div class="ibox">
+                                                    <div class="ibox-title">
+                                                        <h5>Propriedade (Opcional)</h5>
+                                                    </div>
+                                                    <div class="ibox-content">
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.propriedade.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.propriedade|add_class:"form-control" }}
+                                                                {% if perfil_form.propriedade.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.propriedade.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.propr_cidade.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.propr_cidade|add_class:"form-control" }}
+                                                                {% if perfil_form.propr_cidade.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.propr_cidade.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row pb-2">
+                                                            <label class="col-lg-3 col-form-label">{{ perfil_form.propr_estado.label }}</label>
+                                                            <div class="col-lg-9">
+                                                                {{ perfil_form.propr_estado|add_class:"form-control select2" }}
+                                                                {% if perfil_form.propr_estado.errors %}
+                                                                    <span class="text-danger">{{ perfil_form.propr_estado.errors }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
 
                                                 <!-- Botão de Envio -->
                                                 <div class="form-group row pb-2">
-                                                    <div class="col-lg-10 mt-3">
-                                                        <button class="btn btn-primary btn-lg" type="submit">Fazer meu cadastro</button>
+                                                    <div class="col-lg-12 text-end">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="ti ti-check"></i> Cadastrar
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -173,22 +365,29 @@
                         </div>
 
                     </div>
-                  </div> <!-- end col-->
-                </div> <!-- end row-->
-              </div> <!-- end card-body-->
-            </div> <!-- end card-->
-          </div> <!-- end col-->
-        </div> <!-- end row-->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </div>    
 
-    </div> <!-- container -->
+    <!-- Botão Voltar -->
+    <div class="row mb-4 py-4">
+        <div class="col-12 text-start">
+          <a href="{% url 'home_frontend:home' %}" class="btn btn-outline-primary">
+            <i class="ti ti-arrow-left me-1"></i> Voltar a Home</a>
+        </div>
+    </div>
+
+    </div>
   </section>
 
 {% endblock %}
 
 {% block extra_javascript %}
-<!-- Landing Page js -->
 <script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
 <script src="{% static 'frontend/assets/plugins/select2/select2.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
@@ -196,7 +395,6 @@
     $(document).ready(function(){
         $('#id_cpf').mask('000.000.000-00');
         $('#id_cnpj').mask('00.000.000/0000-00');
-        $('#id_cpf_repres').mask('000.000.000-00');
         $('#id_end_cep').mask('00000-000');
         $('#id_telefone').mask('(00) 0000-0000');
         $('#id_celular').mask('(00) 90000-0000');
@@ -204,14 +402,14 @@
         // Restringe username para letras minúsculas, sem acentos e sem espaços
         $('#id_username').on('input', function() {
             let val = $(this).val();
-            // Remove acentos, espaços e caracteres não permitidos
-            val = val.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // remove acentos
-            val = val.replace(/[^a-z0-9]/g, ''); // permite apenas minúsculas e números
+            val = val.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            val = val.toLowerCase();
+            val = val.replace(/[^a-z0-9]/g, '');
             $(this).val(val);
         });
 
-        // Inicializa o Select2 para os campos de estado
-        $('#id_emis_uf, #id_end_estado').select2();
+        // Inicializa o Select2
+        $('.select2').select2();
 
         // Preenche os campos de endereço com base no CEP
         $('#id_end_cep').on('blur', function() {
@@ -222,7 +420,7 @@
                         $('#id_end_rua_av').val(data.logradouro);
                         $('#id_end_bairro').val(data.bairro);
                         $('#id_end_cidade').val(data.localidade);
-                        $('#id_end_estado').val(data.uf).trigger('change'); // para select2
+                        $('#id_end_estado').val(data.uf).trigger('change');
                     } else {
                         alert('CEP não encontrado.');
                     }

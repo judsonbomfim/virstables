@@ -1,0 +1,52 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+  {{ page_title }}
+{% endblock %}
+
+{% block content %}
+  <section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="opiniao">
+    <div class="container mt-3">
+      <div class="row">
+        <div class="card col-lg-8 p-4">
+          <article>
+            <header class="mb-4">
+              <h1 class="fw-bolder mb-1">{{ post.titulo }}</h1>
+              <div class="text-muted fst-italic mb-2">Postado em {{ post.created_at|date:'d/m/Y' }} por {{ post.autor.get_full_name|default:post.autor.username }}</div>
+              {% if post.categoria %}
+                <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ post.categoria.nome }}</a>
+              {% endif %}
+            </header>
+            {% if post.imagem %}
+              <figure class="mb-4">
+                <img class="img-fluid rounded" src="{{ post.imagem.url }}" alt="{{ post.titulo }}" />
+              </figure>
+            {% endif %}
+            <section class="mb-5">{{ post.conteudo|safe }}</section>
+          </article>
+        </div>
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3>Outras Opniões</h3>
+            </div>
+            <div class="card-body">
+              <div class="align-items-center">
+                <ul class="list-group list-group-flush fs-sm">
+                  {% for post_a in posts %}
+                    <li class="list-group-item ps-0">
+                      <a href="{% url 'blog_frontend:post_detalhe' post_a.slug %}" class="link-reset fw-medium">{{ post_a.titulo }}</a>
+                    </li>
+                  {% empty %}
+                    <li>Nenhum opinião encontrado.</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card">
+        <div class="card-header border-l-primary border-3">
+          <h5 class="card-title">Excluir Logo</h5>
+        </div>
+        <div class="card-body">
+          <p>Tem certeza que deseja excluir o logo <strong>{{ logo.titulo }}</strong>?</p>
+          <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-pill">Excluir</button>
+            <a href="{% url 'site_config_backend:site_config_detalhes' %}" class="btn btn-secondary ms-2">Cancelar</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block title %}Analytics de Cavalos - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">🐴 Analytics de Cavalos</h1>
+    
+    {% if error %}
+    <div class="alert alert-danger">
+        <strong>Erro:</strong> {{ error }}
+    </div>
+    {% else %}
+    
+    <div class="analytics-card">
+        <h5>Ranking de Performance (Últimos 30 dias)</h5>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cavalo</th>
+                    <th class="text-end">Visualizações</th>
+                    <th class="text-end">Usuários Únicos</th>
+                    <th class="text-end">Tempo Médio</th>
+                    <th class="text-end">Engajamento</th>
+                    <th class="text-end">Preço</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cavalo in cavalos %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {% if cavalo.foto %}
+                        <img src="{{ cavalo.foto }}" alt="{{ cavalo.nome }}" 
+                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 10px;">
+                        {% endif %}
+                        <div class="d-inline-block">
+                            <strong>{{ cavalo.nome|default:cavalo.title }}</strong><br>
+                            <small class="text-muted">ID: {{ cavalo.cavalo_id }}</small>
+                        </div>
+                    </td>
+                    <td class="text-end"><strong>{{ cavalo.views }}</strong></td>
+                    <td class="text-end">-</td>
+                    <td class="text-end">{{ cavalo.avg_time|floatformat:0 }}s</td>
+                    <td class="text-end">
+                        <span class="badge bg-success">{{ cavalo.engagement|floatformat:2 }}</span>
+                    </td>
+                    <td class="text-end">
+                        {% if cavalo.preco %}
+                        R$ {{ cavalo.preco|floatformat:2 }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        {% if cavalo.cavalo_id %}
+                        <a href="{% url 'analytics:cavalo_detail' cavalo.cavalo_id %}" 
+                           class="btn btn-sm btn-outline-primary">
+                            Ver Detalhes
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Nenhum dado disponível</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% endif %}
+</div>
+{% endblock %}

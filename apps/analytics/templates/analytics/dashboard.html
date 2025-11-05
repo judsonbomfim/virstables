@@ -1,0 +1,283 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block title %}Analytics - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* Força aplicação dos estilos */
+div.analytics-card {
+    background: white !important;
+    border-radius: 8px !important;
+    padding: 25px !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    margin-bottom: 20px !important;
+}
+
+div.stat-box {
+    text-align: center !important;
+    padding: 30px 20px !important;
+    color: white !important;
+    border-radius: 8px !important;
+    margin-bottom: 20px !important;
+    min-height: 130px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+div.stat-value {
+    font-size: 2.5rem !important;
+    font-weight: bold !important;
+    margin: 10px 0 !important;
+    line-height: 1 !important;
+}
+
+div.stat-label {
+    font-size: 0.9rem !important;
+    opacity: 0.95 !important;
+    margin-bottom: 5px !important;
+}
+
+.realtime-indicator {
+    display: inline-block !important;
+    width: 10px !important;
+    height: 10px !important;
+    background: #22c55e !important;
+    border-radius: 50% !important;
+    animation: pulse 2s infinite !important;
+    margin-right: 8px !important;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.analytics-card table th {
+    padding: 14px !important;
+    background-color: #f8f9fa !important;
+}
+
+.analytics-card table td {
+    padding: 14px !important;
+}
+
+.analytics-card table {
+    margin-bottom: 0 !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    {% if error %}
+    <div class="alert alert-danger">
+        <strong>Erro:</strong> {{ error }}
+    </div>
+    {% else %}
+    
+    <!-- Usuários em tempo real -->
+    <div class="analytics-card">
+        <h5><span class="realtime-indicator"></span> Usuários Ativos Agora</h5>
+        <div class="stat-value" style="font-size: 2.5rem !important; font-weight: bold !important; margin: 10px 0 !important;">{{ realtime_users }}</div>
+    </div>
+    
+    <!-- Estatísticas gerais (últimos 30 dias) -->
+    <div class="row" style="margin-left: -10px; margin-right: -10px;">
+        <div class="col-md-3" style="padding-left: 10px; padding-right: 10px;">
+            <div class="stat-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; padding: 30px 20px !important; border-radius: 8px !important; text-align: center !important; color: white !important; margin-bottom: 20px !important;">
+                <div class="stat-label" style="font-size: 0.9rem !important; opacity: 0.95 !important; margin-bottom: 5px !important;">Usuários</div>
+                <div class="stat-value" style="font-size: 2.5rem !important; font-weight: bold !important; margin: 10px 0 !important;">{{ stats.users|default:0 }}</div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding-left: 10px; padding-right: 10px;">
+            <div class="stat-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important; padding: 30px 20px !important; border-radius: 8px !important; text-align: center !important; color: white !important; margin-bottom: 20px !important;">
+                <div class="stat-label" style="font-size: 0.9rem !important; opacity: 0.95 !important; margin-bottom: 5px !important;">Sessões</div>
+                <div class="stat-value" style="font-size: 2.5rem !important; font-weight: bold !important; margin: 10px 0 !important;">{{ stats.sessions|default:0 }}</div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding-left: 10px; padding-right: 10px;">
+            <div class="stat-box" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important; padding: 30px 20px !important; border-radius: 8px !important; text-align: center !important; color: white !important; margin-bottom: 20px !important;">
+                <div class="stat-label" style="font-size: 0.9rem !important; opacity: 0.95 !important; margin-bottom: 5px !important;">Visualizações</div>
+                <div class="stat-value" style="font-size: 2.5rem !important; font-weight: bold !important; margin: 10px 0 !important;">{{ stats.pageviews|default:0 }}</div>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding-left: 10px; padding-right: 10px;">
+            <div class="stat-box" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important; padding: 30px 20px !important; border-radius: 8px !important; text-align: center !important; color: white !important; margin-bottom: 20px !important;">
+                <div class="stat-label" style="font-size: 0.9rem !important; opacity: 0.95 !important; margin-bottom: 5px !important;">Taxa de Rejeição</div>
+                <div class="stat-value" style="font-size: 2.5rem !important; font-weight: bold !important; margin: 10px 0 !important;">{{ stats.bounce_rate|default:0|floatformat:1 }}%</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gráfico de visitantes diários -->
+    <div class="analytics-card">
+        <h5 style="margin-bottom: 20px;">Visitantes Diários (Últimos 30 dias)</h5>
+        <div style="padding: 10px 0;">
+            <canvas id="dailyChart" height="80"></canvas>
+        </div>
+    </div>
+    
+    <div class="row" style="margin-left: -10px; margin-right: -10px;">
+        <!-- Páginas mais visitadas -->
+        <div class="col-md-6" style="padding-left: 10px; padding-right: 10px;">
+            <div class="analytics-card">
+                <h5 style="margin-bottom: 20px;">Top 10 Páginas</h5>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th style="padding: 14px !important;">Página</th>
+                            <th class="text-end" style="padding: 14px !important;">Visualizações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for page in top_pages %}
+                        <tr>
+                            <td style="padding: 14px !important;">
+                                <small class="text-muted">{{ page.path }}</small><br>
+                                {{ page.title|truncatewords:5 }}
+                            </td>
+                            <td class="text-end" style="padding: 14px !important;"><strong>{{ page.views }}</strong></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center text-muted" style="padding: 30px !important;">Nenhum dado disponível</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Fontes de tráfego -->
+        <div class="col-md-6" style="padding-left: 10px; padding-right: 10px;">
+            <div class="analytics-card">
+                <h5 style="margin-bottom: 20px;">Fontes de Tráfego</h5>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th style="padding: 14px !important;">Fonte</th>
+                            <th class="text-end" style="padding: 14px !important;">Sessões</th>
+                            <th class="text-end" style="padding: 14px !important;">Usuários</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for source in traffic_sources %}
+                        <tr>
+                            <td style="padding: 14px !important;">{{ source.source }}</td>
+                            <td class="text-end" style="padding: 14px !important;">{{ source.sessions }}</td>
+                            <td class="text-end" style="padding: 14px !important;">{{ source.users }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted" style="padding: 30px !important;">Nenhum dado disponível</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cavalos mais visualizados -->
+    <div class="row" style="margin-top: 20px; margin-left: -10px; margin-right: -10px;">
+        <div class="col-12" style="padding-left: 10px; padding-right: 10px;">
+            <div class="analytics-card">
+                <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 20px;">
+                    <h5 style="margin-bottom: 0;">🐴 Top 10 Cavalos Mais Visualizados</h5>
+                    <a href="{% url 'analytics:cavalos' %}" class="btn btn-sm btn-primary">
+                        Ver Relatório Completo
+                    </a>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="padding: 14px !important;">Cavalo</th>
+                            <th class="text-end" style="padding: 14px !important;">Visualizações</th>
+                            <th class="text-end" style="padding: 14px !important;">Tempo Médio</th>
+                            <th class="text-end" style="padding: 14px !important;">Engajamento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cavalo in top_cavalos %}
+                        <tr>
+                            <td style="padding: 14px !important;">
+                                {% if cavalo.foto %}
+                                <img src="{{ cavalo.foto }}" alt="{{ cavalo.nome }}" 
+                                     style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px; vertical-align: middle;">
+                                {% endif %}
+                                <strong>{{ cavalo.nome|default:cavalo.title }}</strong><br>
+                                <small class="text-muted">{{ cavalo.path }}</small>
+                            </td>
+                            <td class="text-end" style="padding: 14px !important;">
+                                <strong>{{ cavalo.views }}</strong>
+                            </td>
+                            <td class="text-end" style="padding: 14px !important;">
+                                {{ cavalo.avg_time|floatformat:0 }}s
+                            </td>
+                            <td class="text-end" style="padding: 14px !important;">
+                                <span class="badge bg-success">{{ cavalo.engagement|floatformat:2 }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted" style="padding: 30px !important;">Nenhum dado disponível</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
+<script>
+const dailyData = {{ daily_data_json|safe }};
+
+if (dailyData && dailyData.length > 0) {
+    const ctx = document.getElementById('dailyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dailyData.map(d => d.date),
+            datasets: [
+                {
+                    label: 'Usuários',
+                    data: dailyData.map(d => d.users),
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                },
+                {
+                    label: 'Sessões',
+                    data: dailyData.map(d => d.sessions),
+                    borderColor: '#f093fb',
+                    backgroundColor: 'rgba(240, 147, 251, 0.1)',
+                    tension: 0.4,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

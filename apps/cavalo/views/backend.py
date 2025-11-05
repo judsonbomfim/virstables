@@ -1,65 +1,18 @@
 from io import BytesIO
-import json
 import unicodedata
 from PIL import Image
-from django import forms
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from core.decorators import group_required
 from django.conf import settings
 from django.core.files.base import ContentFile
-from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.forms import ModelForm
 from django.db.models import Max  # Adicionada a importação do Max
 from django.shortcuts import get_object_or_404, render, redirect
-from django.views.decorators.csrf import csrf_exempt
-from apps.cavalo import models
-from apps.leilao.models import Leilao
+from apps.leilao.models import Leilao, Lance
 from apps.cavalo.models import Cavalo, Video, Foto
+from apps.cavalo.forms import CavaloForm, FotoForm, VideoForm
 
-class CavaloForm(ModelForm):
-    class Meta:
-        model = Cavalo
-        fields = ['nome', 'raca', 'descricao', 'informacoes', 'registro',
-                  'nascimento', 'geracao', 'altura', 'sexo', 'pelagem',
-                  'criador', 'vendedor', 'alojamento', 'pai', 'mae',
-                  'avo_paterno', 'avo_paterna', 'avo_materno', 'avo_materna',
-                  'bisavo_paterno1', 'bisavo_paterno2', 'bisavo_paterno3', 'bisavo_paterno4',
-                  'bisavo_materno1', 'bisavo_materno2', 'bisavo_materno3', 'bisavo_materno4',
-                  'lance_inicial', 'parcela', 'leilao', 'status']
-        help_texts = {
-            # Add any specific help texts if needed
-        }
-        error_messages = {
-            'nome': {
-                'max_length': "O nome do cavalo é muito longo.",
-            },
-            'registro': {
-                'unique': "Já existe um cavalo com este registro.",
-            },
-        }
-        widgets = {
-            # Define widgets if needed, e.g., for better UI
-        }
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Filtra apenas leilões com status 'aberto'
-        self.fields['leilao'].queryset = Leilao.objects.filter(status='ativo')
-
-class VideoForm(ModelForm):
-    class Meta:
-        model = Video
-        fields = ['cavalo', 'url_youtube', 'legenda']
-
-class FotoForm(ModelForm):
-    class Meta:
-        model = Foto
-        fields = ['cavalo', 'imagem', 'is_destaque', 'ordem']
-        widgets = {
-            'ordem': forms.HiddenInput(),
-        }
 
 def youtube_to_embed(url):
     import re
@@ -87,10 +40,9 @@ def cavalo_lista(request):
 
     cavalos = Cavalo.objects.filter(leilao__isnull=True)
     print(f"Total de cavalos disponíveis: {cavalos.count()}")  # Debugging line
-    page_title = 'Cavalos Individuais Disponíveis'
     context = {
         'painel_title': settings.PAINEL_TITLE,
-        'page_title': page_title,
+        'page_title': 'Cavalos Individuais Disponíveis',
         'page_icon': 'icofont icofont-animal-horse-head-alt-1',
         'pagesub_title': 'Cavalos Disponíveis',
         'cavalos': cavalos,
@@ -105,6 +57,13 @@ def cavalo_detalhe(request, id):
 
     cavalo = get_object_or_404(Cavalo, pk=id)
     leilao_nome = cavalo.leilao.nome if cavalo.leilao else ""
+    fotos = Foto.objects.filter(cavalo=cavalo).order_by('ordem')
+    videos = Video.objects.filter(cavalo=cavalo).order_by('-id')
+    #Listar os lances deste cavalo especificamente
+    if cavalo.leilao:
+        lances = Lance.objects.filter(cavalo=cavalo).order_by('-valor')
+    else:
+        lances = None
 
     if request.method == 'POST':
         if 'foto_id' in request.POST and 'is_destaque' in request.POST:
@@ -134,8 +93,8 @@ def cavalo_detalhe(request, id):
                 return JsonResponse({'status': 'erro', 'mensagem': str(e)}, status=500)
 
     # Listar fotos para exibição
-    fotos = Foto.objects.filter(cavalo=cavalo).order_by('ordem')
-    videos = Video.objects.filter(cavalo=cavalo).order_by('-id')
+
+    
     context = {
         'painel_title': settings.PAINEL_TITLE,
         'page_title': f'Detalhes de {cavalo.nome}',
@@ -145,6 +104,7 @@ def cavalo_detalhe(request, id):
         'leilao_nome': leilao_nome,
         'fotos': fotos,
         'videos': videos,
+        'lances': lances,
     }
     return render(request, 'backend/cavalo_detalhe.html', context)
 
@@ -212,7 +172,10 @@ def cavalo_form(request, id_cavalo=None, id_leilao=None):
 def cavalo_form_video(request,id):
             
     cavalo = get_object_or_404(Cavalo, pk=id)
-    leilao_nome = cavalo.leilao.nome
+    if cavalo.leilao:
+        leilao_nome = cavalo.leilao.nome
+    else:
+        leilao_nome = ""
 
     if request.method == 'POST':
         form = VideoForm(request.POST)
@@ -268,10 +231,10 @@ def cavalo_form_foto(request, id=None):
 
             try:
                 img = Image.open(arquivo)
-                if img.width > 1200:
-                    proporcao = 1200 / float(img.width)
+                if img.width > 1440:
+                    proporcao = 1440 / float(img.width)
                     nova_altura = int(float(img.height) * proporcao)
-                    img = img.resize((1200, nova_altura), Image.Resampling.LANCZOS)
+                    img = img.resize((1440, nova_altura), Image.Resampling.LANCZOS)
                 img_io = BytesIO()
                 img_format = img.format if img.format else 'JPEG'
                 img.save(img_io, format=img_format)
@@ -321,6 +284,44 @@ def cavalo_form_foto(request, id=None):
 
     return render(request, 'backend/cavalo_form foto.html', context)
 
+
+# ...existing code...
+@login_required(login_url='/login/')
+@group_required('Administradores')
+def cavalo_excluir(request, id):
+    cavalo = get_object_or_404(Cavalo, pk=id)
+    if request.method == 'POST':
+        from django.db import transaction
+        import os
+        try:
+            with transaction.atomic():
+                # Excluir fotos e arquivos físicos
+                fotos = Foto.objects.filter(cavalo=cavalo)
+                for foto in fotos:
+                    try:
+                        # Remove via storage (compatível com S3, etc.)
+                        if foto.imagem:
+                            caminho_local = foto.imagem.path if hasattr(foto.imagem, 'path') else None
+                            foto.imagem.delete(save=False)
+                            # (Opcional) garantir remoção local se ainda existir
+                            if caminho_local and os.path.isfile(caminho_local):
+                                try:
+                                    os.remove(caminho_local)
+                                except Exception:
+                                    pass
+                    except Exception as e:
+                        messages.warning(request, f'Falha ao remover arquivo da foto {foto.id}: {e}')
+                    foto.delete()
+
+                # Excluir vídeos (não há arquivo físico, apenas registro)
+                Video.objects.filter(cavalo=cavalo).delete()
+
+                # Finalmente excluir o cavalo
+                cavalo.delete()
+                messages.success(request, 'Cavalo e mídias associadas excluídos com sucesso!')
+        except Exception as e:
+            messages.error(request, f'Erro ao excluir cavalo: {e}')
+        return redirect('cavalo_backend:cavalo_lista')
 
 @login_required(login_url='/login/')
 @group_required('Administradores')

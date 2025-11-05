@@ -17,18 +17,14 @@ class Cavalo(models.Model):
     slug = models.SlugField(max_length=120, unique=True, blank=True, null=True)
     raca = models.CharField(max_length=50, null=True)
     descricao = models.TextField()
-    informacoes = models.TextField(blank=True, null=True)
     registro = models.CharField(
         max_length=50,
-        validators=[RegexValidator(r'^[A-Z0-9-]+$', 'Registro deve conter apenas letras maiúsculas, números e hífens')]
     )
     nascimento = models.DateField(blank=True, null=True, help_text="Data de nascimento do cavalo")
     geracao = models.CharField(max_length=50, blank=True, null=True, help_text="Geração do cavalo")
     altura = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, help_text="Altura em metros")
-    sexo = models.CharField(max_length=10, choices=[('M', 'Macho'), ('F', 'Fêmea'), ('C', 'Castrado')])
+    sexo = models.CharField(max_length=10, blank=True, null=True, choices=[('M', 'Macho'), ('F', 'Fêmea'), ('C', 'Castrado'), ('G', 'Garanhão')])
     pelagem = models.CharField(max_length=30, blank=True, null=True, help_text="Tipo de pelagem")
-    # criador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cavalos_criador', blank=True, null=True)
-    # vendedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cavalos_vendedor', blank=True, null=True)
     criador = models.CharField(max_length=100, blank=True, null=True, help_text="Criador do cavalo")
     vendedor = models.CharField(max_length=100, blank=True, null=True, help_text="Vendedor do cavalo")
     alojamento = models.CharField(max_length=100, blank=True, null=True, help_text="Local de alojamento do cavalo")
@@ -48,7 +44,9 @@ class Cavalo(models.Model):
     bisavo_materno3 = models.CharField(max_length=30, blank=True, null=True, help_text="Bisavô Materno")
     bisavo_materno4 = models.CharField(max_length=30, blank=True, null=True, help_text="Bisavó Materno")
     lance_inicial = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text="Lance Inicial da parcela")
+    incremento_lance = models.DecimalField(max_digits=10, decimal_places=2, default=50.00, blank=True, null=True, help_text="Valor mínimo de incremento entre lances")
     parcela = models.IntegerField(blank=True, null=True, help_text="Número de parcelas")
+    lote = models.IntegerField(blank=True, null=True, help_text="Número do lote no leilão")
     data_cadastro = models.DateTimeField(auto_now_add=True, help_text="Data de cadastro do cavalo")
     status = models.CharField(
         max_length=20,
@@ -56,6 +54,9 @@ class Cavalo(models.Model):
         default='disponivel',
         help_text="Status do cavalo"
     )
+    
+    class Meta:
+        unique_together = ['leilao', 'lote']
     
     def __str__(self):
         return self.nome

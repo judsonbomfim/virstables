@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,visualstudiocode
 
+docker-compose.dev.yml
+
 ### Django ###
 *.log
 *.pot
@@ -284,3 +286,4 @@ poetry.toml
 # End of https://www.toptal.com/developers/gitignore/api/python,django,visualstudiocode
 .env.bak
 .env.bak
+config/google-analytics-credentials.json

@@ -5,11 +5,11 @@
   <nav class="navbar navbar-expand-lg py-3 sticky-top" id="landing-navbar">
     <div class="container">
       <div class="auth-brand mb-0">
-        <a href="/" class="logo-dark">
-          <img src="{% static 'frontend/images/logo-virtual-stables-site.png' %}" alt="dark logo" height="70">
+        <a href="{% url 'home_frontend:home' %}" class="logo-dark">
+          <img src="{% static 'frontend/images/logo_virtualstable_site.png' %}" alt="dark logo" height="70">
         </a>
-        <a href="/" class="logo-light">
-          <img src="{% static 'frontend/images/logo-virtual-stables-site.png' %}" alt="logo" height="70">
+        <a href="{% url 'home_frontend:home' %}" class="logo-light">
+          <img src="{% static 'frontend/images/logo_virtualstable_site.png' %}" alt="logo" height="70">
         </a>
       </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -20,7 +20,16 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav fw-medium gap-2 fs-sm mx-auto mt-2 mt-lg-0" id="navbar-example">
           <li class="nav-item">
-            <a class="nav-link active" href="#hero">Home</a>
+            <a href="{% url 'home_frontend:home' %}" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'leilao_frontend:leilao_lista' %}" class="nav-link">Leilões</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'cavalo_frontend:venda_permanente' %}" class="nav-link">Venda Permanente</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'blog_frontend:post_home' %}" class="nav-link">Opinião</a>
           </li>
           <li class="nav-item">
             <a href="{% url 'users_frontend:cadastro' %}" class="nav-link">Cadastro</a>

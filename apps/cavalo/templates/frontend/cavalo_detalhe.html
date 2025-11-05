@@ -1,6 +1,6 @@
 {% extends 'frontend/base.html' %}
 
-{% load static i18n cavalo_extras %}
+{% load static i18n cavalo_extras site_info_tags %}
 
 {% block html_attribute %}
   data-bs-theme="light"
@@ -17,36 +17,55 @@
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'frontend/css/contador.css' %}" />
   <style>
-    .pais{
-      border: 2px solid #8A755F;
-      color: #8A755F;
+    .gene table {
+        table-layout: fixed;
+        margin-top: 50px;
     }
-    .avos{
-      border: 2px solid #8A755F;
-      color: #8A755F;
+
+    .gene .base {
+        text-align: center;
+        padding: 0 0 20px 0;
     }
-    .bisavos{
-      border: 2px solid #8A755F;
-      color: #8A755F;
+
+    .gene table span {
+        padding: 15px 10px;
+        border-radius: 4px;
+        display: block;
+        font-size: 12px;
+        border: 1px solid #8A755F;
+    }
+
+    .avos {
+        color: #8A755F;
+        border: none; 
+        padding-right: 5px;
+    }
+
+    .bisavos {
+        color: #8A755F;
+        border: none; 
+        padding-bottom: 5px;
+    }
+    .pais {
+        color: #8A755F;
+        border: none; 
     }
   </style>
 {% endblock %}
 
 {% block content %}
-  {% include "frontend/partials/subtitle.html" %}
-
   <!-- Leilões -->
   <section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="leiloes">
     <div class="container">
       <div class="card shadow-lg">
 
-        <div class="row align-items-center m-2 m-lg-5">
+        <div class="row align-items-center m-lg-5">
           <div class="col-12">
             <div class="card">
               <div class="card-body">
                 <div class="row">
                   <div class="col-xl-4">
-                    <div class="card card-top-sticky border-0">
+                    <div class="card border-0">
                       <div class="card-body p-0">
                         <!-- Crossfade -->
                         
@@ -85,43 +104,94 @@
                         </div>
                         <!-- end carousel-->
 
-                        {% if ultimo_lance %}
-                          <div class="row my-3 text-center">
-                            <span class="text-muted fs-4">Último Lance:</span>
-                            <span class="text-primary fs-3 fw-semibold">R$ {{ ultimo_lance.valor|floatformat:2 }}</span>
-                            <span class="text-muted fs-6">por {{ ultimo_lance.usuario }}</span>
-                            <span class="text-muted fs-6">em {{ ultimo_lance.data|date:"d/m/Y H:i" }}</span>
-                            <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
+                        {% if leilao %}
+                          <div id="lance" class="row my-3 text-center">                      
+                          {% if ultimo_lance %}
+                            <!-- Existe pelo menos um lance -->
+                              <span class="text-muted fs-4">Último Lance:</span>
+                              <span class="text-primary fs-3 fw-semibold">R$ {{ ultimo_lance.valor|floatformat:2 }}</span>
+                              <span class="text-primary fs-5">{{ ultimo_lance.usuario.perfil_cliente.end_cidade }}/{{ ultimo_lance.usuario.perfil_cliente.end_estado }}</span>
+                              <span class="text-muted fs-6">em {{ ultimo_lance.data|date:"d/m/Y H:i" }}</span>
+                              <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
+                          {% else %}
+                            <!-- Não há lances ainda -->
+                              <span class="text-muted fs-4">Lance Inicial:</span>
+                              <span class="text-primary fs-3 fw-semibold">R$ {{ cavalo.lance_inicial|floatformat:2 }}</span>
+                              <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
+                              {% if exibir_lance == 's' %}
+                              <div class="alert alert-warning text-center mb-0" role="alert">
+                                  <a class="alert-link">Seja o primeiro a confirmar o lance</a>!
+                              </div>
+                              {% endif %}
+                          {% endif %}
                           </div>
+
+                          <!-- Lance-->
                           <div class="row text-center my-3">
-                            <a href=""
-                              class="btn btn-secondary me-1"><i
-                              class="ti ti-pencil fs-lg me-1"></i> Dê um um lace</a>
+                            {% include "frontend/partials/messages.html" %}
+                            {% if exibir_lance == 's' %}
+                            {% if user.is_authenticated %}
+                              <form method="post" action="{% url 'cavalo_frontend:dar_lance' cavalo.id %}" id="lanceForm">
+                                {% csrf_token %}
+                                <div class="row g-2 align-items-end justify-content-center">
+                                  <div class="col-auto">
+                                    <label for="valor_lance" class="form-label small text-muted">Valor do Lance (R$)</label>
+                                    <input type="number" 
+                                          class="form-control" 
+                                          id="valor_lance" 
+                                          name="valor" 
+                                          placeholder="{% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance }}{% else %}{{ cavalo.lance_inicial }}{% endif %}"
+                                          min="{% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance }}{% else %}{{ cavalo.lance_inicial }}{% endif %}"
+                                          step="{{ cavalo.incremento_lance }}"
+                                          required>
+                                  </div>
+                                  <div class="col-auto">
+                                    <button type="button" class="btn btn-secondary" id="btnDarLance">
+                                      <i class="ti ti-gavel fs-lg me-1"></i> 
+                                      {% if ultimo_lance %}Dar um Lance{% else %}Primeiro Lance{% endif %}
+                                    </button>
+                                  </div>
+                                </div>
+                                <small class="text-muted d-block mt-1">
+                                  Lance mínimo: R$ {% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance|floatformat:2 }}{% else %}{{ cavalo.lance_inicial|floatformat:2 }}{% endif %}
+                                </small>
+                              </form>
+                            {% else %}
+                            <div class="alert alert-info text-center" role="alert">
+                              <p>Você precisa estar logado para dar lances.</p>
+                              <a href="{% url 'users_frontend:login' %}?next={{ request.get_full_path }}" class="btn btn-primary">
+                                <i class="ti ti-login me-1"></i> Fazer Login
+                              </a>
+                            </div>
+                            {% endif %}
+                            {% else %}
+                            <div class="alert alert-info text-center" role="alert">
+                              <p>Lance Indisponível!</p>
+                            </div>
+                            {% endif %} <!-- fim exibir lance-->
                           </div>
+                          <!-- Fim Lance-->
                         {% else %}
                           <div class="row my-3 text-center">
-                            <span class="text-muted fs-4">Lance Inicial:</span>
-                            <span class="text-primary fs-3 fw-semibold">R$ {{cavalo.lance_inicial|floatformat:2}}</span>
-                            <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
-                          </div>
-                          <div class="row text-center my-3">
-                            <a href=""
-                              class="btn btn-secondary me-1"><i
-                              class="ti ti-pencil fs-lg me-1"></i> Seja o primeiro a dar um lace</a>
+                            <a href="https://wa.me/55{{ site.telefone|only_digits }}?text=Ola!%20Tenho%20interesse%20no%20cavalo%20{{cavalo.nome}}" target="_blank" type="button" class="btn btn-secondary" id="btnSolicitarInfo">
+                                <i class="ti ti-gavel fs-lg me-1"></i> Solicitar Informações
+                            </a>
                           </div>
                         {% endif %}
-
+                          
                       </div> <!-- end card-body-->
                     </div> <!-- end card-->
                   </div> <!-- end col-->
 
                   <div class="col-xl-8">
                     <div class="p-0 p-md-4">
+                      {% if cavalo.lote %}
                       <div class="d-flex align-items-center justify-content-between">
                         <div>
-                          <span class="badge bg-success-subtle text-success px-2 py-1 fs-base rounded-pill">Lote</span>
+                          <span class="badge bg-success-subtle text-success px-2 py-1 fs-4 rounded-pill">Lote {{cavalo.lote|stringformat:"02d"}}</span>
                         </div>
                       </div>
+                      {% endif %}
                       <div class="mt-3 mb-5">
                         <h1 class="fs-x2">{{cavalo.nome}}</h1>
                       </div>
@@ -170,49 +240,165 @@
                       
                       {% if cavalo.videos.all %}
                       <div class="row mb-4">
-                        <div class="ratio ratio-16x9">
-                          {% for video in cavalo.videos.all %}
-                            <div class="ratio ratio-16x9 mb-3">
-                              <iframe src="{{ video.url_youtube }}" title="{{ cavalo.nome }}" allowfullscreen></iframe>
-                            </div>
-                          {% endfor %}
-                        </div>
+                        <h5 class="text-uppercase text-muted fs-xs mb-2">Vídeos:</h5>
+                        {% for video in cavalo.videos.all %}
+                          <div class="ratio ratio-16x9 mb-3">
+                            {% if 'youtube.com' in video.url_youtube or 'youtu.be' in video.url_youtube %}
+                              {% with video_id=video.url_youtube|slice:"-11:" %}
+                                <iframe 
+                                  src="https://www.youtube.com/embed/{{ video_id }}" 
+                                  title="{{ cavalo.nome }} - Vídeo {{ forloop.counter }}" 
+                                  frameborder="0"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                  referrerpolicy="strict-origin-when-cross-origin"
+                                  allowfullscreen>
+                                </iframe>
+                              {% endwith %}
+                            {% else %}
+                              <iframe 
+                                src="{{ video.url_youtube }}" 
+                                title="{{ cavalo.nome }} - Vídeo {{ forloop.counter }}" 
+                                frameborder="0"
+                                allowfullscreen>
+                              </iframe>
+                            {% endif %}
+                          </div>
+                        {% endfor %}
                       </div>
                       {% endif %}
 
                       <div class="row">
 
-                        <div class="container my-4">
-                          <div class="row pb-3">
-                            <div class="col-12 col-md-4 text-center fw-bold">PAIS</div>
-                            <div class="col-12 col-md-4 text-center fw-bold">AVÓS</div>
-                            <div class="col-12 col-md-4 text-center fw-bold">BISAVÓS</div>
-                          </div>
-                          <div class="row align-items-center">
-                            <!-- PAIS -->
-                            <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
-                              <div class="p-2 mb-4 bg-primary bg-opacity-75 text-white">{{ cavalo.pai }}</div>
-                              <div class="p-2 bg-primary bg-opacity-75 text-white">{{ cavalo.mae }}</div>
+                        <div class="col-sm-12 col-xs-12 np gene">
+                            <div class="col-md-12 np">
+                                <p class="text-center">PATERNO</p>
+                                <div class="base">
+                                    <table width="100%">
+                                        <tbody>
+
+                                            <tr>
+                                                <td rowspan="2" align="left" valign="middle"></td>
+                                                <td colspan="1" rowspan="2" align="left" valign="middle" class="avos">
+                                                    <span class="male bg-gray">
+                                                        <b>{{ cavalo.avo_paterno }}</b>
+                                                    </span>
+                                                </td>
+
+                                                <td align="left" class="bisavos">
+                                                    <span class="male bg-gray">
+                                                        <b>{{ cavalo.bisavo_paterno1 }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td align="left" class="bisavos">
+                                                    <span class="female">
+                                                        <b>{{ cavalo.bisavo_paterno2 }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="pais" align="left" valign="middle" colspan="2">
+                                                    <span class="male bg-gray" style="width: 68%">
+                                                        <small>Pai: </small>
+                                                        <b>{{ cavalo.pai }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td rowspan="2" align="left" valign="middle"></td>
+                                                <td colspan="1" rowspan="2" align="left" valign="middle" class="avos">
+                                                    <span class="female">
+                                                        <b>{{ cavalo.avo_paterna }}</b>
+                                                    </span>
+                                                </td>
+
+                                                <td align="left" class="bisavos">
+                                                    <span class="male bg-gray">
+                                                        <b>{{ cavalo.bisavo_paterno3 }}</b>
+                                                    </span>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td align="left" class="bisavos">
+                                                    <span class="female">
+                                                        <b>{{ cavalo.bisavo_paterno4 }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <!-- AVÓS -->
-                            <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
-                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_paterno }}</div>
-                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_paterna }}</div>
-                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_materno }}</div>
-                              <div class="p-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_materna }}</div>
+                            <hr>
+                            <div class="col-md-12 np">
+                                <p class="text-center">MATERNO</p>
+                                <div class="base">
+                                    <table width="100%">
+                                        <tbody>
+
+                                            <tr>
+                                                <td rowspan="2" align="left" valign="middle"></td>
+                                                <td colspan="1" rowspan="2" align="left" valign="middle" class="avos">
+                                                    <span class="male bg-gray">
+                                                        <b>{{ cavalo.avo_materno }}</b>
+                                                    </span>
+                                                </td>
+
+                                                <td align="left" class="bisavos">
+                                                    <span class="male bg-gray">
+                                                        <b>{{ cavalo.bisavo_materno1 }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td align="left" class="bisavos">
+                                                    <span class="female">
+                                                        <b>{{ cavalo.bisavo_materno2 }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="pais" align="left" valign="middle" colspan="2">
+                                                    <span class="female" style="width: 68%">
+                                                        <small>Mãe: </small>
+                                                        <b>{{ cavalo.mae }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td rowspan="2" align="left" valign="middle"></td>
+                                                <td colspan="1" rowspan="2" align="left" valign="middle" class="avos">
+                                                    <span class="female">
+                                                        <b>{{ cavalo.avo_materna }}</b>
+                                                    </span>
+                                                </td>
+                                                <td align="left" class="bisavos">
+                                                    <span class="male bg-gray">
+                                                        <b>{{ cavalo.bisavo_materno3 }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td align="left" class="bisavos">
+                                                    <span class="female">
+                                                        <b>{{ cavalo.bisavo_materno4 }}</b>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <!-- BISAVÓS -->
-                            <div class="col-12 col-md-4 text-center">
-                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno1 }}</div>
-                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno2 }}</div>
-                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno3 }}</div>
-                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno4 }}</div>
-                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno1 }}</div>
-                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno2 }}</div>
-                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno3 }}</div>
-                              <div class="p-2 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno4 }}</div>
-                            </div>
-                          </div>                          
                         </div>
 
                       </div>
@@ -226,7 +412,15 @@
         </div> <!-- end row-->
 
       </div>
-
+      {% if leilao %}
+      <div class="row mb-4 py-4">
+        <div class="col-12 text-start">
+          <a href="{% url 'leilao_frontend:leilao_detalhe' cavalo.leilao.slug %}" class="btn btn-outline-primary">
+            <i class="ti ti-arrow-left me-1"></i> Voltar ao Leilão {{ cavalo.leilao.nome }}
+          </a>
+        </div>
+      </div>
+      {% endif %}
     </div> <!-- container -->
   </section>
 
@@ -241,6 +435,42 @@
   </div>
 </div>
 
+<!-- Modal de confirmação do lance -->
+<div class="modal fade" id="confirmLanceModal" tabindex="-1" aria-labelledby="confirmLanceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmLanceModalLabel">
+          <i class="ti ti-gavel me-2"></i>Confirmar Lance
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="mb-3">
+          <i class="ti ti-alert-circle text-warning" style="font-size: 3rem;"></i>
+        </div>
+        <h6 class="mb-3 fs-4">Deseja confirmar o lance?</h6>
+        <div class="alert alert-info">
+          <strong>Cavalo:</strong> {{ cavalo.nome }}<br>
+          <strong>Valor do Lance:</strong> R$ <span id="modalValorLance">0,00</span><br>
+        </div>
+        <p class="text-muted small">
+          Ao confirmar, você estará dando um lance oficial neste leilão. 
+          Certifique-se do valor antes de prosseguir.
+        </p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="ti ti-x me-1"></i>Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" id="confirmarLance">
+          <i class="ti ti-gavel me-1"></i>Confirmar Lance
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_javascript %}
@@ -248,6 +478,7 @@
   <script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function () {
+    // Lightbox para fotos
     document.querySelectorAll('.foto-lightbox').forEach(function(img) {
       img.addEventListener('click', function() {
         var modalImg = document.getElementById('fotoModalImg');
@@ -256,6 +487,66 @@
         fotoModal.show();
       });
     });
+
+    // Modal de confirmação do lance
+    const btnDarLance = document.getElementById('btnDarLance');
+    const lanceForm = document.getElementById('lanceForm');
+    const confirmLanceModal = new bootstrap.Modal(document.getElementById('confirmLanceModal'));
+    const confirmarLanceBtn = document.getElementById('confirmarLance');
+    const valorLanceInput = document.getElementById('valor_lance');
+    const modalValorLance = document.getElementById('modalValorLance');
+
+    // Quando clicar no botão "Dar Lance"
+    btnDarLance.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const valorLance = valorLanceInput.value;
+      
+      // Validar se o campo está preenchido
+      if (!valorLance || parseFloat(valorLance) <= 0) {
+        alert('Por favor, insira um valor válido para o lance.');
+        valorLanceInput.focus();
+        return;
+      }
+
+      // Validar valor mínimo
+      const valorMinimo = parseFloat(valorLanceInput.min);
+      if (parseFloat(valorLance) < valorMinimo) {
+        alert(`O valor mínimo do lance é R$ ${valorMinimo.toFixed(2).replace('.', ',')}`);
+        valorLanceInput.focus();
+        return;
+      }
+
+      // Atualizar o valor no modal
+      modalValorLance.textContent = parseFloat(valorLance).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+      // Mostrar o modal
+      confirmLanceModal.show();
+    });
+
+    // Quando confirmar o lance no modal
+    confirmarLanceBtn.addEventListener('click', function() {
+      // Fechar o modal
+      confirmLanceModal.hide();
+      
+      // Submeter o formulário
+      lanceForm.submit();
+    });
+
+    // Validação em tempo real do campo
+    valorLanceInput.addEventListener('input', function() {
+      const valor = parseFloat(this.value);
+      const minimo = parseFloat(this.min);
+      
+      if (valor && valor < minimo) {
+        this.setCustomValidity(`Valor mínimo: R$ ${minimo.toFixed(2)}`);
+      } else {
+        this.setCustomValidity('');
+      }
+    });
   });
-</script>
+  </script>
 {% endblock %}

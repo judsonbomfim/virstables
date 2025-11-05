@@ -1,0 +1,25 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card">
+        <div class="card-header border-l-danger border-3">
+          <h5 class="card-title mb-0">Excluir Post</h5>
+        </div>
+        <div class="card-body text-center">
+          <p>Tem certeza que deseja excluir o post <strong>{{ post.titulo }}</strong>?</p>
+          {% if post.imagem %}
+            <img src="{{ post.imagem.url }}" class="img-fluid rounded mb-3" alt="{{ post.titulo }}" style="max-width: 300px;">
+          {% endif %}
+          <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sim, excluir</button>
+            <a href="{% url 'blog_backend:post_lista' %}" class="btn btn-secondary">Cancelar</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
