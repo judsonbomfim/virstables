@@ -37,7 +37,7 @@ def cavalo_detalhe(request, slug):
 
     context = {
         'painel_title': settings.PAINEL_TITLE,
-        'page_title': f'Detalhes do Cavalo: {cavalo.nome}',
+        'page_title': f'Cavalo: {cavalo.nome}',
         'cavalo': cavalo,
         'leilao': leilao,
         'ultimo_lance': ultimo_lance,
