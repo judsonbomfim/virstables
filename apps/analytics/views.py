@@ -62,6 +62,10 @@ def cavalos_analytics(request):
         cavalos_comparison = ga.get_cavalos_comparison(days=30)
         
         context = {
+            'painel_title': settings.PAINEL_TITLE,
+            'page_title': 'Analytics de Cavalos',
+            'page_icon': 'icofont icofont-spreadsheet',
+            'pagesub_title': 'Analytics de Cavalos',
             'cavalos': cavalos_comparison,
         }
         
