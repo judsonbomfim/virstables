@@ -36,6 +36,26 @@ def email_cadastro_analise(id):
     send_email(html_content, text_content, subject, [email_cliente])
 
 @shared_task
+def email_notificacao_cadastro(id):
+    cliente = PerfilCliente.objects.get(pk=id) if id else None
+    nome_cliente = cliente.nome_completo if cliente else "Cliente"
+    primeiro_nome = "Virtual Stables Admin"
+    email_notificacao = settings.DEFAULT_FROM_EMAIL
+    title_email = f"Novo Cadastro - {nome_cliente}"
+
+    context = {
+        'name_site': settings.PAINEL_TITLE,
+        'url_site': settings.URL_SITE,
+        'title_email': title_email,
+        'primeiro_nome': primeiro_nome,
+        'nome_cliente': nome_cliente,
+    }
+    html_content = render_to_string('partials/notificacao_de_cadastro.html', context)
+    text_content = strip_tags(html_content)
+    subject = f"{title_email}"
+    send_email(html_content, text_content, subject, [email_notificacao])
+
+@shared_task
 def email_cadastro_confirmado(id):
     cliente = PerfilCliente.objects.get(pk=id) if id else None
     nome_cliente = cliente.nome_completo if cliente else "Cliente"

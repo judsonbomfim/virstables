@@ -1,0 +1,22 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}Cadastro em Análise - Virtual Stables{% endblock %}
+
+{% block message %}
+    <p style="margin: 0 0 20px 0;">
+        Recebemos o cadastro de {{ nome_cliente }}.
+    </p>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 20px; margin: 20px 0;">
+        <p style="margin: 0; color: #856404; font-size: 14px;">
+            <strong>📧 Próximo passo:</strong> Aprove o cadastro do cliente
+        </p>
+    </div>
+
+{% endblock %}
+
+{% block button %}
+    <div class="button-container">
+        <a href="{{ url_site }}/painel/" class="btn">Acessar Admin</a>
+    </div>
+{% endblock %}

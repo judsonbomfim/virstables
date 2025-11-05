@@ -14,7 +14,7 @@ from django.contrib.auth.views import (
     PasswordResetCompleteView
 )
 from django.contrib.auth.models import User
-from apps.emails.tasks import email_cadastro_analise, email_recuperacao_senha
+from apps.emails.tasks import email_cadastro_analise, email_recuperacao_senha, email_notificacao_cadastro
 from ..forms import CustomUserCreationForm, PerfilClienteForm
 
 def cadastro(request):
@@ -43,6 +43,7 @@ def cadastro(request):
                 perfil.save()
 
                 email_cadastro_analise.delay(perfil.id)
+                email_notificacao_cadastro.delay(perfil.id)
 
                 messages.success(request, 
                     f'Cadastro realizado com sucesso para {user.first_name} {user.last_name}! '
