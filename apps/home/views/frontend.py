@@ -22,10 +22,12 @@ def home(request):
     cavalos = Cavalo.objects.all().order_by('-data_cadastro').filter(leilao__isnull=True)
     posts = Post.objects.all().order_by('-created_at')[:3]
     hoje = data_atual()
+        
     context = {
         'painel_title': settings.PAINEL_TITLE,
         'page_title': 'Home',
         'site_settings': site_settings,
+        'banners': banners,
         'banners': banners,
         'logos': logos,
         'leiloes': leiloes,
