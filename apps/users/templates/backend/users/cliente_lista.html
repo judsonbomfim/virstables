@@ -16,6 +16,7 @@
                   <th>ID</th>
                   <th>Nome</th>
                   <th>Email</th>
+                  <th>Status</th>  <!-- Nova coluna para status -->
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -25,6 +26,11 @@
                     <td>{{ cliente.id }}</td>
                     <td>{{ cliente.usuario.get_full_name|default:cliente.usuario.username }}</td>
                     <td>{{ cliente.usuario.email }}</td>
+                    <td>
+                      <span class="badge {% if cliente.status == 'ativo' %}bg-success{% elif cliente.status == 'inativo' %}bg-warning{% else %}bg-info{% endif %}">
+                        {{ cliente.get_status_display }}
+                      </span>
+                    </td>  <!-- Exibe o status com badge colorido -->
                     <td>
                       <a href="{% url 'users_backend:cliente_detalhe' cliente.id %}" class="btn btn-sm btn-primary">Ver</a>
                       <a href="{% url 'users_backend:cliente_editar' cliente.id %}" class="btn btn-sm btn-secondary">Editar</a>
