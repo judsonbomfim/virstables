@@ -17,28 +17,25 @@
           <div class="card-body">
             
             <!-- Status e Aprovação -->
-            <div class="alert {% if perfil.usuario.is_active %}alert-success{% else %}alert-warning{% endif %}">
+            <div class="alert {% if perfil.status == 'ativo' %}alert-success{% elif perfil.status == 'inativo' %}alert-warning{% else %}alert-info{% endif %}">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <strong>Status: </strong>
-                  {% if perfil.usuario.is_active %}
-                    Ativo
-                  {% else %}
-                    Inativo/Aguardando Aprovação
-                  {% endif %}
+                  <strong>Status: </strong> {{ perfil.get_status_display }}
                 </div>
                 <div>
                   <form method="post" action="{% url 'users_backend:cliente_aprovar' perfil.id %}" style="display: inline;">
                     {% csrf_token %}
-                    {% if not perfil.usuario.is_active %}
-                      <button type="submit" name="acao" value="aprovar" class="btn btn-sm btn-success">
-                        <i class="icofont icofont-check"></i> Aprovar Cliente
-                      </button>
-                    {% else %}
-                      <button type="submit" name="acao" value="reprovar" class="btn btn-sm btn-warning">
-                        <i class="icofont icofont-close"></i> Desativar Cliente
-                      </button>
-                    {% endif %}
+                    <input type="hidden" name="form_uuid" id="form_uuid" value="">
+                    <input type="hidden" name="form_timestamp" id="form_timestamp" value="">
+                    <select name="status" class="form-select form-select-sm d-inline-block w-auto me-2">
+                      <option value="analise" {% if perfil.status == 'analise' %}selected{% endif %}>Em Análise</option>
+                      <option value="ativo" {% if perfil.status == 'ativo' %}selected{% endif %}>Aprovado (Ativo)</option>
+                      <option value="inativo" {% if perfil.status == 'inativo' %}selected{% endif %}>Recusado (Inativo)</option>
+                      <option value="suspenso" {% if perfil.status == 'suspenso' %}selected{% endif %}>Suspenso</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary" id="update-status-btn">
+                      <i class="icofont icofont-check"></i> Atualizar Status
+                    </button>
                   </form>
                 </div>
               </div>
@@ -154,4 +151,52 @@
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('form_uuid').value = generateUUID();
+    document.getElementById('form_timestamp').value = Date.now() / 1000;
+    
+    const btn = document.getElementById('update-status-btn');
+    const form = btn.closest('form');
+    if (btn && form) {
+      btn.addEventListener('click', function(event) {
+        if (this.disabled) {
+          event.preventDefault();
+          return false;
+        }
+        this.disabled = true;
+        this.innerHTML = '<i class="icofont icofont-spinner"></i> Atualizando...';
+        // Submete via AJAX para evitar reload duplicado
+        fetch(window.location.href, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          }
+        }).then(response => {
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            this.disabled = false;
+            this.innerHTML = 'Erro. Tente novamente.';
+          }
+        }).catch(() => {
+          this.disabled = false;
+          this.innerHTML = 'Erro. Tente novamente.';
+        });
+        event.preventDefault();
+      });
+    }
+  });
+</script>
 {% endblock %}

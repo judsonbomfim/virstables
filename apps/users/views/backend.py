@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
+from apps.emails.tasks import email_cadastro_confirmado, email_cadastro_recusado
 from core.decorators import group_required
 from apps.users.models import PerfilCliente
 from apps.users.forms import PerfilClienteForm  # <-- Usar o mesmo formulário
@@ -85,19 +86,25 @@ def cliente_editar(request, id):
 @login_required(login_url='/login/')
 @group_required('Administradores')
 def cliente_aprovar(request, id):
-    """Aprova ou reprova um cliente"""
+    """Atualiza o status do cliente"""
     perfil = get_object_or_404(PerfilCliente, id=id)
     
     if request.method == 'POST':
-        acao = request.POST.get('acao')
+        novo_status = request.POST.get('status')
         
-        if acao == 'aprovar':
-            perfil.usuario.is_active = True
-            perfil.usuario.save()
-            messages.success(request, f'Cliente {perfil.usuario.get_full_name()} aprovado com sucesso!')
-        elif acao == 'reprovar':
-            perfil.usuario.is_active = False
-            perfil.usuario.save()
-            messages.warning(request, f'Cliente {perfil.usuario.get_full_name()} foi desativado.')
+        if novo_status in ['analise', 'ativo', 'inativo', 'suspenso'] and perfil.status != novo_status:
+            perfil.status = novo_status
+            perfil.save()
+            messages.success(request, f'Status do cliente {perfil.usuario.get_full_name()} atualizado para {perfil.get_status_display()}!')
+            
+            if novo_status == 'ativo':
+                email_cadastro_confirmado.delay(perfil.id)
+            elif novo_status == 'inativo':
+                email_cadastro_recusado.delay(perfil.id)
+        else:
+            if perfil.status == novo_status:
+                messages.info(request, 'O status já está definido como selecionado.')
+            else:
+                messages.error(request, 'Status inválido.')
     
     return redirect('users_backend:cliente_detalhe', id=perfil.id)

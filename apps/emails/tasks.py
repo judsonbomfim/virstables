@@ -75,6 +75,26 @@ def email_cadastro_confirmado(id):
     send_email(html_content, text_content, subject, [email_cliente])
 
 @shared_task
+def email_cadastro_recusado(id):
+    cliente = PerfilCliente.objects.get(pk=id) if id else None
+    nome_cliente = cliente.nome_completo if cliente else "Cliente"
+    primeiro_nome = nome_cliente.split()[0] if nome_cliente else "Cliente"
+    email_cliente = cliente.usuario.email if cliente else settings.DEFAULT_FROM_EMAIL
+    title_email = "Cadastro Recusado"
+    
+    context = {
+        'name_site': settings.PAINEL_TITLE,
+        'url_site': settings.URL_SITE,
+        'title_email': title_email,
+        'primeiro_nome': primeiro_nome
+    }
+    html_content = render_to_string('partials/cadastro_recusado.html', context)
+    text_content = strip_tags(html_content)
+    subject = f"{title_email}"
+    send_email(html_content, text_content, subject, [email_cliente])
+
+
+@shared_task
 def email_lance_confirmado(id):
     print(">>>>> Enviando email de lance confirmado")
     lance = Lance.objects.get(pk=id)    

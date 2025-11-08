@@ -1,0 +1,26 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}{{title_email}} - {{name_site}}{% endblock %}
+
+{% block message %}
+  <p style="margin: 0 0 20px 0;">
+    <strong>❌ Lamentamos informar.</strong> Seu cadastro foi analisado e, infelizmente, não foi aprovado neste momento.
+  </p>
+
+  <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 6px; padding: 20px; margin: 20px 0;">
+    <p style="margin: 0; color: #721c24; font-size: 14px;">
+      <strong>❌ Status:</strong> Cadastro recusado<br />
+      {% comment %} <strong>📞 Motivo:</strong> Verifique os dados fornecidos ou entre em contato para mais detalhes<br />
+      <strong>🔄 Próximos passos:</strong> Corrija as informações e tente novamente {% endcomment %}
+    </p>
+  </div>
+
+  <p style="margin: 0 0 20px 0;">Se você acredita que houve um erro ou deseja esclarecimentos, entre em contato conosco.</p>
+
+{% endblock %}
+
+{% block button %}
+  <div class="button-container">
+    <a href="mailto:contato@virstables.com.br" class="btn">Entrar em Contato</a>
+  </div>
+{% endblock %}

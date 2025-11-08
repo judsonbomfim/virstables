@@ -38,8 +38,8 @@ class PerfilCliente(models.Model):
     
     STATUS_CHOICES = [
         ('analise', 'Em Análise'),
-        ('ativo', 'Ativo'),
-        ('inativo', 'Inativo'),
+        ('ativo', 'Aprovado'),
+        ('inativo', 'Recusado'),
         ('suspenso', 'Suspenso'),
     ]
     
