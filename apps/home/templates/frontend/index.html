@@ -422,4 +422,56 @@
 {% block extra_javascript %}
   <!-- Landing Page js -->
   <script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Para cada contador na página
+      document.querySelectorAll('.data-leilao').forEach(function(input) {
+        const dataLeilaoStr = input.value;
+        if (!dataLeilaoStr) return;
+
+        // Encontra o card mais próximo para pegar o ID do leilão
+        const card = input.closest('.card');
+        if (!card) return;
+
+        // Procura os elementos de dias, horas, minutos e segundos
+        const daysEl = card.querySelector('[id^="days-"]');
+        const hoursEl = card.querySelector('[id^="hours-"]');
+        const minutesEl = card.querySelector('[id^="minutes-"]');
+        const secondsEl = card.querySelector('[id^="seconds-"]');
+
+        if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+
+        // Converte a data do leilão
+        const dataLeilao = new Date(dataLeilaoStr.replace(' ', 'T'));
+
+        function atualizarContador() {
+          const agora = new Date();
+          const diferenca = dataLeilao - agora;
+
+          if (diferenca <= 0) {
+            daysEl.textContent = '0';
+            hoursEl.textContent = '00';
+            minutesEl.textContent = '00';
+            secondsEl.textContent = '00';
+            return;
+          }
+
+          const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+          const horas = Math.floor((diferenca % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
+          const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
+
+          daysEl.textContent = dias;
+          hoursEl.textContent = String(horas).padStart(2, '0');
+          minutesEl.textContent = String(minutos).padStart(2, '0');
+          secondsEl.textContent = String(segundos).padStart(2, '0');
+        }
+
+        // Atualiza imediatamente e depois a cada segundo
+        atualizarContador();
+        setInterval(atualizarContador, 1000);
+      });
+    });
+  </script>
 {% endblock %}

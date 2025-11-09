@@ -1,47 +1,47 @@
 <!-- Contagem -->
 <div class="container">
-  <div class="row justify-content-center">
-
-    <div class="container">
-      <div class="row">
-          <div class="col-md-8">
-            <div class="card">
-              <div class="card-header bg-primary text-white text-center">
-                {% if data_hoje < leilao.data_inicio %}
-                  <h4 class="fs-5 fs-md-4 fs-lg-3 mb-1">Tempo para Início do Pré-lance</h4>
-                  <input type="hidden" class="data-leilao" value="{{ leilao.data_inicio|date:'Y-m-d H:i:s' }}" />
-                {% elif data_hoje < leilao.data_fim %}
-                  <h4 class="fs-5 fs-md-4 fs-lg-3 mb-1">Tempo para Termino do Pré-lance</h4>
-                  <input type="hidden" class="data-leilao" value="{{ leilao.data_fim|date:'Y-m-d H:i:s' }}" />
-                {% else %}
-                  <h4 class="fs-5 fs-md-4 fs-lg-3 mb-1">Pré-lance encerrado</h4>
-                {% endif %}
+  <div class="row pt-3">
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white text-center py-3">
+          {% if data_hoje < leilao.data_inicio %}
+            <strong>Pré-lance começa em:</strong>
+            <input type="hidden" class="data-leilao" value="{{ leilao.data_inicio|date:'Y-m-d H:i:s' }}" />
+          {% elif data_hoje >= leilao.data_inicio and data_hoje < leilao.data_fim %}
+            <strong>Pré-lance encerra em:</strong>
+            <input type="hidden" class="data-leilao" value="{{ leilao.data_fim|date:'Y-m-d H:i:s' }}" />
+          {% else %}
+            <strong>Pré-lance encerrado</strong>
+          {% endif %}
+        </div>
+        <div class="card-body py-4">
+          {% if data_hoje < leilao.data_fim %}
+            <div class="d-flex justify-content-around text-center">
+              <div>
+                <div id="days-{{ leilao.id }}" class="display-6 fw-bold text-secondary">0</div>
+                <small class="text-muted text-uppercase">Dias</small>
               </div>
-              <div class="card-body">
-                  <div class="row text-center">
-                    <div class="col-3">
-                        <h3 id="days-{{ leilao.id }}" class="display-4 text-secondary fw-semibold">00</h3>
-                        <p>Dias</p>
-                    </div>
-                    <div class="col-3">
-                        <h3 id="hours-{{ leilao.id }}" class="display-4 text-secondary fw-semibold">00</h3>
-                        <p>Horas</p>
-                    </div>
-                    <div class="col-3">
-                        <h3 id="minutes-{{ leilao.id }}" class="display-4 text-secondary fw-semibold">00</h3>
-                        <p>Min</p>
-                    </div>
-                    <div class="col-3">
-                        <h3 id="seconds-{{ leilao.id }}" class="display-4 text-secondary fw-semibold">00</h3>
-                        <p>Seg</p>
-                    </div>
-                  </div>
+              <div>
+                <div id="hours-{{ leilao.id }}" class="display-6 fw-bold text-secondary">00</div>
+                <small class="text-muted text-uppercase">Horas</small>
+              </div>
+              <div>
+                <div id="minutes-{{ leilao.id }}" class="display-6 fw-bold text-secondary">00</div>
+                <small class="text-muted text-uppercase">Min</small>
+              </div>
+              <div>
+                <div id="seconds-{{ leilao.id }}" class="display-6 fw-bold text-secondary">00</div>
+                <small class="text-muted text-uppercase">Seg</small>
               </div>
             </div>
-          </div>
+          {% else %}
+            <div class="text-center text-muted">
+              <p class="mb-0">O prazo para pré-lances já encerrou.</p>
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
-    
   </div>
 </div>
 <!-- End Contagem -->
