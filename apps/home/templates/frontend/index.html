@@ -64,7 +64,11 @@
           <div class="d-flex justify-content-center align-items-center flex-wrap gap-5 mt-4 mb-4">
             {% for logo in logos %}
               <div>
-                <a href="{{ logo.link|default:'#' }}" class="d-block" target="_blank"><img src="{{ logo.imagem.url }}" alt="{{ logo.titulo }}" width="100" /></a>
+                {% if logo.link %}
+                <a href="{{ logo.link|default:'' }}" class="d-block" target="_blank"><img src="{{ logo.imagem.url }}" alt="{{ logo.titulo }}" width="100" /></a>
+                {% else %}
+                <img src="{{ logo.imagem.url }}" alt="{{ logo.titulo }}" width="100" />
+                {% endif %}
               </div>
             {% endfor %}
           </div>
