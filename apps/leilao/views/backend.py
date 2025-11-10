@@ -50,30 +50,30 @@ def leilao_lista(request):
 @login_required(login_url='/login/')
 @group_required('Administradores')
 def leilao_detalhe(request, id):
-    leilao = Leilao.objects.get(pk=id)
-    cavalos = leilao.cavalos_leilao.all()
+    leilao = get_object_or_404(Leilao, pk=id)
+    
+    # Buscar cavalos que têm lances neste leilão
+    lances = Lance.objects.filter(leilao=leilao).select_related('cavalo').order_by('cavalo', '-valor')
+    
+    # Agrupar por cavalo e pegar o último lance de cada
+    cavalos_dict = {}
+    for lance in lances:
+        if lance.cavalo.id not in cavalos_dict:
+            # Adicionar atributo diretamente no objeto cavalo
+            lance.cavalo.ultimo_lance_valor = lance.valor
+            cavalos_dict[lance.cavalo.id] = lance.cavalo
+    
+    cavalos_com_lances = list(cavalos_dict.values())
     
     context = {
         'painel_title': settings.PAINEL_TITLE,
-        'page_title': f'Leilão - {leilao.nome}',
-        'page_icon': 'icofont icofont-court-hammer',
-        'pagesub_title': 'Detalhe Leilão',
+        'page_title': 'Detalhes do Leilão',
+        'page_subtitle': leilao.nome,
+        'page_icon': 'icofont icofont-gavel',
         'leilao': leilao,
-        'cavalos': cavalos,
+        'cavalos_com_lances': cavalos_com_lances,
     }
     
-    if request.method == 'POST':
-        cavalo_id = request.POST.get('cavalo_id')
-        valor = request.POST.get('valor')
-        try:
-            cavalo = Cavalo.objects.get(pk=cavalo_id, leilao=leilao)
-            lance = Lance(cavalo=cavalo, usuario=request.user, valor=valor)
-            lance.clean()
-            lance.save()
-        except Exception as e:
-            context.update({'error': str(e)})
-            return render(request, 'backend/leilao_detalhe.html', context)
-        
     return render(request, 'backend/leilao_detalhe.html', context)
 
 
