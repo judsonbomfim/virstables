@@ -72,7 +72,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for cavalo in cavalos %}
+                    {% for item in cavalos_com_lances %}
+                      {% with cavalo=item.cavalo ultimo_lance=item.ultimo_lance %}
                       <tr>
                         <td scope="row">{{ cavalo.nome }}</td>
                         <td>
@@ -83,8 +84,8 @@
                           {% endif %}
                         </td>
                         <td>
-                          {% if cavalo.raca %}
-
+                          {% if ultimo_lance %}
+                            R$ {{ ultimo_lance.valor|floatformat:2 }}
                           {% else %}
                             -
                           {% endif %}
@@ -98,9 +99,10 @@
                           <a href=""><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Leilão"></i></a>
                         </td>
                       </tr>
+                      {% endwith %}
                     {% empty %}
                       <tr>
-                        <td colspan="4">Nenhum leilão ativo no momento.</td>
+                        <td colspan="5">Nenhum cavalo cadastrado no momento.</td>
                       </tr>
                     {% endfor %}
                   </tbody>

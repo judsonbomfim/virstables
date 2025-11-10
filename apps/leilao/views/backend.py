@@ -53,13 +53,22 @@ def leilao_detalhe(request, id):
     leilao = Leilao.objects.get(pk=id)
     cavalos = leilao.cavalos_leilao.all()
     
+    # Buscar o último lance para cada cavalo
+    cavalos_com_lances = []
+    for cavalo in cavalos:
+        ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor', '-data').first()
+        cavalos_com_lances.append({
+            'cavalo': cavalo,
+            'ultimo_lance': ultimo_lance
+        })
+    
     context = {
         'painel_title': settings.PAINEL_TITLE,
         'page_title': f'Leilão - {leilao.nome}',
         'page_icon': 'icofont icofont-court-hammer',
         'pagesub_title': 'Detalhe Leilão',
         'leilao': leilao,
-        'cavalos': cavalos,
+        'cavalos_com_lances': cavalos_com_lances,
     }
     
     if request.method == 'POST':
@@ -67,7 +76,7 @@ def leilao_detalhe(request, id):
         valor = request.POST.get('valor')
         try:
             cavalo = Cavalo.objects.get(pk=cavalo_id, leilao=leilao)
-            lance = Lance(cavalo=cavalo, usuario=request.user, valor=valor)
+            lance = Lance(cavalo=cavalo, leilao=leilao, usuario=request.user, valor=valor)
             lance.clean()
             lance.save()
         except Exception as e:
