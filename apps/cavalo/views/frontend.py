@@ -33,7 +33,7 @@ def cavalo_detalhe(request, slug):
         # ultimo_lance = leilao.lance_leilao.order_by('-data').first()
         ultimo_lance = Lance.objects.filter(cavalo=cavalo).order_by('-valor', '-data').first()
 
-        exibir_lance = exibirLance(leilao.id)
+        exibir_lance = exibirLance(leilao.id, request.user)
 
     context = {
         'painel_title': settings.PAINEL_TITLE,

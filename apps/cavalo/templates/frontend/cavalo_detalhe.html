@@ -171,7 +171,7 @@
                           <div class="row text-center my-3">
                             {% include "frontend/partials/messages.html" %}
                             {% if exibir_lance == 's' %}
-                              {% if user.is_authenticated and user.is_active and user.perfil_cliente.pode_dar_lances %}
+                              {% if user.is_authenticated and user.perfil_cliente.pode_dar_lances %}
                                 <form method="post" action="{% url 'cavalo_frontend:dar_lance' cavalo.id %}" id="lanceForm">
                                   {% csrf_token %}
                                   <div class="row g-2 align-items-end justify-content-center">
@@ -211,7 +211,7 @@
                               {% endif %}
                             {% elif exibir_lance == 'f' %}
                             <div class="alert alert-danger text-center" role="alert">
-                              Lances Finalizados!
+                              Lances Online Finalizados!
                             </div>
                             {% else %}
                             <div class="alert alert-warning text-center" role="alert">

@@ -1,7 +1,7 @@
 import datetime
 from apps.leilao.models import Leilao
 
-def exibirLance(leilao):
+def exibirLance(leilao, user):
     hoje_date = datetime.date.today()
     leilao = Leilao.objects.get(id=leilao)
     exibir_lance = 'n'
@@ -11,7 +11,7 @@ def exibirLance(leilao):
     data_fim = leilao.data_fim.date() if hasattr(leilao.data_fim, 'date') else leilao.data_fim
     
     if data_inicio <= hoje_date <= data_fim:
-        exibir_lance = 's'
-    elif data_inicio > data_fim:
+            exibir_lance = 's'
+    elif hoje_date > data_fim:
         exibir_lance = 'f'
     return exibir_lance

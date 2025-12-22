@@ -40,7 +40,7 @@ def leilao_detalhe(request, slug):
             'ultimo_lance': ultimo_lance
         })
 
-    exibir_lance = exibirLance(leilao.id)        
+    exibir_lance = exibirLance(leilao.id, request.user)        
     hoje = data_atual()
     
     context = {
