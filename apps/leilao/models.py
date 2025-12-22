@@ -22,7 +22,7 @@ class Leilao(models.Model):
     data_inicio = models.DateTimeField()
     data_fim = models.DateTimeField()
     imagem = models.ImageField(upload_to='leilao/')
-    status = models.CharField(max_length=20, choices=[('ativo', 'Ativo'), ('finalizado', 'Finalizado')], default='ativo')
+    status = models.CharField(max_length=20, choices=[('ativo', 'Ativo'), ('inativo', 'Inativo'), ('finalizado', 'Finalizado')], default='inativo')
 
     def __str__(self):
         return str(self.nome)

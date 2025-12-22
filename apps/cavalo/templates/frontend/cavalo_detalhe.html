@@ -110,7 +110,7 @@
                       <div class="card-body p-0">
                         <!-- Crossfade -->
                         
-                        <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                        <div id="carouselExampleFade" class="carousel slide carousel-fade">
                           <div class="carousel-inner bg-light bg-opacity-25 border border-light border-dashed rounded-3" role="listbox">
                             {% for foto in cavalo.fotos.all|dictsort:"ordem" %}
                               <div class="carousel-item text-center {% if forloop.first %}active{% endif %}">
@@ -171,7 +171,7 @@
                           <div class="row text-center my-3">
                             {% include "frontend/partials/messages.html" %}
                             {% if exibir_lance == 's' %}
-                              {% if user.is_authenticated %}
+                              {% if user.is_authenticated and user.is_active and user.perfil_cliente.pode_dar_lances %}
                                 <form method="post" action="{% url 'cavalo_frontend:dar_lance' cavalo.id %}" id="lanceForm">
                                   {% csrf_token %}
                                   <div class="row g-2 align-items-end justify-content-center">
@@ -197,6 +197,10 @@
                                     Lance mínimo: R$ {% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance|floatformat:2 }}{% else %}{{ cavalo.lance_inicial|floatformat:2 }}{% endif %}
                                   </small>
                                 </form>
+                              {% elif user.is_authenticated and not user.perfil_cliente.pode_dar_lances %}
+                              <div class="alert alert-warning text-center" role="alert">
+                                <p>Seu cadastro está em análise. Você poderá dar lances após a aprovação.</p>
+                              </div>
                               {% else %}
                               <div class="alert alert-info text-center" role="alert">
                                 <p>Você precisa estar logado para dar lances.</p>
