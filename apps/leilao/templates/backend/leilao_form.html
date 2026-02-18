@@ -1,0 +1,172 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block css_custom %}
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.snow.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.bubble.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2">
+      <div class="card">
+        <div class="card-header border-l-primary border-3">
+          <h5 class="card-title">{{ page_subtitle }}</h5>
+        </div>
+        <div class="card-body">
+          <!-- Exibe mensagens de erro ou sucesso -->
+          {% include "frontend/partials/messages.html" %}
+          
+          <form method="post" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+
+            <!-- Dados básicos do Leilão -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.nome.label }}</label>
+              <div class="col-sm-9">
+                {{ form.nome|add_class:"form-control" }}
+                {% if form.nome.errors %}
+                  <div class="text-danger small">{{ form.nome.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.descricao.label }}</label>
+              <div class="col-sm-9">
+                <div id="editor" style="height: 200px;"></div>
+                <input type="hidden" id="{{ form.descricao.id_for_label }}" name="{{ form.descricao.name }}" value="{{ form.descricao.value|default_if_none:'' }}" />
+                {% if form.descricao.errors %}
+                  <div class="text-danger small">{{ form.descricao.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Campo Termos (PDF) -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.termos.label }}</label>
+              <div class="col-sm-9">
+                {{ form.termos|add_class:"form-control" }}
+                {% if form.termos.help_text %}
+                  <small class="form-text text-muted">{{ form.termos.help_text }}</small>
+                {% endif %}
+                {% if leilao.termos %}
+                  <div class="mt-2">
+                    <small class="text-muted">Arquivo atual: 
+                      <a href="{{ leilao.termos.url }}" target="_blank">{{ leilao.termos.name }}</a>
+                    </small>
+                  </div>
+                {% endif %}
+                {% if form.termos.errors %}
+                  <div class="text-danger small">{{ form.termos.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Datas -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.data_leilao.label }}</label>
+              <div class="col-sm-9">
+                <input type="datetime-local" class="form-control" id="{{ form.data_leilao.id_for_label }}" name="{{ form.data_leilao.name }}" value="{% if form.data_leilao.value %}{{ form.data_leilao.value|date:'Y-m-d\TH:i' }}{% endif %}" />
+                {% if form.data_leilao.errors %}
+                  <div class="text-danger small">{{ form.data_leilao.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.data_inicio.label }}</label>
+              <div class="col-sm-9">
+                <input type="datetime-local" class="form-control" id="{{ form.data_inicio.id_for_label }}" name="{{ form.data_inicio.name }}" value="{% if form.data_inicio.value %}{{ form.data_inicio.value|date:'Y-m-d\TH:i' }}{% endif %}" />
+                {% if form.data_inicio.errors %}
+                  <div class="text-danger small">{{ form.data_inicio.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.data_fim.label }}</label>
+              <div class="col-sm-9">
+                <input type="datetime-local" class="form-control" id="{{ form.data_fim.id_for_label }}" name="{{ form.data_fim.name }}" value="{% if form.data_fim.value %}{{ form.data_fim.value|date:'Y-m-d\TH:i' }}{% endif %}" />
+                {% if form.data_fim.errors %}
+                  <div class="text-danger small">{{ form.data_fim.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Imagem -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.imagem.label }}</label>
+              <div class="col-sm-9">
+                {{ form.imagem|add_class:"form-control" }}
+                {% if leilao.imagem %}
+                  <div class="mt-2">
+                    <small class="text-muted">Imagem atual: 
+                      <a href="{{ leilao.imagem.url }}" target="_blank">{{ leilao.imagem.name }}</a>
+                    </small>
+                  </div>
+                {% endif %}
+                {% if form.imagem.errors %}
+                  <div class="text-danger small">{{ form.imagem.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label">{{ form.status.label }}</label>
+              <div class="col-sm-9">
+                {{ form.status|add_class:"form-control" }}
+                {% if form.status.errors %}
+                  <div class="text-danger small">{{ form.status.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Botões -->
+            <div class="row">
+              <div class="col-sm-9 offset-sm-3">
+                <button type="submit" class="btn btn-primary">
+                  {% if leilao %}Atualizar{% else %}Criar{% endif %} Leilão
+                </button>
+                <a href="{% url 'leilao_backend:leilao_lista' %}" class="btn btn-secondary">Cancelar</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'backend/assets/js/editors/quill.js' %}"></script>
+  <script>
+    // Editor para descrição
+    const quillDescricao = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          ['link'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['clean']
+        ]
+      }
+    });
+    
+    // Carregar conteúdo existente
+    const descricaoInput = document.getElementById('{{ form.descricao.id_for_label }}');
+    if (descricaoInput.value) {
+      quillDescricao.root.innerHTML = descricaoInput.value;
+    }
+       
+    // Salvar conteúdo no submit
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function (event) {
+      descricaoInput.value = quillDescricao.root.innerHTML;
+    });
+  </script>
+{% endblock %}

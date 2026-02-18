@@ -1,0 +1,26 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row widget-grid">
+      <div class="col-xxl-4 col-sm-6 box-col-6">
+        <div class="card profile-box">
+          <div class="card-body">
+            <div class="d-flex media-wrapper justify-content-between">
+              <div class="flex-grow-1">
+                <div class="greeting-user">
+                  <h2 class="f-w-600">Bem-vindo(a) {{ user.get_full_name|default:user.username }}</h2>
+                  <p>Administrador de leilões</p>
+                  <div class="whatsnew-btn">
+                    <a class="btn btn-outline-white" href="/user_profile" target="_blank">Ver Perfil</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

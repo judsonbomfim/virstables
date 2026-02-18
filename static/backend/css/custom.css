@@ -1,0 +1,19 @@
+.text-danger,
+.text-danger .errorlist,
+.text-danger .errorlist li {
+  color: #dc3545 !important;
+}
+
+footer {
+    margin-top: 20px !important;
+}
+
+.page-wrapper.compact-wrapper .page-body-wrapper .page-body {
+    min-height: calc(100vh - 160px) !important;
+}
+
+.ql-editor p,
+.ql-editor ol,
+.ql-editor ul {
+  margin-bottom: 20px !important; 
+}

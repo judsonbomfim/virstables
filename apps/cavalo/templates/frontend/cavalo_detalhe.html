@@ -1,0 +1,395 @@
+{% extends 'frontend/base.html' %}
+
+{% load static i18n cavalo_extras %}
+
+{% block html_attribute %}
+  data-bs-theme="light"
+{% endblock %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block body_attribute %}
+  class="bg-body-secondary" data-bs-spy="scroll" data-bs-target="#navbar-example"
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'frontend/css/contador.css' %}" />
+  <style>
+    .pais{
+      border: 2px solid #8A755F;
+      color: #8A755F;
+    }
+    .avos{
+      border: 2px solid #8A755F;
+      color: #8A755F;
+    }
+    .bisavos{
+      border: 2px solid #8A755F;
+      color: #8A755F;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% include "frontend/partials/subtitle.html" %}
+
+  <!-- Leilões -->
+  <section class="section-custom bg-light bg-opacity-30 border-top border-light border-bottom" id="leiloes">
+    <div class="container">
+      <div class="card shadow-lg">
+
+        <div class="row align-items-center m-2 m-lg-5">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-xl-4">
+                    <div class="card border-0">
+                      <div class="card-body p-0">
+                        <!-- Crossfade -->
+                        
+                        <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                          <div class="carousel-inner bg-light bg-opacity-25 border border-light border-dashed rounded-3" role="listbox">
+                            {% for foto in cavalo.fotos.all|dictsort:"ordem" %}
+                              <div class="carousel-item text-center {% if forloop.first %}active{% endif %}">
+                                <img src="{{ foto.imagem.url }}" alt="Foto {{ forloop.counter }}" class="img-fluid foto-lightbox" style="cursor: zoom-in;">
+                              </div>
+                            {% empty %}
+                              <div class="carousel-item text-center active">
+                                <img src="{% static 'images/products/single-1.png' %}" alt="Sem foto" class="img-fluid foto-lightbox" style="cursor: zoom-in;">
+                              </div>
+                            {% endfor %}
+                          </div>
+                          <div class="carousel-indicators m-0 mt-3 d-lg-flex d-none position-static h-100 rounded gap-2">
+                            {% for foto in cavalo.fotos.all|dictsort:"ordem" %}
+                              <button type="button" data-bs-target="#carouselExampleFade"
+                                      data-bs-slide-to="{{ forloop.counter0 }}"
+                                      aria-label="Slide {{ forloop.counter }}"
+                                      class="h-auto rounded bg-light-subtle border {% if forloop.first %}active{% endif %}"
+                                      {% if forloop.first %}aria-current="true"{% endif %}
+                                      style="width: auto !important;">
+                                <img src="{{ foto.imagem.url }}" class="d-block avatar-xl" alt="indicator-img">
+                              </button>
+                            {% empty %}
+                              <button type="button" data-bs-target="#carouselExampleFade"
+                                      data-bs-slide-to="0" aria-current="true"
+                                      aria-label="Slide 1"
+                                      class="h-auto rounded bg-light-subtle border active"
+                                      style="width: auto !important;">
+                                <img src="{{leilao.imagem.url}}" class="d-block avatar-xl" alt="indicator-img">
+                              </button>
+                            {% endfor %}
+                          </div>
+                        </div>
+                        <!-- end carousel-->
+
+                          <div id="lance" class="row my-3 text-center">                      
+                          {% if ultimo_lance %}
+                            <!-- Existe pelo menos um lance -->
+                              <span class="text-muted fs-4">Último Lance:</span>
+                              <span class="text-primary fs-3 fw-semibold">R$ {{ ultimo_lance.valor|floatformat:2 }}</span>
+                              <span class="text-primary fs-5">{{ ultimo_lance.usuario.perfil_cliente.end_cidade }}/{{ ultimo_lance.usuario.perfil_cliente.end_estado }}</span>
+                              <span class="text-muted fs-6">em {{ ultimo_lance.data|date:"d/m/Y H:i" }}</span>
+                              <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
+                          {% else %}
+                            <!-- Não há lances ainda -->
+                              <span class="text-muted fs-4">Lance Inicial:</span>
+                              <span class="text-primary fs-3 fw-semibold">R$ {{ cavalo.lance_inicial|floatformat:2 }}</span>
+                              <span class="text-primary fs-4">{{ cavalo.parcela|default:"-" }} Parcelas</span>
+                              <div class="alert alert-warning text-center mb-0" role="alert">
+                                  <a class="alert-link">Seja o primeiro a confirmar o lance</a>!
+                              </div>
+                          {% endif %}
+                          </div>
+
+
+                        <!-- Lance-->
+                        <div class="row text-center my-3">
+                          {% include "frontend/partials/messages.html" %}
+
+                          {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'cavalo_frontend:dar_lance' cavalo.id %}" id="lanceForm">
+                              {% csrf_token %}
+                              <div class="row g-2 align-items-end justify-content-center">
+                                <div class="col-auto">
+                                  <label for="valor_lance" class="form-label small text-muted">Valor do Lance (R$)</label>
+                                  <input type="number" 
+                                        class="form-control" 
+                                        id="valor_lance" 
+                                        name="valor" 
+                                        placeholder="{% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance }}{% else %}{{ cavalo.lance_inicial }}{% endif %}"
+                                        min="{% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance }}{% else %}{{ cavalo.lance_inicial }}{% endif %}"
+                                        step="{{ cavalo.incremento_lance }}"
+                                        required>
+                                </div>
+                                <div class="col-auto">
+                                  <button type="button" class="btn btn-secondary" id="btnDarLance">
+                                    <i class="ti ti-gavel fs-lg me-1"></i> 
+                                    {% if ultimo_lance %}Dar um Lance{% else %}Primeiro Lance{% endif %}
+                                  </button>
+                                </div>
+                              </div>
+                              <small class="text-muted d-block mt-1">
+                                Lance mínimo: R$ {% if ultimo_lance %}{{ ultimo_lance.valor|add:cavalo.incremento_lance|floatformat:2 }}{% else %}{{ cavalo.lance_inicial|floatformat:2 }}{% endif %}
+                              </small>
+                            </form>
+                          {% else %}
+                          <div class="alert alert-info text-center" role="alert">
+                            <p>Você precisa estar logado para dar lances.</p>
+                            <a href="{% url 'users_frontend:login' %}?next={{ request.get_full_path }}" class="btn btn-primary">
+                              <i class="ti ti-login me-1"></i> Fazer Login
+                            </a>
+                          </div>
+                          {% endif %}
+                        </div>
+                        <!-- Fim Lance-->
+                          
+                      </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                  </div> <!-- end col-->
+
+                  <div class="col-xl-8">
+                    <div class="p-0 p-md-4">
+                      {% if cavalo.lote %}
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                          <span class="badge bg-success-subtle text-success px-2 py-1 fs-4 rounded-pill">Lote {{cavalo.lote|stringformat:"02d"}}</span>
+                        </div>
+                      </div>
+                      {% endif %}
+                      <div class="mt-3 mb-5">
+                        <h1 class="fs-x2">{{cavalo.nome}}</h1>
+                      </div>
+
+                      <div class="row mb-4">
+                        <div class="col-md-4 col-xl-3">
+                          <h6 class="mb-1 text-muted text-uppercase">Raça:</h6>
+                          <p class="fw-medium mb-0">{{cavalo.raca}}</p>
+                        </div>
+                        <div class="col-md-4 col-xl-3">
+                          <h6 class="mb-1 text-muted text-uppercase">Nascimento:</h6>
+                          <p class="fw-medium mb-0">{{cavalo.nascimento|date:"d M, Y"}}</p>
+                        </div>
+                        <div class="col-md-4 col-xl-3">
+                          <h6 class="mb-1 text-muted text-uppercase">Registro:</h6>
+                          <p class="fw-medium mb-0">{{cavalo.registro}}</p>
+                        </div>
+                        <div class="col-md-4 col-xl-3">
+                          <h6 class="mb-1 text-muted text-uppercase">Altura:</h6>
+                          <p class="fw-medium mb-0">{{cavalo.altura|floatformat:2}}</p>
+                        </div>
+                      </div>
+
+                      <div class="row mb-4">
+                        <div class="col-md-4 col-xl-3">
+                          <h6 class="mb-1 text-muted text-uppercase">Sexo:</h6>
+                          <p class="fw-medium mb-0">{{cavalo.get_sexo_display}}</p>
+                        </div>
+                        <div class="col-md-4 col-xl-3">
+                          <h6 class="mb-1 text-muted text-uppercase">Pelagem:</h6>
+                          <p class="fw-medium mb-0">{{cavalo.pelagem}}</p>
+                        </div>
+                        <div class="col-md-4 col-xl-3">
+                          <h6 class="mb-1 text-muted text-uppercase">Criador:</h6>
+                          <p class="fw-medium mb-0">{{cavalo.criador}}</p>
+                        </div>
+                        <div class="col-md-4 col-xl-3">
+                          <h6 class="mb-1 text-muted text-uppercase">Vendedor:</h6>
+                          <p class="fw-medium mb-0">{{cavalo.vendedor}}</p>
+                        </div>
+                      </div>
+                      <div class="row mb-4">
+                        <h5 class="text-uppercase text-muted fs-xs mb-2">Detalhes:</h5>
+                        {{ cavalo.descricao|safe }}                      
+                      </div>
+                      
+                      {% if cavalo.videos.all %}
+                      <div class="row mb-4">
+                        <div class="ratio ratio-16x9">
+                          {% for video in cavalo.videos.all %}
+                            <div class="ratio ratio-16x9 mb-3">
+                              <iframe src="{{ video.url_youtube }}" title="{{ cavalo.nome }}" allowfullscreen></iframe>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                      {% endif %}
+
+                      <div class="row">
+
+                        <div class="container my-4">
+                          <div class="row pb-3">
+                            <div class="col-12 col-md-4 text-center fw-bold">PAIS</div>
+                            <div class="col-12 col-md-4 text-center fw-bold">AVÓS</div>
+                            <div class="col-12 col-md-4 text-center fw-bold">BISAVÓS</div>
+                          </div>
+                          <div class="row align-items-center">
+                            <!-- PAIS -->
+                            <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
+                              <div class="p-2 mb-4 bg-primary bg-opacity-75 text-white">{{ cavalo.pai }}</div>
+                              <div class="p-2 bg-primary bg-opacity-75 text-white">{{ cavalo.mae }}</div>
+                            </div>
+                            <!-- AVÓS -->
+                            <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
+                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_paterno }}</div>
+                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_paterna }}</div>
+                              <div class="p-2 mb-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_materno }}</div>
+                              <div class="p-2 bg-primary bg-opacity-50 text-white">{{ cavalo.avo_materna }}</div>
+                            </div>
+                            <!-- BISAVÓS -->
+                            <div class="col-12 col-md-4 text-center">
+                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno1 }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno2 }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno3 }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_paterno4 }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno1 }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno2 }}</div>
+                              <div class="p-2 mb-1 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno3 }}</div>
+                              <div class="p-2 bg-primary bg-opacity-25 text-primary">{{ cavalo.bisavo_materno4 }}</div>
+                            </div>
+                          </div>                          
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </div> <!-- end col-->
+                </div> <!-- end row-->
+              </div> <!-- end card-body-->
+            </div> <!-- end card-->
+          </div> <!-- end col-->
+        </div> <!-- end row-->
+
+      </div>
+
+    </div> <!-- container -->
+  </section>
+
+<!-- Modal para exibir imagem ampliada -->
+<div class="modal fade" id="fotoModal" tabindex="-1" aria-labelledby="fotoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-transparent border-0">
+      <div class="modal-body p-0 text-center">
+        <img id="fotoModalImg" src="" alt="Foto ampliada" class="img-fluid rounded shadow">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmação do lance -->
+<div class="modal fade" id="confirmLanceModal" tabindex="-1" aria-labelledby="confirmLanceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmLanceModalLabel">
+          <i class="ti ti-gavel me-2"></i>Confirmar Lance
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="mb-3">
+          <i class="ti ti-alert-circle text-warning" style="font-size: 3rem;"></i>
+        </div>
+        <h6 class="mb-3 fs-4">Deseja confirmar o lance?</h6>
+        <div class="alert alert-info">
+          <strong>Cavalo:</strong> {{ cavalo.nome }}<br>
+          <strong>Valor do Lance:</strong> R$ <span id="modalValorLance">0,00</span><br>
+        </div>
+        <p class="text-muted small">
+          Ao confirmar, você estará dando um lance oficial neste leilão. 
+          Certifique-se do valor antes de prosseguir.
+        </p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="ti ti-x me-1"></i>Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" id="confirmarLance">
+          <i class="ti ti-gavel me-1"></i>Confirmar Lance
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_javascript %}
+  <!-- Landing Page js -->
+  <script src="{% static 'frontend/assets/js/pages/landing.js' %}"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Lightbox para fotos
+    document.querySelectorAll('.foto-lightbox').forEach(function(img) {
+      img.addEventListener('click', function() {
+        var modalImg = document.getElementById('fotoModalImg');
+        modalImg.src = this.src;
+        var fotoModal = new bootstrap.Modal(document.getElementById('fotoModal'));
+        fotoModal.show();
+      });
+    });
+
+    // Modal de confirmação do lance
+    const btnDarLance = document.getElementById('btnDarLance');
+    const lanceForm = document.getElementById('lanceForm');
+    const confirmLanceModal = new bootstrap.Modal(document.getElementById('confirmLanceModal'));
+    const confirmarLanceBtn = document.getElementById('confirmarLance');
+    const valorLanceInput = document.getElementById('valor_lance');
+    const modalValorLance = document.getElementById('modalValorLance');
+
+    // Quando clicar no botão "Dar Lance"
+    btnDarLance.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const valorLance = valorLanceInput.value;
+      
+      // Validar se o campo está preenchido
+      if (!valorLance || parseFloat(valorLance) <= 0) {
+        alert('Por favor, insira um valor válido para o lance.');
+        valorLanceInput.focus();
+        return;
+      }
+
+      // Validar valor mínimo
+      const valorMinimo = parseFloat(valorLanceInput.min);
+      if (parseFloat(valorLance) < valorMinimo) {
+        alert(`O valor mínimo do lance é R$ ${valorMinimo.toFixed(2).replace('.', ',')}`);
+        valorLanceInput.focus();
+        return;
+      }
+
+      // Atualizar o valor no modal
+      modalValorLance.textContent = parseFloat(valorLance).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+      // Mostrar o modal
+      confirmLanceModal.show();
+    });
+
+    // Quando confirmar o lance no modal
+    confirmarLanceBtn.addEventListener('click', function() {
+      // Fechar o modal
+      confirmLanceModal.hide();
+      
+      // Submeter o formulário
+      lanceForm.submit();
+    });
+
+    // Validação em tempo real do campo
+    valorLanceInput.addEventListener('input', function() {
+      const valor = parseFloat(this.value);
+      const minimo = parseFloat(this.min);
+      
+      if (valor && valor < minimo) {
+        this.setCustomValidity(`Valor mínimo: R$ ${minimo.toFixed(2)}`);
+      } else {
+        this.setCustomValidity('');
+      }
+    });
+  });
+  </script>
+{% endblock %}

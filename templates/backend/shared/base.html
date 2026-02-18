@@ -1,0 +1,102 @@
+{% load static %}
+{% load sass_tags %}
+
+<!DOCTYPE html>
+<html lang="en" dir="box-layout">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cuba admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+    <meta name="keywords" content="admin template, Cuba admin template, dashboard template, flat admin template, responsive admin template, web app">
+    <meta name="author" content="pixelstrap">
+    <link rel="icon" href="{% static 'img/lgo_virtual_stables_site_favicon.png' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'img/lgo_virtual_stables_site_favicon.png' %}" type="image/x-icon">
+    <title>{{painel_title}} | {{page_title}}</title>
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,400i,500,500i,700,700i&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900&amp;display=swap" rel="stylesheet">
+    <!-- Font Awesome-->
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/fontawesome.css' %}">
+    <!-- ico-font-->
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/icofont.css' %}">
+    <!-- Themify icon-->
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/themify.css' %}">
+    <!-- Flag icon-->
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/flag-icon.css' %}">
+    <!-- Feather icon-->
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/feather-icon.css' %}">
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/slick.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/slick-theme.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/scrollbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/animate.css' %}">
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/bootstrap.css' %}">
+    <!-- App css-->
+    <link rel="stylesheet" type="text/css" href="{% sass_src 'backend/assets/scss/style.scss' %}">
+    <link id="color" rel="stylesheet" href="{% static 'backend/assets/css/color-1.css' %}" media="screen">
+    <!-- Responsive css-->
+    <link rel="stylesheet" type="text/css" href="{% sass_src 'backend/assets/scss/responsive.scss' %}">
+    <!-- Custom-->
+    <link rel="stylesheet" type="text/css" href="{% static 'backend/css/custom.css' %}" />
+    {% block css_custom %}  {% endblock css_custom %}
+  </head>
+
+<body class='dark-sidebar' {% if request.resolver_match.url_name == 'index' and request.resolver_match.app_name == 'leilao_backend' %} onload="startTime()" {% endif %}>
+   <div class="loader-wrapper">
+      {% comment %} <div class="loader-index">CARREGANDO 123 ... <span></span></div> {% endcomment %}
+      {% comment %} <svg>
+        <defs></defs>
+        <filter id="goo">
+          <fegaussianblur in="SourceGraphic" stddeviation="11" result="blur"></fegaussianblur>
+          <fecolormatrix in="blur" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo"> </fecolormatrix>
+        </filter>
+      </svg> {% endcomment %}
+      <img src="https://media.tenor.com/JycB4PdebMEAAAAM/horse-animated.gif" alt="Virtual Stables" class="loader-img">      
+    </div>
+    <!-- loader ends-->
+    <!-- tap on top starts-->
+    <div class="tap-top"><i data-feather="chevrons-up"></i></div>
+    <!-- tap on tap ends-->
+    <!-- page-wrapper Start-->
+    <div class="page-wrapper compact-wrapper" id="pageWrapper">
+        {% include "backend/layout/header.html" %}
+        <!-- Page Body Start-->
+        <div class="page-body-wrapper">
+          {% include "backend/layout/sidebar.html" %}
+          <div class="page-body">
+            {% include "backend/layout/breadcrumb.html" %}
+            {% include "backend/partials/_messages.html" %}
+            {% block content %} {% endblock %}
+          </div>
+          {% include "backend/layout/footer.html" %}
+        </div>
+    </div>
+
+    <!-- latest jquery-->
+    <script src="{% static 'backend/assets/js/jquery.min.js' %}"></script>
+    <!-- Bootstrap js-->
+    <script src="{% static 'backend/assets/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <!-- feather icon js-->
+    <script src="{% static 'backend/assets/js/icons/feather-icon/feather.min.js' %}"></script>
+    <script src="{% static 'backend/assets/js/icons/feather-icon/feather-icon.js' %}"></script>
+    <!-- scrollbar js-->
+    <script src="{% static 'backend/assets/js/scrollbar/simplebar.min.js' %}"></script>
+    <script src="{% static 'backend/assets/js/scrollbar/custom.js' %}"></script>
+    <!-- Sidebar jquery-->
+    <script src="{% static 'backend/assets/js/config.js' %}"></script>
+    <!-- Plugins JS start-->
+    <script src="{% static 'backend/assets/js/sidebar-menu.js' %}"></script>
+    <script src="{% static 'backend/assets/js/sidebar-pin.js' %}"></script>
+    <script src="{% static 'backend/assets/js/slick/slick.min.js' %}"></script>
+    <script src="{% static 'backend/assets/js/slick/slick.js' %}"></script>
+    <script src="{% static 'backend/assets/js/header-slick.js' %}"></script>
+    <script src="{% static 'backend/assets/js/script.js' %}"></script>
+    <script src="{% static 'backend/assets/js/script1.js' %}"></script>
+
+
+    {% block scriptcontent %} {% endblock %}
+
+  </body>
+</html>

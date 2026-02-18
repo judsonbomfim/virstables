@@ -1,0 +1,163 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container-fluid basic_table">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Leilões Ativos</h5>
+            <a href="{% url 'leilao_backend:leilao_adicionar' %}" class="btn btn-outline-primary"><i class="icofont icofont-plus"></i> Adicionar Leilão</a>
+          </div>
+          <div class="card-block row">
+            <div class="col-sm-12 col-lg-12 col-xl-12">
+              <div class="table-responsive custom-scrollbar">
+                <table class="table">
+                  <thead class="table-success">
+                    <tr>
+                      <th scope="col">Nome</th>
+                      <th scope="col">Data Inicio</th>
+                      <th scope="col">Data Fim</th>
+                      <th scope="col">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for leilao in leiloes_ativ %}
+                      <tr>
+                        <td scope="row">{{ leilao.nome }}</td>
+                        <td>
+                          {% if leilao.data_inicio %}
+                            {{ leilao.data_inicio|date:'d/m/Y' }}
+                          {% else %}
+                            -
+                          {% endif %}
+                        </td>
+                        <td>
+                          {% if leilao.data_fim %}
+                            {{ leilao.data_fim|date:'d/m/Y' }}
+                          {% else %}
+                            -
+                          {% endif %}
+                        </td>
+                        <td>
+                          <a href="{% url 'leilao_backend:leilao_detalhe' leilao.pk %}"><i class="icofont icofont-file-text text-primary fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Ver Detalhes"></i></a>
+                          <a href="{% url 'leilao_backend:leilao_editar' leilao.pk %}"><i class="icofont icofont-edit text-info fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Editar Leilão"></i></a>
+                          <a href="#" class="abrir-modal-excluir" data-leilao-id="{{ leilao.pk }}" data-leilao-nome="{{ leilao.nome }}" data-leilao-inicio="{{ leilao.data_inicio|date:'d/m/Y' }}" data-leilao-fim="{{ leilao.data_fim|date:'d/m/Y' }}"><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Leilão"></i></a>
+                        </td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="4">Nenhum leilão ativo no momento.</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header border-l-primary border-3">
+            <h5>Leilões Anteriores</h5>
+          </div>
+          <div class="card-block row">
+            <div class="col-sm-12 col-lg-12 col-xl-12">
+              <div class="table-responsive custom-scrollbar">
+                <table class="table">
+                  <thead class="table-light">
+                    <tr>
+                      <th scope="col">Nome</th>
+                      <th scope="col">Data Inicio</th>
+                      <th scope="col">Data Fim</th>
+                      <th scope="col">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for leilao in leiloes_dest %}
+                      <tr>
+                        <td scope="row">{{ leilao.nome }}</td>
+                        <td>
+                          {% if leilao.data_inicio %}
+                            {{ leilao.data_inicio|date:'d/m/Y' }}
+                          {% else %}
+                            -
+                          {% endif %}
+                        </td>
+                        <td>
+                          {% if leilao.data_fim %}
+                            {{ leilao.data_fim|date:'d/m/Y' }}
+                          {% else %}
+                            -
+                          {% endif %}
+                        </td>
+                        <td>
+                          <a href="{% url 'leilao_backend:leilao_detalhe' leilao.pk %}"><i class="icofont icofont-file-text text-primary fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Ver Detalhes"></i></a>
+                          <a href="{% url 'leilao_backend:leilao_editar' leilao.pk %}"><i class="icofont icofont-edit text-info fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Editar Leilão"></i></a>
+                          <a href="#" class="abrir-modal-excluir" data-leilao-id="{{ leilao.pk }}" data-leilao-nome="{{ leilao.nome }}" data-leilao-inicio="{{ leilao.data_inicio|date:'d/m/Y' }}" data-leilao-fim="{{ leilao.data_fim|date:'d/m/Y' }}"><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Leilão"></i></a>
+                        </td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="4">Nenhum leilão ativo no momento.</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação -->
+  <div class="modal fade" id="modalExcluirLeilao" tabindex="-1" aria-labelledby="modalExcluirLeilaoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content border-danger">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalExcluirLeilaoLabel"><i class="icofont icofont-ui-delete"></i> Excluir Leilão</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Tem certeza que deseja excluir o leilão <strong id="modalLeilaoNome"></strong>?<br />
+            <span id="modalLeilaoDatas"></span>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <form id="formExcluirLeilao" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+          </form>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'backend/assets/js/tooltip-init.js' %}"></script>
+  <script src="{% static 'backend/assets/js/tooltip-init.js' %}"></script>
+  <script>
+    document.querySelectorAll('.abrir-modal-excluir').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault()
+        var leilaoId = this.getAttribute('data-leilao-id')
+        var leilaoNome = this.getAttribute('data-leilao-nome')
+        var leilaoInicio = this.getAttribute('data-leilao-inicio')
+        var leilaoFim = this.getAttribute('data-leilao-fim')
+        document.getElementById('modalLeilaoNome').textContent = leilaoNome
+        document.getElementById('modalLeilaoDatas').textContent = 'Início: ' + leilaoInicio + ' | Fim: ' + leilaoFim
+        var form = document.getElementById('formExcluirLeilao')
+        form.action = '/painel/leilao/excluir/' + leilaoId + '/'
+        var modal = new bootstrap.Modal(document.getElementById('modalExcluirLeilao'))
+        modal.show()
+      })
+    })
+  </script>
+{% endblock %}

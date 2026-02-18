@@ -1,0 +1,105 @@
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css_custom %}
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.snow.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.bubble.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card">
+        <div class="card-header border-l-primary border-3">
+          <h5 class="card-title">{{ page_subtitle }}</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'cavalo_backend:cavalo_video_adicionar' cavalo.id %}" enctype="multipart/form-data" class="form-horizontal">
+          {% csrf_token %}
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.nome.id_for_label }}">Leilão</label>
+              <input type="text" class="form-control" value="{{ leilao_nome|default_if_none:'' }}" disabled />
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.cavalo.id_for_label }}">Cavalo</label>
+              <input type="text" class="form-control" value="{{ cavalo.nome|default_if_none:'' }}" disabled />
+              <input type="hidden" class="form-control" id="{{ form.cavalo.id_for_label }}" name="{{ form.cavalo.name }}" value="{{ cavalo.id }}" required />
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.url_youtube.id_for_label }}">Link Youtube</label>
+              <input type="text" class="form-control" id="{{ form.url_youtube.id_for_label }}" name="{{ form.url_youtube.name }}" value="{{ form.url_youtube.value|default_if_none:'' }}" required />
+              {% if form.url_youtube.errors %}
+                <div class="text-danger">{{ form.url_youtube.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.legenda.id_for_label }}">Legenda</label>
+              <input type="text" class="form-control" id="{{ form.legenda.id_for_label }}" name="{{ form.legenda.name }}" value="{{ form.legenda.value|default_if_none:'' }}" required />
+              {% if form.legenda.errors %}
+                <div class="text-danger">{{ form.legenda.errors }}</div>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary btn-pill">{{ page_subtitle }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'backend/assets/js/editors/quill.js' %}"></script>
+  <script src="{% static 'backend/assets/js/custom-add-product3.js' %}"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.5/dist/autoNumeric.min.js"></script>
+  <script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const lance_inicialInput = document.getElementById('{{ form.lance_inicial.id_for_label }}');
+      if (lance_inicialInput) {
+        new AutoNumeric(lance_inicialInput, {
+            currencySymbol: 'R$ ',
+            decimalCharacter: ',',
+            digitGroupSeparator: '.',
+            decimalPlaces: 2,
+            minimumValue: '0',
+            modifyValueOnWheel: false,
+            unformatOnSubmit: true
+        });
+      }
+      // Máscara para altura (ex: 1.62)
+      const alturaInput = document.getElementById('{{ form.altura.id_for_label }}');
+      if (alturaInput) {
+        new AutoNumeric(alturaInput, {
+            decimalCharacter: ',',
+            digitGroupSeparator: '',
+            decimalPlaces: 2,
+            minimumValue: '0',
+            maximumValue: '3.00', // ou '3.99' ou '9.99' conforme sua necessidade
+            modifyValueOnWheel: false,
+            unformatOnSubmit: true
+        });
+      }
+  });
+  </script>
+
+  <script>
+    // Editor para descrição
+    const quillDescricao = new Quill('#editor-descricao', { theme: 'snow' });
+    const descricaoInput = document.getElementById('{{ form.descricao.id_for_label }}');
+    quillDescricao.root.innerHTML = descricaoInput.value;
+
+    // Editor para informações
+    const quillInformacoes = new Quill('#editor-informacoes', { theme: 'snow' });
+    const informacoesInput = document.getElementById('{{ form.informacoes.id_for_label }}');
+    quillInformacoes.root.innerHTML = informacoesInput.value;
+
+    // Atualiza os campos hidden antes de enviar o formulário
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function (event) {
+      descricaoInput.value = quillDescricao.root.innerHTML;
+      informacoesInput.value = quillInformacoes.root.innerHTML;
+    });
+  </script>
+
+{% endblock %}
