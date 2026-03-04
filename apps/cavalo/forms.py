@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Case, When, Value, IntegerField
 from apps.leilao.models import Leilao
 from .models import Cavalo, Foto, Video
 
@@ -33,8 +34,19 @@ class CavaloForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Filtra apenas leilões com status 'aberto'
-        self.fields['leilao'].queryset = Leilao.objects.filter(status='ativo')
+        self.fields['leilao'].queryset = (
+            Leilao.objects
+            .filter(status__in=['ativo', 'inativo'])
+            .annotate(
+                ordem_status=Case(
+                    When(status='ativo', then=Value(0)),
+                    When(status='inativo', then=Value(1)),
+                    default=Value(2),
+                    output_field=IntegerField(),
+                )
+            )
+            .order_by('ordem_status', 'id')
+        )
     
     def clean(self):
         cleaned_data = super().clean()
