@@ -1,0 +1,21 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}Lance Coberto - Virtual Stables{% endblock %}
+
+{% block message %}
+    <p style="margin: 0 0 20px 0;">
+        Seu lance de <span class="highlight">{{ valor_lance }}</span> 
+        no cavalo <span class="highlight">{{ cavalo }}</span> foi coberto por outro cliente!
+    </p>
+    
+    <p style="margin: 0 0 20px 0;">
+        Não perca a oportunidade de continuar participando deste leilão. 
+        Você ainda pode fazer um novo lance e conquistar este excelente animal.
+    </p>
+{% endblock %}
+
+{% block button %}
+    <div class="button-container">
+        <a href="{{ url_site }}" class="btn">Fazer Novo Lance</a>
+    </div>
+{% endblock %}

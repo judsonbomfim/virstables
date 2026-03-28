@@ -107,23 +107,11 @@
                   <p>
                     <b>Alojamento:</b> {{ cavalo.alojamento }}
                   </p>
-                </div>
-                <div class="col-6">
-                  <p>
-                    <b>Pai:</b> {{ cavalo.pai }} <br />
-                    <b>Mãe:</b> {{ cavalo.mae }} <br />
-                    <b>Avô Paterno:</b> {{ cavalo.avo_paterno }} <br />
-                    <b>Avó Paterna:</b> {{ cavalo.avo_paterna }} <br />
-                    <b>Avô Materno:</b> {{ cavalo.avo_materno }} <br />
-                    <b>Avó Materna:</b> {{ cavalo.avo_materna }} <br />
-                    <b>Bisavô Paterno:</b> {{ cavalo.bisavo_paterno }} <br />
-                    <b>Bisavó Paterna:</b> {{ cavalo.bisavo_paterna }} <br />
-                    <b>Bisavô Materno:</b> {{ cavalo.bisavo_materno }} <br />
-                    <b>Bisavó Materna:</b> {{ cavalo.bisavo_materna }} <br />
-                  </p>
-
-                  <p>
+                    <p>
                     <b>Lance Inicial:</b> {{ cavalo.lance_inicial }}
+                  </p>
+                  <p>
+                    <b>Incremento:</b> {{ cavalo.incremento }}
                   </p>
                   <p>
                     <b>Parcelas:</b> {{ cavalo.parcela }}
@@ -132,15 +120,36 @@
                     <b>Status:</b> {{ cavalo.get_status_display }}
                   </p>
                 </div>
+                <div class="col-6">
+                  <p>
+                    <b>Pai:</b> {{ cavalo.pai }} <br />
+                    <b>Mãe:</b> {{ cavalo.mae }} <br />
+
+                    <h6 class="mt-3">Linhagem Paterna</h6>
+                    <b>Avô Paterno:</b> {{ cavalo.avo_paterno }} <br />
+                    <b>Avó Paterna:</b> {{ cavalo.avo_paterna }} <br />
+                    <small class="text-muted">Bisavôs Paternos:</small><br />
+                    <b>Bisavô Paterno 1:</b> {{ cavalo.bisavo_paterno1 }} <br />
+                    <b>Bisavó Paterna 1:</b> {{ cavalo.bisavo_paterno2 }} <br />
+                    <b>Bisavô Paterno 2:</b> {{ cavalo.bisavo_paterno3 }} <br />
+                    <b>Bisavó Paterna 2:</b> {{ cavalo.bisavo_paterno4 }} <br />
+
+                    <h6 class="mt-3">Linhagem Materna</h6>
+                    <b>Avô Materno:</b> {{ cavalo.avo_materno }} <br />
+                    <b>Avó Materna:</b> {{ cavalo.avo_materna }} <br />
+                    <small class="text-muted">Bisavôs Maternos:</small><br />
+                    <b>Bisavô Materno 1:</b> {{ cavalo.bisavo_materno1 }} <br />
+                    <b>Bisavó Materna 1:</b> {{ cavalo.bisavo_materno2 }} <br />
+                    <b>Bisavô Materno 2:</b> {{ cavalo.bisavo_materno3 }} <br />
+                    <b>Bisavó Materna 2:</b> {{ cavalo.bisavo_materno4 }} <br />
+                  </p>
+                </div>
               </div>
             </div>
             <br />
             <br />
             <p>
               <b>Descrição:</b> {{ cavalo.descricao|safe }}
-            </p>
-            <p>
-              <b>Informações:</b> {{ cavalo.informacoes|safe }}
             </p>
           </div>
         </div>
@@ -215,7 +224,7 @@
             <div class="col-sm-12 col-lg-12 col-xl-12">
               <div class="table-responsive custom-scrollbar">
                 <table class="table">
-                  <thead class="table-success">
+                <thead class="table-success">
                     <tr>
                       <th scope="col">Nome</th>
                       <th scope="col">Cidade/Estado</th>
@@ -223,26 +232,17 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for cavalo in cavalos %}
+                    {% for lance in lances %}
                       <tr>
-                        <th scope="row">{{ cavalo.nome }}</th>
+                        <td scope="row">{{ lance.usuario.perfil_cliente.nome_completo }}</td>
                         <td>
-                          {% if cavalo.raca %}
-                            {{ cavalo.raca }}
-                          {% else %}
-                            -
-                          {% endif %}
+                            {{ lance.usuario.perfil_cliente.end_cidade }}/{{ lance.usuario.perfil_cliente.end_estado }}
                         </td>
-                        <th scope="row">{{ cavalo.get_status_display }}</th>
-                        <td>
-                          <a href=""><i class="icofont icofont-file-text text-primary fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Ver Detalhes"></i></a>
-                          <a href="{% url 'cavalo_backend:cavalo_editar' cavalo.id %}"><i class="icofont icofont-edit text-info fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Editar Leilão"></i></a>
-                          <a href=""><i class="icofont icofont-ui-delete text-danger fs-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Excluir Leilão"></i></a>
-                        </td>
+                        <td scope="row">R$ {{ lance.valor|floatformat:2 }}</td>
                       </tr>
                     {% empty %}
                       <tr>
-                        <td colspan="4">Nenhum lance no momento.</td>
+                        <td colspan="3">Nenhum lance no momento.</td>
                       </tr>
                     {% endfor %}
                   </tbody>

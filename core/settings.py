@@ -1,8 +1,8 @@
 from pathlib import Path
-import environ
-import urllib.parse
 import os
+import ssl
 from django.contrib.messages import constants as messages
+from celery.schedules import crontab
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = [
     h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',')
@@ -42,10 +42,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'sass_processor',
     'widget_tweaks',
-    'apps.home.apps.HomeConfig',
-    'apps.users.apps.UsersConfig',
+    'apps.blog.apps.BlogConfig',
     'apps.cavalo.apps.CavaloConfig',
+    'apps.emails.apps.EmailsConfig',
+    'apps.home.apps.HomeConfig',
     'apps.leilao.apps.LeilaoConfig',
+    'apps.site_config.apps.SiteConfigConfig',
+    'apps.users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -63,13 +66,15 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.site_config.context_processors.site_settings',
             ],
         },
     },
@@ -81,19 +86,23 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASE_URL = os.getenv('DATABASE_URL', f'postgres://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@db:5432/{os.getenv("DB_NAME")}')
+# DATABASE_URL = os.getenv('DATABASE_URL', f'postgres://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@db:5432/{os.getenv("DB_NAME")}')
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'db',
-        'PORT': os.getenv('DB_PORT'),
+        'HOST': os.getenv('DB_HOST', 'db'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    'apps.users.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -128,6 +137,8 @@ DATE_FORMAT = '%d/%m/%Y'
 
 DATA_UPLOAD_MAX_NUMBER_FILES = 1000
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Expirar sessão em 10h
 SESSION_COOKIE_AGE = 36000
 
@@ -141,11 +152,85 @@ URL_CDN = 'https://'+str(os.getenv('URL_CDN'))
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'core/static'),
 ]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+
+# CELERY
+REDIS_URL = os.getenv('REDIS_URL')
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE')
+CELERY_ENABLE_UTC = True
+CELERY_ENABLE_REMOTE_CONTROL = False
+
+
+# Adicione a configuração de agendamento de tarefas aqui
+CELERY_BEAT_SCHEDULE = {
+    # Exemplo de tarefa: 'nome-da-tarefa-agendada'
+    # 'send-summary-every-morning': {
+    #     'task': 'apps.emails.tasks.sua_tarefa_periodica',  # Caminho para a sua função de tarefa
+    #     'schedule': crontab(hour=8, minute=0),  # Executa todo dia às 8h da manhã
+    #     # 'args': (16, 16), # Argumentos para a tarefa, se houver
+    # },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.getenv('REDIS_URL', 'redis://redis:6379/0'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'primary',
+    messages.ERROR: 'danger',
+    messages.SUCCESS: 'success',
+    messages.INFO: 'info',
+    messages.WARNING: 'warning',
+}
+
+# E-mail
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# else:
+#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = str(os.getenv('EMAIL_HOST'))
+EMAIL_PORT = 587
+EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
+EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = str(os.getenv('DEFAULT_FROM_EMAIL'))
 
 
 # # Configurações AWS
@@ -178,28 +263,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # # URLs para arquivos estáticos e mídia
 # STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
 # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ],
-}
-
-MESSAGE_TAGS = {
-    messages.DEBUG: 'primary',
-    messages.ERROR: 'danger',
-    messages.SUCCESS: 'success',
-    messages.INFO: 'info',
-    messages.WARNING: 'warning',
-}

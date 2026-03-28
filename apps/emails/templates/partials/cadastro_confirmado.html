@@ -1,0 +1,38 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}
+  Cadastro Confirmado - Virtual Stables
+{% endblock %}
+
+{% block message %}
+  <p style="margin: 0 0 20px 0;">
+    <strong>🎉 Parabéns!</strong> Seu cadastro foi aprovado e você já pode participar de todos os nossos leilões.
+  </p>
+
+  <div style="background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 6px; padding: 20px; margin: 20px 0;">
+    <p style="margin: 0; color: #155724; font-size: 14px;">
+      <strong>✅ Status:</strong> Cadastro aprovado<br />
+      <strong>🏇 Acesso liberado:</strong> Todos os leilões<br />
+      <strong>💰 Pronto para:</strong> Fazer lances e participar
+    </p>
+  </div>
+
+  <p style="margin: 0 0 20px 0;">Agora você pode navegar pelos nossos leilões ativos, conhecer os cavalos disponíveis e fazer seus lances.</p>
+
+  <p style="margin: 0 0 20px 0;">
+    <strong>Dicas para começar:</strong>
+  </p>
+  <div style="color: #555555; font-size: 14px; line-height: 1.6; margin: 0 0 20px 20px;">
+    <p>
+      Explore os leilões ativos em nossa página principal<br />
+      Analise o histórico e pedigree dos cavalos<br />
+      Acompanhe seus lances em tempo real
+    </p>
+  </div>
+{% endblock %}
+
+{% block button %}
+  <div class="button-container">
+    <a href="{{ url_site }}" class="btn">Começar a Participar</a>
+  </div>
+{% endblock %}

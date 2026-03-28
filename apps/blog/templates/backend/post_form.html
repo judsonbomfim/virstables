@@ -1,0 +1,88 @@
+<!-- filepath: /home/judbomfim/virstables/apps/blog/templates/backend/post_form.html -->
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block css_custom %}
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.snow.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/quill.bubble.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/dropzone.min.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/filepond.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'backend/assets/css/vendors/filepond-plugin-image-preview.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card">
+        <div class="card-header border-l-primary border-3">
+          <h5 class="card-title">{{ page_subtitle }}</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.titulo.id_for_label }}">Título</label>
+              <input type="text" class="form-control" id="{{ form.titulo.id_for_label }}" name="{{ form.titulo.name }}" value="{{ form.titulo.value|default_if_none:'' }}" required />
+              {% if form.titulo.errors %}
+                <div class="text-danger">{{ form.titulo.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.imagem.id_for_label }}">Imagem de Destaque</label>
+              {{ form.imagem }}
+              {% if form.imagem.errors %}
+                <div class="text-danger">{{ form.imagem.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.conteudo.id_for_label }}">Conteúdo</label>
+              <div id="editor-conteudo" class="quill-editor h-150"></div>
+                <input type="hidden" id="{{ form.conteudo.id_for_label }}" name="{{ form.conteudo.name }}" value="{{ form.conteudo.value|default_if_none:'' }}" />              {% if form.conteudo.errors %}
+                <div class="text-danger">{{ form.conteudo.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.resumo.id_for_label }}">Resumo</label>
+              {{ form.resumo }}
+              {% if form.resumo.errors %}
+                <div class="text-danger">{{ form.resumo.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="{{ form.published.id_for_label }}">Publicado?</label>
+              <select class="form-control" id="{{ form.published.id_for_label }}" name="{{ form.published.name }}">
+                <option value="True" {% if form.published.value %}selected{% endif %}>Sim</option>
+                <option value="False" {% if not form.published.value %}selected{% endif %}>Não</option>
+              </select>
+              {% if form.published.errors %}
+                <div class="text-danger">{{ form.published.errors }}</div>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary btn-pill">{{ page_subtitle }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scriptcontent %}
+  <script src="{% static 'backend/assets/js/editors/quill.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const quillConteudo = new Quill('#editor-conteudo', { theme: 'snow' });
+      const conteudoInput = document.getElementById('{{ form.conteudo.id_for_label }}');
+      quillConteudo.root.innerHTML = conteudoInput.value || '';
+
+      const form = conteudoInput.closest('form');
+      form.addEventListener('submit', function (event) {
+        conteudoInput.value = quillConteudo.root.innerHTML;
+        if (quillConteudo.getText().trim().length === 0) {
+          alert('Preencha o campo Conteúdo.');
+          event.preventDefault();
+          return false;
+        }
+      });
+    });
+  </script>
+{% endblock %}

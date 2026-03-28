@@ -1,7 +1,6 @@
 {% load static i18n %}
 <!DOCTYPE html>
-{% get_current_language as LANGUAGE_CODE %}
-<html lang="{{ LANGUAGE_CODE }}" {% block html_attribute %}{% endblock html_attribute %}>
+<html lang="pt-br" {% block html_attribute %}{% endblock html_attribute %}>
 <head>
       <!-- Title Meta -->
 <meta charset="utf-8" />
@@ -11,14 +10,14 @@
 <meta name="keywords" content="Inspinia, admin dashboard, WrapBootstrap, HTML template, Bootstrap admin, CRM template, CMS template, responsive admin, web app UI, admin theme, best admin template">
 <meta name="author" content="WebAppLayers">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<link rel="shortcut icon" href="{% static 'frontend/images/lgo_virtual_stables_site_favicon.png' %}">
+<link rel="shortcut icon" href="{% static 'frontend/assets/images/lgo_virtual_stables_site_favicon.png' %}">
 {% block css %}
 
         {% block extra_css %} {% endblock extra_css %}
 
         <!-- =========css=========== -->
         <!-- Theme Config Js -->
-        <script src="{% static 'frontend/assets/js/config.js' %}"></script>
+        {% comment %} <script src="{% static 'frontend/assets/js/config.js' %}"></script> {% endcomment %}
         <!-- Vendor css -->
         <link href="{% static 'frontend/assets/css/vendors.min.css' %}" rel="stylesheet" type="text/css">
         <!-- App css -->

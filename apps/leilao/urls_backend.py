@@ -4,9 +4,9 @@ from .views import backend
 app_name = 'leilao'
 
 urlpatterns = [
-    path('leilao/', backend.leilao_lista, name='leilao_lista'),
-    path('leilao/adicionar/', backend.leilao_form, name='leilao_adicionar'),
-    path('leilao/editar/<int:id>/', backend.leilao_form, name='leilao_editar'),
-    path('leilao/detalhe/<int:id>/', backend.leilao_detalhe, name='leilao_detalhe'),
-    path('leilao/excluir/<int:id>/', backend.leilao_excluir, name='leilao_excluir'),
+    path('', backend.leilao_lista, name='leilao_lista'),
+    path('adicionar/', backend.leilao_form, name='leilao_adicionar'),
+    path('editar/<int:id>/', backend.leilao_form, name='leilao_editar'),
+    path('detalhe/<int:id>/', backend.leilao_detalhe, name='leilao_detalhe'),
+    path('excluir/<int:id>/', backend.leilao_excluir, name='leilao_excluir'),
 ]

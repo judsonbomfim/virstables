@@ -1,0 +1,86 @@
+<!-- filepath: /home/judbomfim/virstables/apps/site_config/templates/backend/site_config_detalhes.html -->
+{% extends 'backend/shared/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container-fluid basic_table">
+    <div class="row">
+      <div class="col-lg-6">
+        <!-- Configurações do Site -->
+        <div class="card">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Configurações do Site</h5>
+            <a href="{% url 'site_config_backend:site_settings_edit' site_settings.id %}" class="btn btn-warning btn-sm">Editar</a>
+          </div>
+          <div class="card-body">
+            <p><b>Email:</b> {{ site_settings.email }}</p>
+            <p><b>Telefone:</b> {{ site_settings.telefone }}</p>
+            <p>
+              {% if site_settings.facebook %}
+                <b>Facebook:</b> <a href="{{ site_settings.facebook }}" target="_blank">{{ site_settings.facebook }}</a><br>
+              {% endif %}
+              {% if site_settings.instagram %}
+                <b>Instagram:</b> <a href="{{ site_settings.instagram }}" target="_blank">{{ site_settings.instagram }}</a><br>
+              {% endif %}
+              {% if site_settings.youtube %}
+                <b>YouTube:</b> <a href="{{ site_settings.youtube }}" target="_blank">{{ site_settings.youtube }}</a>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        <!-- Banners -->
+        <div class="card mt-4">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Banners</h5>
+            <a href="{% url 'site_config_backend:banner_add' %}" class="btn btn-success btn-sm">Adicionar Banner</a>
+          </div>
+          <div class="card-body">
+            <ul class="sortable-list">
+              {% for banner in banners %}
+                <li class="sortable-item py-3" data-id="{{ banner.id }}">
+                  {{ banner.ordem }} - 
+                  <img src="{{ banner.imagem.url }}" alt="{{ banner.titulo }}" style="max-width: 200px; max-height: 60px; object-fit: contain; padding-right: 20px;" />
+                  <span>{{ banner.titulo }}</span>
+                  {% if banner.link %}
+                    <a href="{{ banner.link }}" target="_blank" class="btn btn-outline-primary ms-2">Destino Banner</a>
+                  {% endif %}
+                  <a href="{% url 'site_config_backend:banner_edit' banner.id %}" class="btn btn-warning btn-sm ms-2">Editar</a>
+                  <a href="{% url 'site_config_backend:banner_delete' banner.id %}" class="btn btn-danger btn-sm ms-2">Excluir</a>
+                </li>
+              {% empty %}
+                <li>Nenhum banner cadastrado.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Logos -->
+        <div class="card mt-4">
+          <div class="card-header border-l-primary border-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Logos</h5>
+            <a href="{% url 'site_config_backend:logo_add' %}" class="btn btn-success btn-sm">Adicionar Logo</a>
+          </div>
+          <div class="card-body">
+            <ul class="sortable-list">
+              {% for logo in logos %}
+                <li class="sortable-item py-3" data-id="{{ logo.id }}">
+                  {{ logo.ordem }} - 
+                  <img src="{{ logo.imagem.url }}" alt="{{ logo.titulo }}" style="max-width: 200px; max-height: 60px; object-fit: contain; padding-right: 20px;" />
+                  <span>{{ logo.titulo }}</span>
+                  {% if logo.link %}
+                    <a href="{{ logo.link }}" target="_blank" class="btn btn-outline-primary ms-2">Ver Logo</a>
+                  {% endif %}
+                  <a href="{% url 'site_config_backend:logo_edit' logo.id %}" class="btn btn-warning btn-sm ms-2">Editar</a>
+                  <a href="{% url 'site_config_backend:logo_delete' logo.id %}" class="btn btn-danger btn-sm ms-2">Excluir</a>
+                </li>
+              {% empty %}
+                <li>Nenhum logo cadastrado.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,18 +1,34 @@
-# Estágio de build
-FROM python:3.12-slim AS builder
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
-
-# Estágio final
+# Usar uma imagem base com Python
 FROM python:3.12-slim
-WORKDIR /app
-RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /root/.local /root/.local
-COPY . .
-ENV PATH=/root/.local/bin:$PATH
+
+# Definir variáveis de ambiente
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-RUN chmod +x entrypoint.sh
+
+# Instalar dependências do sistema
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar requirements.txt e instalar dependências
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar o código do projeto
+COPY . .
+
+# Criar usuário não-root para segurança
+RUN adduser --disabled-password --gecos '' appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
+# Expor a porta do Gunicorn
 EXPOSE 8000
-ENTRYPOINT ["./entrypoint.sh"]
+
+# Comando padrão
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]

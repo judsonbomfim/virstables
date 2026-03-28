@@ -5,35 +5,37 @@ from .models import PerfilCliente
 import re
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True, help_text="Digite um email válido")
-    username = forms.CharField(
-        label="Usuário",
-        help_text="Use apenas letras minúsculas e números, sem espaços ou acentos."
-    )
-    
+    email = forms.EmailField(required=True, label="E-mail")
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
-    
+        fields = ('username', 'email', 'password1', 'password2')
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Este email já está em uso.")
+            raise forms.ValidationError("Este e-mail já está cadastrado.")
         return email
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("Este nome de usuário já existe.")
+        return username
 
 class PerfilClienteForm(forms.ModelForm):
     class Meta:
         model = PerfilCliente
         fields = [
-            'cpf', 'cnpj', 'rg_ie', 'emis_uf', 'nasc_fund', 'profis_cnae',
-            'representante', 'cpf_repres', 'end_cep', 'end_rua_av', 'end_numero',
+            'nome_completo', 'cpf', 'cnpj', 'rg_ie', 'emis_uf', 'nasc_fund', 'profis_cnae',
+            'end_cep', 'end_rua_av', 'end_numero',
             'end_complem', 'end_bairro', 'end_cidade', 'end_estado',
-            'telefone', 'celular'
+            'telefone', 'celular', 'propriedade', 'propr_cidade', 'propr_estado'
         ]
         widgets = {
             'nasc_fund': forms.DateInput(attrs={'type': 'date'}),
             'emis_uf': forms.Select(),
-            'end_estado': forms.Select(),
+            'end_estado': forms.Select(), 
             'cpf': forms.TextInput(attrs={'placeholder': '000.000.000-00'}),
             'cnpj': forms.TextInput(attrs={'placeholder': '00.000.000/0000-00'}),
             'cpf_repres': forms.TextInput(attrs={'placeholder': '000.000.000-00'}),
@@ -55,9 +57,3 @@ class PerfilClienteForm(forms.ModelForm):
         if PerfilCliente.objects.filter(cnpj=cnpj).exists():
             raise forms.ValidationError("Este CNPJ já está cadastrado.")
         return cnpj
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if PerfilCliente.objects.filter(email=email).exists():
-            raise forms.ValidationError("Este email já está cadastrado.")
-        return email
