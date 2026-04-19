@@ -110,7 +110,7 @@
                       <div class="card-body p-0">
                         <!-- Crossfade -->
                         
-                        <div id="carouselExampleFade" class="carousel slide carousel-fade">
+                        <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-touch="true">
                           <div class="carousel-inner bg-light bg-opacity-25 border border-light border-dashed rounded-3" role="listbox">
                             {% for foto in cavalo.fotos.all|dictsort:"ordem" %}
                               <div class="carousel-item text-center {% if forloop.first %}active{% endif %}">
@@ -122,6 +122,15 @@
                               </div>
                             {% endfor %}
                           </div>
+                          <!-- Botões prev/next visíveis apenas no mobile -->
+                          <button class="carousel-control-prev d-flex d-lg-none" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                          </button>
+                          <button class="carousel-control-next d-flex d-lg-none" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Próximo</span>
+                          </button>
                           <div class="carousel-indicators m-0 mt-3 d-lg-flex d-none position-static h-100 rounded gap-2">
                             {% for foto in cavalo.fotos.all|dictsort:"ordem" %}
                               <button type="button" data-bs-target="#carouselExampleFade"
