@@ -117,6 +117,9 @@
                 {% endif %}
                 <p><strong>Celular:</strong> {{ perfil.celular }}</p>
               </div>
+              <div class="col-md-6">
+                <p><strong>E-mail:</strong> {{ perfil.usuario.email|default:"-" }}</p>
+              </div>
             </div>
 
             {% if perfil.propriedade %}
