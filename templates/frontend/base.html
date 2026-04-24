@@ -40,11 +40,11 @@
 
 {% block preloader %}{% endblock %}
 
-{% include "frontend/layout/header.html" %}
+{% if not request.is_app_subdomain %}{% include "frontend/layout/header.html" %}{% endif %}
 
 {% block content %}{% endblock content %}
 
-{% include "frontend/layout/footer.html" %}
+{% if not request.is_app_subdomain %}{% include "frontend/layout/footer.html" %}{% endif %}
 
 {% block javascript %}
 

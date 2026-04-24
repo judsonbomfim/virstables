@@ -57,17 +57,23 @@ def cliente_editar(request, id):
                 nomes = nome_completo.split()
                 perfil.usuario.first_name = nomes[0] if nomes else ''
                 perfil.usuario.last_name = ' '.join(nomes[1:]) if len(nomes) > 1 else ''
-                perfil.usuario.save()
             
+            # Atualizar email do usuário se fornecido
+            email = form.cleaned_data.get('email', '').strip()
+            if email:
+                perfil.usuario.email = email
+            
+            perfil.usuario.save()
             form.save()
             messages.success(request, 'Cliente atualizado com sucesso!')
             return redirect('users_backend:cliente_detalhe', id=perfil.id)
         else:
             messages.error(request, 'Por favor, corrija os erros abaixo.')
     else:
-        # Preencher nome_completo inicial
+        # Preencher nome_completo e email iniciais
         initial_data = {
-            'nome_completo': f"{perfil.usuario.first_name} {perfil.usuario.last_name}".strip()
+            'nome_completo': f"{perfil.usuario.first_name} {perfil.usuario.last_name}".strip(),
+            'email': perfil.usuario.email
         }
         form = PerfilClienteForm(instance=perfil, initial=initial_data)
     

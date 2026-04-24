@@ -1,6 +1,23 @@
 from django.shortcuts import redirect
 from django.conf import settings
 
+
+class SubdomainMiddleware:
+    """
+    Detecta requisições vindas do subdomínio 'app.' e marca
+    request.is_app_subdomain = True para suprimir header/footer.
+    O subdomínio é configurável via settings.APP_SUBDOMAIN_PREFIX (padrão: 'app').
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.prefix = getattr(settings, 'APP_SUBDOMAIN_PREFIX', 'app')
+
+    def __call__(self, request):
+        host = request.get_host().split(':')[0].lower()
+        request.is_app_subdomain = host.startswith(f'{self.prefix}.')
+        return self.get_response(request)
+
 class MaintenanceMiddleware:
     """
     Middleware para colocar site em manutenção.

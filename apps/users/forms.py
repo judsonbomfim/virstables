@@ -32,6 +32,13 @@ class PerfilClienteForm(forms.ModelForm):
         help_text="Este nome será usado para preencher automaticamente o nome no sistema"
     )
     
+    email = forms.EmailField(
+        required=False,
+        label="E-mail",
+        widget=forms.EmailInput(attrs={'placeholder': 'exemplo@email.com', 'class': 'form-control'}),
+        help_text="E-mail do cliente"
+    )
+    
     class Meta:
         model = PerfilCliente
         fields = [
