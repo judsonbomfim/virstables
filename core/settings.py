@@ -64,6 +64,9 @@ MIDDLEWARE = [
     'core.middleware.SubdomainMiddleware',
 ]
 
+# Permite que o subdomínio app. seja carregado em WebView (FlutterFlow)
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [

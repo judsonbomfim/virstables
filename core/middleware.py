@@ -7,6 +7,7 @@ class SubdomainMiddleware:
     Detecta requisições vindas do subdomínio 'app.' e marca
     request.is_app_subdomain = True para suprimir header/footer.
     O subdomínio é configurável via settings.APP_SUBDOMAIN_PREFIX (padrão: 'app').
+    Remove o header X-Frame-Options para permitir embedding via WebView/iframe (FlutterFlow).
     """
 
     def __init__(self, get_response):
@@ -16,7 +17,10 @@ class SubdomainMiddleware:
     def __call__(self, request):
         host = request.get_host().split(':')[0].lower()
         request.is_app_subdomain = host.startswith(f'{self.prefix}.')
-        return self.get_response(request)
+        response = self.get_response(request)
+        if request.is_app_subdomain:
+            response.headers.pop('X-Frame-Options', None)
+        return response
 
 class MaintenanceMiddleware:
     """
